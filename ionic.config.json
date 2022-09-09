@@ -1,0 +1,7 @@
+{
+  "name": "ModWithMe",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
