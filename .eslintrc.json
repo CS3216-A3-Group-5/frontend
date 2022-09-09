@@ -6,5 +6,8 @@
     "react-app",
     "react-app/jest",
     "prettier"
-  ]
+  ],
+  "parserOptions": {
+    "project": ["./tsconfig.json"]
+  }
 }
