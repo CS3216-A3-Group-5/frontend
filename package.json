@@ -43,12 +43,26 @@
     "workbox-strategies": "^5.1.4",
     "workbox-streams": "^5.1.4"
   },
+  "devDependencies": {
+    "@capacitor/cli": "4.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/parser": "^5.36.2",
+    "eslint": "^8.23.0",
+    "eslint-config-prettier": "^8.5.0",
+    "firebase": "^9.9.4",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "stylelint": "^14.11.0",
+    "stylelint-config-prettier": "^9.0.3"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
     "eject": "react-scripts eject",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "deploy": "ionic build --prod && firebase deploy"
   },
   "browserslist": {
     "production": [
@@ -62,28 +76,18 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "@capacitor/cli": "4.2.0",
-    "@typescript-eslint/eslint-plugin": "^5.36.2",
-    "@typescript-eslint/parser": "^5.36.2",
-    "eslint": "^8.23.0",
-    "eslint-config-prettier": "^8.5.0",
-    "husky": "^8.0.1",
-    "lint-staged": "^13.0.3",
-    "prettier": "^2.7.1",
-    "stylelint-config-prettier": "^9.0.3"
-  },
   "lint-staged": {
     "*.ts": [
-      "eslint --fix",
-      "prettier --write --ignore-unknown"
+      "eslint --fix"
     ],
     "*.tsx": [
-      "eslint --fix",
+      "eslint --fix"
+    ],
+    "**/*": [
       "prettier --write --ignore-unknown"
     ],
     "*.css": [
-      "stylelint --allow-empty-input"
+      "stylelint --fix --allow-empty-input"
     ]
   }
 }
