@@ -74,11 +74,11 @@
     "stylelint-config-prettier": "^9.0.3"
   },
   "lint-staged": {
-    "**.tsx?/*": [
+    "**/*.tsx?": [
       "eslint --fix",
       "prettier --write --ignore-unknown"
     ],
-    "**.css/*": [
+    "**/*.css": [
       "stylelint --allow-empty-input"
     ]
   }
