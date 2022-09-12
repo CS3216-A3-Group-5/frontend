@@ -5,6 +5,7 @@ import {
   IonList,
   IonListHeader,
   IonPage,
+  IonSearchbar,
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
@@ -37,15 +38,19 @@ export default function ModuleView({
         <AppHeader />
         <IonContent fullscreen>
           <IonToolbar>
-            <IonTitle size="large">{uniModule.code}</IonTitle>
-            <IonTitle size="small">{uniModule.name}</IonTitle>
+            <IonTitle>
+              <h1>{uniModule.code}</h1>
+              <h4>{uniModule.name}</h4>
+            </IonTitle>
+            <IonTitle></IonTitle>
           </IonToolbar>
           <IonListHeader>
             <IonLabel>
               <h1>Students</h1>
             </IonLabel>
           </IonListHeader>
-          <IonList>
+          <IonSearchbar />
+          <IonList className="ion-no-padding">
             {uniModule.enrolledStudents
               ? uniModule.enrolledStudents.map((user) => (
                   <UserListItem user={user} key={user.id} />

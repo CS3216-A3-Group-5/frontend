@@ -1,6 +1,8 @@
 import {
   IonContent,
+  IonLabel,
   IonList,
+  IonListHeader,
   IonPage,
   IonSearchbar,
   IonToolbar,
@@ -20,6 +22,11 @@ export default function Homepage() {
         </IonToolbar>
       </AppHeader>
       <IonContent fullscreen>
+        <IonListHeader className="ion-padding-top">
+          <IonLabel>
+            <h1>My Modules</h1>
+          </IonLabel>
+        </IonListHeader>
         <IonList lines="full">
           {sampleModuleData.map((uniModule) => (
             <ModuleListItem
