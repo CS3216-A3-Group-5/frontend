@@ -5,9 +5,15 @@ import {
   IonBackButton,
   IonButtons,
 } from '@ionic/react';
+import { ReactNode } from 'react';
 import styles from './styles.module.scss';
 
-export default function AppHeader() {
+interface AppHeaderProps {
+  // Children compoennts to customize the bottom of AppHeader
+  children?: ReactNode;
+}
+
+export default function AppHeader({ children }: AppHeaderProps) {
   return (
     <IonHeader>
       <IonToolbar className={styles['app-header-toolbar']}>
@@ -16,6 +22,7 @@ export default function AppHeader() {
         </IonButtons>
         <IonTitle className={styles['app-title']}>Mod With Me</IonTitle>
       </IonToolbar>
+      {children}
     </IonHeader>
   );
 }

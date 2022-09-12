@@ -1,6 +1,5 @@
 import {
   IonContent,
-  IonHeader,
   IonList,
   IonPage,
   IonSearchbar,
@@ -13,13 +12,12 @@ import ModuleListItem from './ModuleListItem';
 export default function ModulesListView() {
   return (
     <IonPage>
-      <AppHeader />
+      <AppHeader>
+        <IonToolbar>
+          <IonSearchbar />
+        </IonToolbar>
+      </AppHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="fade">
-          <IonToolbar>
-            <IonSearchbar />
-          </IonToolbar>
-        </IonHeader>
         <IonList lines="full">
           {sampleModuleData.map((uniModule) => (
             <ModuleListItem uniModule={uniModule} />
