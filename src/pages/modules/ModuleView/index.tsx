@@ -24,16 +24,12 @@ export default function ModuleView({
   const [uniModule, setUniModule] = useState<UniModule>();
   //TODO: add filtering and sorting
 
-  function getModuleDetails() {
-    setUniModule(getModule(match.params.moduleCode));
-  }
-
   // shoot api query before painting to screen
   useLayoutEffect(() => {
     //TODO: add actual api call, with error handling
     //should get the module that we want to get data for from url param
-    getModuleDetails();
-  }, []);
+    setUniModule(getModule(match.params.moduleCode));
+  }, [match.params.moduleCode]);
 
   if (uniModule) {
     return (
