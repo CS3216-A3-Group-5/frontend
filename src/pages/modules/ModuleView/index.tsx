@@ -48,7 +48,7 @@ export default function ModuleView({
           <IonList>
             {uniModule.enrolledStudents
               ? uniModule.enrolledStudents.map((user) => (
-                  <UserListItem user={user} />
+                  <UserListItem user={user} key={user.id} />
                 ))
               : null}
           </IonList>

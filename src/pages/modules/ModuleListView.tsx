@@ -20,7 +20,7 @@ export default function ModulesListView() {
       <IonContent fullscreen>
         <IonList lines="full">
           {sampleModuleData.map((uniModule) => (
-            <ModuleListItem uniModule={uniModule} />
+            <ModuleListItem uniModule={uniModule} key={uniModule.code} />
           ))}
         </IonList>
       </IonContent>
