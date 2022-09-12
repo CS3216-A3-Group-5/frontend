@@ -40,7 +40,10 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.scss';
+import styles from './styles.module.scss';
+
 import ConnectionsPage from './pages/connections';
+import ModuleView from './pages/modules/ModuleView';
 
 setupIonicReact();
 
@@ -49,12 +52,14 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route path="/home">
+          <Route exact path="/home">
             <Home />
           </Route>
-          <Route path="/modules">
+          <Route path="/home/modules/:moduleCode" component={ModuleView} />
+          <Route exact path="/modules">
             <ModulesPage />
           </Route>
+          <Route path="/modules/:moduleCode" component={ModuleView} />
           <Route path="/notifications">
             <NotificationsPage />
           </Route>
@@ -71,23 +76,27 @@ const App: React.FC = () => (
         <IonTabBar slot="bottom">
           <IonTabButton tab="modules" href="/modules">
             <IonIcon icon={searchOutline} />
-            <IonLabel>Modules</IonLabel>
+            <IonLabel className={styles['tab_button_text']}>Modules</IonLabel>
           </IonTabButton>
           <IonTabButton tab="connections" href="/connections">
             <IonIcon icon={people}></IonIcon>
-            <IonLabel>Connections</IonLabel>
+            <IonLabel className={styles['tab_button_text']}>
+              Connections
+            </IonLabel>
           </IonTabButton>
           <IonTabButton tab="home" href="/home">
             <IonIcon icon={home}></IonIcon>
-            <IonLabel>Home</IonLabel>
+            <IonLabel className={styles['tab_button_text']}>Home</IonLabel>
           </IonTabButton>
           <IonTabButton tab="notifications" href="/notifications">
             <IonIcon icon={notifications} />
-            <IonLabel>Notifications</IonLabel>
+            <IonLabel className={styles['tab_button_text']}>
+              Notifications
+            </IonLabel>
           </IonTabButton>
           <IonTabButton tab="userProfile" href="/user_profile">
             <IonIcon icon={person} />
-            <IonLabel>Profile</IonLabel>
+            <IonLabel className={styles['tab_button_text']}>Profile</IonLabel>
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
