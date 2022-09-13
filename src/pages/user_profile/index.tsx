@@ -89,21 +89,3 @@ export default function UserProfile() {
     );
   }
 }
-
-// <IonItem>
-//   <IonAvatar slot="start" className={styles['profilePicture']}>
-//     <img
-//       alt="user thumbnail"
-//       src={
-//         user.profilePic
-//           ? user.profilePic
-//           : 'assets/user_default_icon.svg'
-//       }
-//     ></img>
-//   </IonAvatar>
-//   <IonLabel>
-//     <h1>{user.name}</h1>
-//     <h2>Majoring in {user.universityCourse}</h2>
-//     {user.userStatus ? <p>{user.userStatus}</p> : null}
-//   </IonLabel>
-// </IonItem>
