@@ -3,7 +3,13 @@
  * This is sample data to be able to see UI layout.
  */
 
-import { ConnectionStatus, UniModule, User, UserStatus } from './types';
+import {
+  ConnectionStatus,
+  DetailedUser,
+  UniModule,
+  User,
+  UserStatus,
+} from './types';
 
 export const sampleUsers: Array<User> = [
   {
@@ -43,3 +49,17 @@ export const sampleModuleData: Array<UniModule> = [
     enrolledStudents: sampleUsers,
   },
 ];
+
+export const sampleDetailedUser: DetailedUser = {
+  contact_details: {
+    email: 'bob@u.nus.edu',
+    telegramHandle: '@bobbybob',
+    phoneNumber: '91234567',
+  },
+  matriculationYear: '2022',
+  universityCourse: 'Computer Science',
+  bio: `Hi, I'm Bob`,
+  id: '3',
+  name: 'Bob',
+  connectionStatus: ConnectionStatus.NOT_CONNECTED,
+};
