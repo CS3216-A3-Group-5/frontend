@@ -1,19 +1,10 @@
-import {
-  IonCard,
-  IonCardContent,
-  IonAvatar,
-  IonContent,
-  // IonItem,
-  // IonLabel,
-  IonPage,
-  IonIcon,
-} from '@ionic/react';
+import { IonContent, IonPage, IonButton } from '@ionic/react';
 import AppHeader from '../../components/AppHeader';
 import { useEffect, useState } from 'react';
 import { DetailedUser } from '../../api/types';
 import { getSelfUser } from '../../api/users';
-import { callOutline, mail, paperPlaneOutline } from 'ionicons/icons';
 import styles from './styles.module.scss';
+import UserCardItem from '../../components/UserCardItem';
 
 export default function UserProfile() {
   const [user, setUserDetails] = useState<DetailedUser>();
@@ -30,57 +21,10 @@ export default function UserProfile() {
       <IonPage>
         <AppHeader />
         <IonContent fullscreen>
-          <IonCard color="primary">
-            <IonCardContent>
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <IonAvatar slot="start" className={styles['profile-picture']}>
-                  <img
-                    alt="user picture"
-                    src={
-                      user.profilePic
-                        ? user.profilePic
-                        : 'assets/user_default_icon.svg'
-                    }
-                  ></img>
-                </IonAvatar>
-
-                <div className={styles['user-information']}>
-                  <div>
-                    <h1 className={styles['name']}>{user.name}</h1>
-                    <h2 className={styles['major']}>
-                      Majoring in {user.universityCourse}
-                    </h2>
-                  </div>
-
-                  <div className={styles['contact-information']}>
-                    <div>
-                      <IonIcon icon={mail} />
-                      <h2>{user.contact_details.email}</h2>
-                    </div>
-                    <div>
-                      <IonIcon icon={paperPlaneOutline} />
-                      <h2>
-                        {user.contact_details.telegramHandle
-                          ? user.contact_details.telegramHandle
-                          : 'None'}
-                      </h2>
-                    </div>
-                    <div>
-                      <IonIcon icon={callOutline} />
-                      <h2>
-                        {user.contact_details.phoneNumber
-                          ? user.contact_details.phoneNumber
-                          : 'None'}
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <h1 className={styles['bio-header']}>Bio</h1>
-              <h2 className={styles['bio']}>{user.bio}</h2>
-            </IonCardContent>
-          </IonCard>
+          <UserCardItem user={user} />
+          <IonButton className={styles['edit-profile-button']}>
+            Edit Profile
+          </IonButton>
         </IonContent>
       </IonPage>
     );

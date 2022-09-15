@@ -1,0 +1,56 @@
+.top-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.profile-picture {
+  height: 8rem;
+  aspect-ratio: 1 / 1;
+  width: 8rem;
+  margin-right: 20px;
+}
+
+.user-information {
+  display: flex;
+  flex-direction: 'row';
+  justify-content: space-between;
+  width: 100%;
+}
+
+.user-information .name {
+  font-size: 1.8rem;
+}
+
+.user-information .major {
+  font-size: 1rem;
+}
+
+.bio-row {
+  margin-top: 1rem;
+}
+
+.bio-row .bio-header {
+  font-size: 1.6rem;
+}
+
+.bio-row .bio {
+  font-size: 0.9rem;
+}
+
+.contact-information {
+  display: 'flex';
+  flex-direction: 'column';
+}
+
+.contact-information div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.contact-information h2 {
+  margin-left: 0.3rem;
+  max-width: 8.5rem;
+  overflow-wrap: break-word;
+}

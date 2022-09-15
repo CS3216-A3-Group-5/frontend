@@ -1,47 +1,4 @@
-.profile-picture {
-  height: 8rem;
-  aspect-ratio: 1 / 1;
-  width: 8rem;
-  margin-right: 20px;
-}
-
-.user-information {
-  display: flex;
-  flex-direction: 'row';
-  justify-content: space-between;
+.edit-profile-button {
   width: 100%;
-}
-
-.user-information .name {
-  font-size: 1.6rem;
-}
-
-.user-information .major {
-  font-size: 1.1rem;
-}
-
-.bio-header {
-  margin-top: 1rem;
-}
-
-.bio {
-  font-size: 0.8rem;
-}
-
-.contact-information {
-  display: 'flex';
-  flex-direction: 'column';
-}
-
-.contact-information div {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.contact-information h2 {
-  margin-left: 0.3rem;
-  max-width: 8.5rem;
-  overflow-wrap: break-word;
+  padding-inline: 0.5rem;
 }
