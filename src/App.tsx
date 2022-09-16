@@ -44,6 +44,9 @@ import styles from './styles.module.scss';
 
 import ConnectionsPage from './pages/connections';
 import ModuleView from './pages/modules/ModuleView';
+import RegisterPage from './pages/authentication/register';
+import LoginPage from './pages/authentication/login';
+import VerifyPage from './pages/authentication/verify';
 
 setupIonicReact();
 
@@ -52,6 +55,15 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
+          <Route exact path="/login">
+            <LoginPage />
+          </Route>
+          <Route exact path="/register">
+            <RegisterPage />
+          </Route>
+          <Route exact path="/verify">
+            <VerifyPage />
+          </Route>
           <Route exact path="/home">
             <Home />
           </Route>
