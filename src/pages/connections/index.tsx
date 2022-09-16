@@ -1,5 +1,5 @@
 import { IonContent, IonPage, IonSearchbar, IonToolbar } from '@ionic/react';
-import AppHeader from '../../components/AppHeader';
+import AppHeader from '../../components/AppHeader/AppHeader';
 
 export default function ConnectionsPage() {
   return (

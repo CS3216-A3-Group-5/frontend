@@ -4,7 +4,7 @@
 
 import axios from 'axios';
 
-const apiUrl = 'https://private-52b1ef3-as3test.apiary-mock.com'; // Replace with real api link
+const apiUrl = 'https://private-52b1ef3-as3test.apiary-mock.com'; //TODO: Replace with real api link
 
 type RegisterSuccessResponse = {
   is_email_sent: boolean;
@@ -45,7 +45,7 @@ export async function registerUser(
   }
 }
 
-//TODO
+//TODO: email check logic
 function checkValidEmail(nusEmail: string) {
   return true;
 }

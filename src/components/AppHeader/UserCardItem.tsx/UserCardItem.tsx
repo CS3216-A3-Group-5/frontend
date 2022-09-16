@@ -1,7 +1,7 @@
 import { IonCard, IonCardContent, IonAvatar, IonIcon } from '@ionic/react';
 import { callOutline, mail, paperPlaneOutline } from 'ionicons/icons';
-import { DetailedUser } from '../api/types';
-import styles from './card.module.scss';
+import { DetailedUser } from '../../../api/types';
+import styles from './styles.module.scss';
 
 interface UserCardItemProps {
   user: DetailedUser;

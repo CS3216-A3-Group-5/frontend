@@ -5,7 +5,7 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
-import AppHeader from '../../components/AppHeader';
+import AppHeader from '../../components/AppHeader/AppHeader';
 
 export default function NotificationsPage() {
   return (

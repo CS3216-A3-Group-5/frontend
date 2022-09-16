@@ -9,7 +9,7 @@ import {
 } from '@ionic/react';
 import { useLocation } from 'react-router-dom';
 import { sampleModuleData } from '../../api/sampleData';
-import AppHeader from '../../components/AppHeader';
+import AppHeader from '../../components/AppHeader/AppHeader';
 import ModuleListItem from '../modules/ModuleListItem';
 
 export default function Homepage() {

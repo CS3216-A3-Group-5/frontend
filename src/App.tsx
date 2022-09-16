@@ -10,13 +10,7 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import {
-  home,
-  searchOutline,
-  person,
-  notifications,
-  people,
-} from 'ionicons/icons';
+import { home, searchOutline, person, people } from 'ionicons/icons';
 import Home from './pages/home';
 import ModulesPage from './pages/modules';
 import NotificationsPage from './pages/notifications';
@@ -50,70 +44,64 @@ import VerifyPage from './pages/authentication/verify';
 
 setupIonicReact();
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/login">
-            <LoginPage />
-          </Route>
-          <Route exact path="/register">
-            <RegisterPage />
-          </Route>
-          <Route exact path="/verify">
-            <VerifyPage />
-          </Route>
-          <Route exact path="/home">
-            <Home />
-          </Route>
-          <Route path="/home/modules/:moduleCode" component={ModuleView} />
-          <Route exact path="/modules">
-            <ModulesPage />
-          </Route>
-          <Route path="/modules/:moduleCode" component={ModuleView} />
-          <Route path="/notifications">
-            <NotificationsPage />
-          </Route>
-          <Route path="/user_profile">
-            <UserProfile />
-          </Route>
-          <Route path="/connections">
-            <ConnectionsPage />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/home" />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="modules" href="/modules">
-            <IonIcon icon={searchOutline} />
-            <IonLabel className={styles['tab_button_text']}>Modules</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="connections" href="/connections">
-            <IonIcon icon={people}></IonIcon>
-            <IonLabel className={styles['tab_button_text']}>
-              Connections
-            </IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="home" href="/home">
-            <IonIcon icon={home}></IonIcon>
-            <IonLabel className={styles['tab_button_text']}>Home</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="notifications" href="/notifications">
-            <IonIcon icon={notifications} />
-            <IonLabel className={styles['tab_button_text']}>
-              Notifications
-            </IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="userProfile" href="/user_profile">
-            <IonIcon icon={person} />
-            <IonLabel className={styles['tab_button_text']}>Profile</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
-);
-
-export default App;
+export default function App() {
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Route exact path="/login">
+              <LoginPage />
+            </Route>
+            <Route exact path="/register">
+              <RegisterPage />
+            </Route>
+            <Route exact path="/verify">
+              <VerifyPage />
+            </Route>
+            <Route exact path="/home">
+              <Home />
+            </Route>
+            <Route path="/home/modules/:moduleCode" component={ModuleView} />
+            <Route exact path="/modules">
+              <ModulesPage />
+            </Route>
+            <Route path="/modules/:moduleCode" component={ModuleView} />
+            <Route path="/notifications">
+              <NotificationsPage />
+            </Route>
+            <Route path="/user_profile">
+              <UserProfile />
+            </Route>
+            <Route path="/connections">
+              <ConnectionsPage />
+            </Route>
+            <Route exact path="/">
+              <Redirect to="/home" />
+            </Route>
+          </IonRouterOutlet>
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="modules" href="/modules">
+              <IonIcon icon={searchOutline} />
+              <IonLabel className={styles['tab_button_text']}>Modules</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="connections" href="/connections">
+              <IonIcon icon={people}></IonIcon>
+              <IonLabel className={styles['tab_button_text']}>
+                Connections
+              </IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="home" href="/home">
+              <IonIcon icon={home}></IonIcon>
+              <IonLabel className={styles['tab_button_text']}>Home</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="userProfile" href="/user_profile">
+              <IonIcon icon={person} />
+              <IonLabel className={styles['tab_button_text']}>Profile</IonLabel>
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      </IonReactRouter>
+    </IonApp>
+  );
+}

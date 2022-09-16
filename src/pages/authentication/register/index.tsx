@@ -2,7 +2,7 @@ import { IonButton, IonContent, IonInput, IonPage } from '@ionic/react';
 import { useState } from 'react';
 import { useLocation } from 'react-router';
 import { registerUser } from '../../../api/authentication';
-import AppHeader from '../../../components/AppHeader';
+import AppHeader from '../../../components/AppHeader/AppHeader';
 
 const RegisterPage: React.FC = () => {
   const currentPath = useLocation().pathname;
