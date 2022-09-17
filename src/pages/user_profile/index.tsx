@@ -42,7 +42,11 @@ export default function UserProfile() {
     return (
       <IonPage>
         <AppHeader />
-        <IonContent fullscreen></IonContent>
+        <IonContent fullscreen>
+          <div className={styles['loading-text']}>
+            <h1>Loading...</h1>
+          </div>
+        </IonContent>
       </IonPage>
     );
   }
