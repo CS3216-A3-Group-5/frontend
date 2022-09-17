@@ -4,6 +4,10 @@ import { useLocation } from 'react-router';
 import { registerUser } from '../../../api/authentication';
 import AppHeader from '../../../components/AppHeader/AppHeader';
 
+enum RegisterUserErrorReason {
+  EMAIL_ALREADY_USED = 0,
+}
+
 const RegisterPage: React.FC = () => {
   const currentPath = useLocation().pathname;
   const [email, setEmail] = useState<string>();
@@ -18,7 +22,7 @@ const RegisterPage: React.FC = () => {
       setErrorText('Please fill in all the fields');
       return;
     }
-    registerUser(email, password, confirmPassword).then(
+    registerUser(email, password).then(
       function (registerResult) {
         setRegisterResult(registerResult);
       },
