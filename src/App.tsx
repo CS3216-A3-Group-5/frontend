@@ -41,6 +41,7 @@ import ModuleView from './pages/modules/ModuleView';
 import RegisterPage from './pages/authentication/register';
 import LoginPage from './pages/authentication/login';
 import VerifyPage from './pages/authentication/verify';
+import EditProfile from './pages/user_profile/edit_profile';
 
 setupIonicReact();
 
@@ -73,6 +74,7 @@ export default function App() {
             <Route path="/user_profile">
               <UserProfile />
             </Route>
+            <Route path="/user_profile/edit" component={EditProfile} />
             <Route path="/connections">
               <ConnectionsPage />
             </Route>
