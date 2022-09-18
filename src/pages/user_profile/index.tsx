@@ -1,14 +1,15 @@
 import { IonContent, IonPage, IonButton } from '@ionic/react';
-import AppHeader from '../../components/AppHeader/AppHeader';
+import AppHeader from '../../components/AppHeader';
 import { useEffect, useState } from 'react';
 import { DetailedUser } from '../../api/types';
 import { getSelfUser } from '../../api/users';
 import styles from './styles.module.scss';
 import UserCardItem from '../../components/UserCardItem/UserCardItem';
-import { handleApiRequestError } from '../../api/errors';
+import { useApiRequestErrorHandler } from '../../api/errorHandling';
 
 export default function UserProfile() {
   const [user, setUserDetails] = useState<DetailedUser>();
+  const handleApiRequestError = useApiRequestErrorHandler();
 
   // shoot api query before painting to screen
   useEffect(() => {
@@ -18,6 +19,7 @@ export default function UserProfile() {
         setUserDetails(user);
       },
       (error) => {
+        // console.log(error)
         handleApiRequestError(error);
       }
     );

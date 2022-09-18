@@ -42,68 +42,98 @@ import RegisterPage from './pages/authentication/register';
 import LoginPage from './pages/authentication/login';
 import VerifyPage from './pages/authentication/verify';
 import EditProfile from './pages/user_profile/edit_profile';
+import { AuthContext, useProvideAuth } from './util/authentication/AuthContext';
+import { useLayoutEffect } from 'react';
+import { verifyAuth } from './api/authentication';
+import { PrivateRoute } from './util/authentication/PrivateRoute';
 
 setupIonicReact();
 
 export default function App() {
+  const authenticatedUser = useProvideAuth();
+
+  // before app first renders, check authentication with backend
+  // TODO: show old data if unable to establish connection to backend!
+  useLayoutEffect(() => {
+    void verifyAuth().then((val) => {
+      authenticatedUser.setIsAuthenticated(val);
+    });
+  }, []);
+
   return (
     <IonApp>
-      <IonReactRouter>
-        <IonTabs>
-          <IonRouterOutlet>
-            <Route exact path="/login">
-              <LoginPage />
-            </Route>
-            <Route exact path="/register">
-              <RegisterPage />
-            </Route>
-            <Route exact path="/verify">
-              <VerifyPage />
-            </Route>
-            <Route exact path="/home">
-              <Home />
-            </Route>
-            <Route path="/home/modules/:moduleCode" component={ModuleView} />
-            <Route exact path="/modules">
-              <ModulesPage />
-            </Route>
-            <Route path="/modules/:moduleCode" component={ModuleView} />
-            <Route path="/notifications">
-              <NotificationsPage />
-            </Route>
-            <Route exact path="/user_profile">
-              <UserProfile />
-            </Route>
-            <Route exact path="/user_profile/edit" component={EditProfile} />
-            <Route path="/connections">
-              <ConnectionsPage />
-            </Route>
-            <Route exact path="/">
-              <Redirect to="/home" />
-            </Route>
-          </IonRouterOutlet>
-          <IonTabBar slot="bottom">
-            <IonTabButton tab="modules" href="/modules">
-              <IonIcon icon={searchOutline} />
-              <IonLabel className={styles['tab_button_text']}>Modules</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="connections" href="/connections">
-              <IonIcon icon={people}></IonIcon>
-              <IonLabel className={styles['tab_button_text']}>
-                Connections
-              </IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="home" href="/home">
-              <IonIcon icon={home}></IonIcon>
-              <IonLabel className={styles['tab_button_text']}>Home</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="userProfile" href="/user_profile">
-              <IonIcon icon={person} />
-              <IonLabel className={styles['tab_button_text']}>Profile</IonLabel>
-            </IonTabButton>
-          </IonTabBar>
-        </IonTabs>
-      </IonReactRouter>
+      <AuthContext.Provider value={authenticatedUser}>
+        <IonReactRouter>
+          <IonTabs>
+            <IonRouterOutlet>
+              <Route exact path="/login">
+                <LoginPage />
+              </Route>
+              <Route exact path="/register">
+                <RegisterPage />
+              </Route>
+              <Route exact path="/verify">
+                <VerifyPage />
+              </Route>
+              <PrivateRoute exact path="/home">
+                <Home />
+              </PrivateRoute>
+              <PrivateRoute
+                path="/home/modules/:moduleCode"
+                component={ModuleView}
+              />
+              <PrivateRoute exact path="/modules">
+                <ModulesPage />
+              </PrivateRoute>
+              <PrivateRoute
+                path="/modules/:moduleCode"
+                component={ModuleView}
+              />
+              <PrivateRoute path="/notifications">
+                <NotificationsPage />
+              </PrivateRoute>
+              <PrivateRoute exact path="/user_profile">
+                <UserProfile />
+              </PrivateRoute>
+              <PrivateRoute
+                exact
+                path="/user_profile/edit"
+                component={EditProfile}
+              />
+              <Route path="/connections">
+                <ConnectionsPage />
+              </Route>
+              <Route exact path="/">
+                <Redirect to="/home" />
+              </Route>
+            </IonRouterOutlet>
+            <IonTabBar slot="bottom">
+              <IonTabButton tab="modules" href="/modules">
+                <IonIcon icon={searchOutline} />
+                <IonLabel className={styles['tab_button_text']}>
+                  Modules
+                </IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="connections" href="/connections">
+                <IonIcon icon={people}></IonIcon>
+                <IonLabel className={styles['tab_button_text']}>
+                  Connections
+                </IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="home" href="/home">
+                <IonIcon icon={home}></IonIcon>
+                <IonLabel className={styles['tab_button_text']}>Home</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="userProfile" href="/user_profile">
+                <IonIcon icon={person} />
+                <IonLabel className={styles['tab_button_text']}>
+                  Profile
+                </IonLabel>
+              </IonTabButton>
+            </IonTabBar>
+          </IonTabs>
+        </IonReactRouter>
+      </AuthContext.Provider>
     </IonApp>
   );
 }

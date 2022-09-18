@@ -1,9 +1,9 @@
 import { IonAvatar, IonButton, IonContent, IonPage } from '@ionic/react';
 import { useEffect, useState } from 'react';
-import { handleApiRequestError } from '../../../api/errors';
+import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { DetailedUser } from '../../../api/types';
 import { getSelfUser } from '../../../api/users';
-import AppHeader from '../../../components/AppHeader/AppHeader';
+import AppHeader from '../../../components/AppHeader';
 import InputField from '../../../components/InputField/InputField';
 import styles from './styles.module.scss';
 
@@ -19,6 +19,7 @@ export default function EditProfile() {
   const [telegram, setTelegram] = useState<string>();
   const [phoneNumber, setPhoneNumber] = useState<string>();
 
+  const handleApiRequestError = useApiRequestErrorHandler();
   // shoot api query before painting to screen
   useEffect(() => {
     getSelfUser().then(
