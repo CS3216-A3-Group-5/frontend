@@ -1,5 +1,6 @@
 import { IonCard, IonCardContent, IonAvatar, IonIcon } from '@ionic/react';
 import { callOutline, mail, paperPlaneOutline } from 'ionicons/icons';
+import { useEffect, useState } from 'react';
 import { DetailedUser } from '../../api/types';
 import styles from './styles.module.scss';
 
@@ -7,10 +8,28 @@ interface UserCardItemProps {
   user: DetailedUser;
 }
 
+function UserDetails({ user }: UserCardItemProps) {
+  return (
+    <div>
+      <h1 className={styles['name']}>{user.name}</h1>
+      <h2 className={styles['major']}>Majoring in {user.universityCourse}</h2>
+    </div>
+  );
+}
+
 /**
  * Takes in a User object and creates a user card item for viewing full user details
  */
 export default function UserCardItem({ user }: UserCardItemProps) {
+  const [isDesktop, setDesktop] = useState<boolean>(window.innerWidth >= 500);
+  const updateMedia = () => {
+    setDesktop(window.innerWidth >= 500);
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', updateMedia);
+    return () => window.removeEventListener('resize', updateMedia);
+  });
   return (
     <IonCard>
       <IonCardContent>
@@ -27,13 +46,7 @@ export default function UserCardItem({ user }: UserCardItemProps) {
           </IonAvatar>
 
           <div className={styles['user-information']}>
-            <div>
-              <h1 className={styles['name']}>{user.name}</h1>
-              <h2 className={styles['major']}>
-                Majoring in {user.universityCourse}
-              </h2>
-            </div>
-
+            {isDesktop && <UserDetails user={user} />}
             <div className={styles['contact-information']}>
               <div>
                 <IonIcon icon={mail} />
@@ -43,7 +56,7 @@ export default function UserCardItem({ user }: UserCardItemProps) {
                 <IonIcon icon={paperPlaneOutline} />
                 <h2>
                   {user.contact_details.telegramHandle
-                    ? user.contact_details.telegramHandle
+                    ? '@' + user.contact_details.telegramHandle
                     : 'None'}
                 </h2>
               </div>
@@ -57,6 +70,10 @@ export default function UserCardItem({ user }: UserCardItemProps) {
               </div>
             </div>
           </div>
+        </div>
+
+        <div style={{ marginTop: '10px' }}>
+          {!isDesktop && <UserDetails user={user} />}
         </div>
 
         <div className={styles['bio-row']}>

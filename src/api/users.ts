@@ -2,12 +2,21 @@
  * API call handlers for users.
  */
 
-import { sampleDetailedUser } from './sampleData';
+import axiosInstance from '.';
 import { DetailedUser } from './types';
 
 /**
  * Returns detailed user object of self
  */
-export function getSelfUser(): DetailedUser {
-  return sampleDetailedUser;
+export async function getSelfUser(): Promise<DetailedUser> {
+  const response = await axiosInstance.get<DetailedUser>('/user');
+  return response.data;
+}
+
+/**
+ * Updates user profile of self
+ */
+export async function updateSelfUser(user: DetailedUser) {
+  const response = await axiosInstance.put<DetailedUser>('/user', user);
+  console.log(response);
 }

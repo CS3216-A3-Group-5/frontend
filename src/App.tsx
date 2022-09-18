@@ -41,6 +41,7 @@ import ModuleView from './pages/modules/ModuleView';
 import RegisterPage from './pages/authentication/register';
 import LoginPage from './pages/authentication/login';
 import VerifyPage from './pages/authentication/verify';
+import EditProfile from './pages/user_profile/edit_profile';
 import { AuthContext, useProvideAuth } from './util/authentication/AuthContext';
 import { useLayoutEffect } from 'react';
 import { verifyAuth } from './api/authentication';
@@ -81,16 +82,24 @@ export default function App() {
                 path="/home/modules/:moduleCode"
                 component={ModuleView}
               />
-              <Route exact path="/modules">
+              <PrivateRoute exact path="/modules">
                 <ModulesPage />
-              </Route>
-              <Route path="/modules/:moduleCode" component={ModuleView} />
-              <Route path="/notifications">
+              </PrivateRoute>
+              <PrivateRoute
+                path="/modules/:moduleCode"
+                component={ModuleView}
+              />
+              <PrivateRoute path="/notifications">
                 <NotificationsPage />
-              </Route>
-              <Route path="/user_profile">
+              </PrivateRoute>
+              <PrivateRoute exact path="/user_profile">
                 <UserProfile />
-              </Route>
+              </PrivateRoute>
+              <PrivateRoute
+                exact
+                path="/user_profile/edit"
+                component={EditProfile}
+              />
               <Route path="/connections">
                 <ConnectionsPage />
               </Route>
