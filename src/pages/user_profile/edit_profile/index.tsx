@@ -72,6 +72,11 @@ export default function EditProfile() {
       return;
     }
 
+    // If user puts @ at start of handle, automatically remove it
+    if (telegram && telegram[0] == '@') {
+      setTelegram(telegram.substring(1));
+    }
+
     if (telegram && (telegram.length < 5 || telegram.length > 32)) {
       setErrorText(
         'Telegram handle length must be between 5 and 32 characters'
@@ -82,11 +87,6 @@ export default function EditProfile() {
     if (phoneNumber && isNaN(Number(phoneNumber))) {
       setErrorText('Phone number must only contain numerals');
       return;
-    }
-
-    // If user puts @ at start of handle, automatically remove it
-    if (telegram && telegram[0] == '@') {
-      setTelegram(telegram.substring(1));
     }
 
     const newUser: DetailedUser = {
@@ -114,6 +114,11 @@ export default function EditProfile() {
     );
   }
 
+  const inputFieldStyle = {
+    width: '60%',
+    minWidth: '20rem',
+  };
+
   if (user) {
     return (
       <IonPage>
@@ -134,19 +139,19 @@ export default function EditProfile() {
               value={name}
               setter={setName}
               label={'Name'}
-              style={{ width: '60%' }}
+              style={inputFieldStyle}
             />
             <InputField
               value={uniCourse}
               setter={setUniCourse}
               label={'Course'}
-              style={{ width: '60%' }}
+              style={inputFieldStyle}
             />
             <InputField
               value={bio}
               setter={setBio}
               label={'Bio'}
-              style={{ width: '60%' }}
+              style={inputFieldStyle}
               multiline={true}
               rows={7}
             />
@@ -154,19 +159,19 @@ export default function EditProfile() {
               value={email}
               setter={setEmail}
               label={'Email'}
-              style={{ width: '60%' }}
+              style={inputFieldStyle}
             />
             <InputField
               value={telegram}
               setter={setTelegram}
               label={'Telegram (optional)'}
-              style={{ width: '60%' }}
+              style={inputFieldStyle}
             />
             <InputField
               value={phoneNumber}
               setter={setPhoneNumber}
               label={'Phone Number (optional)'}
-              style={{ width: '60%' }}
+              style={inputFieldStyle}
             />
             {errorText && (
               <IonText className={styles['error-text']} color="danger">
