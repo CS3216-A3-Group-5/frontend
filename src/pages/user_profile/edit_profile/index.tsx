@@ -72,6 +72,18 @@ export default function EditProfile() {
       return;
     }
 
+    if (telegram && (telegram.length < 5 || telegram.length > 32)) {
+      setErrorText(
+        'Telegram handle length must be between 5 and 32 characters'
+      );
+      return;
+    }
+
+    if (phoneNumber && isNaN(Number(phoneNumber))) {
+      setErrorText('Phone number must only contain numerals');
+      return;
+    }
+
     // If user puts @ at start of handle, automatically remove it
     if (telegram && telegram[0] == '@') {
       setTelegram(telegram.substring(1));
