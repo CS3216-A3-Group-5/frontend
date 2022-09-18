@@ -4,8 +4,9 @@ import {
   IonContent,
   IonPage,
   IonText,
+  NavContext,
 } from '@ionic/react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { DetailedUser } from '../../../api/types';
 import { getSelfUser, updateSelfUser } from '../../../api/users';
@@ -26,6 +27,7 @@ export default function EditProfile() {
   const [phoneNumber, setPhoneNumber] = useState<string>();
 
   const [errorText, setErrorText] = useState<string>();
+  const { goBack } = useContext(NavContext);
 
   const handleApiRequestError = useApiRequestErrorHandler();
   // shoot api query before painting to screen
@@ -92,6 +94,7 @@ export default function EditProfile() {
     updateSelfUser(newUser).then(
       (response) => {
         console.log('success');
+        goBack();
       },
       (error) => {
         handleApiRequestError(error);
