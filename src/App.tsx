@@ -71,10 +71,10 @@ export default function App() {
             <Route path="/notifications">
               <NotificationsPage />
             </Route>
-            <Route path="/user_profile">
+            <Route exact path="/user_profile">
               <UserProfile />
             </Route>
-            <Route path="/user_profile/edit" component={EditProfile} />
+            <Route exact path="/user_profile/edit" component={EditProfile} />
             <Route path="/connections">
               <ConnectionsPage />
             </Route>
