@@ -56,7 +56,7 @@ export default function UserCardItem({ user }: UserCardItemProps) {
                 <IonIcon icon={paperPlaneOutline} />
                 <h2>
                   {user.contact_details.telegramHandle
-                    ? user.contact_details.telegramHandle
+                    ? '@' + user.contact_details.telegramHandle
                     : 'None'}
                 </h2>
               </div>

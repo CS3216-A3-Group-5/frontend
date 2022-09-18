@@ -1,4 +1,10 @@
-import { IonAvatar, IonButton, IonContent, IonPage } from '@ionic/react';
+import {
+  IonAvatar,
+  IonButton,
+  IonContent,
+  IonPage,
+  IonText,
+} from '@ionic/react';
 import { useEffect, useState } from 'react';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { DetailedUser } from '../../../api/types';
@@ -18,6 +24,8 @@ export default function EditProfile() {
   const [email, setEmail] = useState<string>();
   const [telegram, setTelegram] = useState<string>();
   const [phoneNumber, setPhoneNumber] = useState<string>();
+
+  const [errorText, setErrorText] = useState<string>();
 
   const handleApiRequestError = useApiRequestErrorHandler();
   // shoot api query before painting to screen
@@ -40,9 +48,31 @@ export default function EditProfile() {
   }, []);
 
   function updateUser() {
-    //TODO Preliminary checks
-    if (!user || !email || !name || !bio || !uniCourse) {
+    setErrorText('');
+    if (!user) {
+      setErrorText('An unexpected error has ocurred');
       return;
+    }
+    if (!name) {
+      setErrorText('Please fill in your name');
+      return;
+    }
+    if (!email) {
+      setErrorText('Please fill in an email address');
+      return;
+    }
+    if (!uniCourse) {
+      setErrorText('Please fill in a university course');
+      return;
+    }
+    if (!bio) {
+      setErrorText('Please fill in a bio');
+      return;
+    }
+
+    // If user puts @ at start of handle, automatically remove it
+    if (telegram && telegram[0] == '@') {
+      setTelegram(telegram.substring(1));
     }
 
     const newUser: DetailedUser = {
@@ -114,15 +144,20 @@ export default function EditProfile() {
             <InputField
               value={telegram}
               setter={setTelegram}
-              label={'Telegram'}
+              label={'Telegram (optional)'}
               style={{ width: '60%' }}
             />
             <InputField
               value={phoneNumber}
               setter={setPhoneNumber}
-              label={'Phone Number'}
+              label={'Phone Number (optional)'}
               style={{ width: '60%' }}
             />
+            {errorText && (
+              <IonText className={styles['error-text']} color="danger">
+                {errorText}
+              </IonText>
+            )}
             <IonButton onClick={updateUser}>Save</IonButton>
           </div>
         </IonContent>
