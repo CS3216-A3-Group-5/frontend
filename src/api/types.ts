@@ -4,6 +4,12 @@ export enum ConnectionStatus {
   PENDING,
 }
 
+export enum ConnectionType {
+  CONNECTED = 0,
+  INCOMING_REQUEST = 1,
+  OUTGOING_REQUEST = 2,
+}
+
 /**
  * Enum used to repesent a User status. If the user does not have a status, then this field would be null or undefined.
  */
