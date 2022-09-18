@@ -2,7 +2,7 @@ import { IonButton, IonContent, IonInput, IonPage } from '@ionic/react';
 import { useState } from 'react';
 import { useLocation } from 'react-router';
 import { registerUser } from '../../../api/authentication';
-import AppHeader from '../../../components/AppHeader/AppHeader';
+import AppHeader from '../../../components/AppHeader';
 
 enum RegisterUserErrorReason {
   EMAIL_ALREADY_USED = 0,
@@ -31,6 +31,7 @@ const RegisterPage: React.FC = () => {
       }
     );
   };
+
   return (
     <IonPage>
       <AppHeader />

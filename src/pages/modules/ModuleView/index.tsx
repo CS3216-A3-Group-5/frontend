@@ -13,7 +13,7 @@ import { useLayoutEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { getModule } from '../../../api/modules';
 import { UniModule } from '../../../api/types';
-import AppHeader from '../../../components/AppHeader/AppHeader';
+import AppHeader from '../../../components/AppHeader';
 import UserListItem from '../../../components/UserListItem';
 
 /**

@@ -3,8 +3,9 @@
  */
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import TokenService from '../util/services/tokenService';
+import { REFRESH_TOKEN_PATH } from './constants';
 
-const API_BASE_URL = 'https://private-52b1ef3-as3test.apiary-mock.com'; //TODO: Replace with real api link
+const API_BASE_URL = 'https://private-857af0-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -43,7 +44,9 @@ axiosInstance.interceptors.response.use(
     if (!axios.isAxiosError(err)) {
       return Promise.reject(err);
     }
-    const originalConfig = err.config as AxiosRequestConfig & { _retry: boolean };
+    const originalConfig = err.config as AxiosRequestConfig & {
+      _retry: boolean;
+    };
 
     if (originalConfig.url !== '/login' && err.response) {
       // Access Token was expired
@@ -51,14 +54,17 @@ axiosInstance.interceptors.response.use(
         originalConfig._retry = true;
 
         try {
-          const rs = await axiosInstance.post('/token/refresh', {
+          const rs = await axiosInstance.post(REFRESH_TOKEN_PATH, {
             refreshToken: TokenService.getLocalRefreshToken(),
           });
           /* eslint-disable */
           if (!rs.data || !rs.data.access_token || !rs.data.refresh_token) {
             throw new RequestTokenError();
           }
-          TokenService.setTokens({ accessToken: rs.data.access_token, refreshToken: rs.data.refresh_token });
+          TokenService.setTokens({
+            accessToken: rs.data.access_token,
+            refreshToken: rs.data.refresh_token,
+          });
         } catch (_error) {
           // if 401 returned here, than need to login again
           return Promise.reject(_error);

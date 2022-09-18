@@ -1,10 +1,10 @@
 import { IonContent, IonPage, IonButton } from '@ionic/react';
-import AppHeader from '../../components/AppHeader/AppHeader';
+import AppHeader from '../../components/AppHeader';
 import { useEffect, useState } from 'react';
 import { DetailedUser } from '../../api/types';
 import { getSelfUser } from '../../api/users';
 import styles from './styles.module.scss';
-import UserCardItem from '../../components/AppHeader/UserCardItem.tsx/UserCardItem';
+import UserCardItem from '../../components/UserCardItem.tsx/UserCardItem';
 
 export default function UserProfile() {
   const [user, setUserDetails] = useState<DetailedUser>();
