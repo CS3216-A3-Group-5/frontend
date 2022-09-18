@@ -17,5 +17,6 @@ export async function getSelfUser(): Promise<DetailedUser> {
  * Updates user profile of self
  */
 export async function updateSelfUser(user: DetailedUser) {
-  await axiosInstance.put<DetailedUser>('/user', user);
+  const response = await axiosInstance.put<DetailedUser>('/user', user);
+  console.log(response);
 }

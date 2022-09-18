@@ -2,7 +2,7 @@ import { IonAvatar, IonButton, IonContent, IonPage } from '@ionic/react';
 import { useEffect, useState } from 'react';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { DetailedUser } from '../../../api/types';
-import { getSelfUser } from '../../../api/users';
+import { getSelfUser, updateSelfUser } from '../../../api/users';
 import AppHeader from '../../../components/AppHeader';
 import InputField from '../../../components/InputField/InputField';
 import styles from './styles.module.scss';
@@ -38,6 +38,36 @@ export default function EditProfile() {
       }
     );
   }, []);
+
+  function updateUser() {
+    //TODO Preliminary checks
+    if (!user || !email || !name || !bio || !uniCourse) {
+      return;
+    }
+
+    const newUser: DetailedUser = {
+      contact_details: {
+        email: email,
+        telegramHandle: telegram,
+        phoneNumber: phoneNumber,
+      },
+      matriculationYear: user.matriculationYear,
+      universityCourse: uniCourse,
+      bio: bio,
+      id: user.id,
+      name: name,
+      connectionStatus: 0,
+    };
+
+    updateSelfUser(newUser).then(
+      (response) => {
+        console.log('success');
+      },
+      (error) => {
+        handleApiRequestError(error);
+      }
+    );
+  }
 
   if (user) {
     return (
@@ -93,7 +123,7 @@ export default function EditProfile() {
               label={'Phone Number'}
               style={{ width: '60%' }}
             />
-            <IonButton>Save</IonButton>
+            <IonButton onClick={updateUser}>Save</IonButton>
           </div>
         </IonContent>
       </IonPage>
