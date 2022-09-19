@@ -11,6 +11,7 @@ import InputFormCard, {
 import { useAppDispatch } from '../../../redux/hooks';
 import { submitRegisterForm } from '../../../redux/slices/userSlice';
 import { VERIFY_EMAIL } from '../../../routes';
+import { isValidEmail } from '../../../util/authentication/constants';
 
 enum RegisterUserErrorReason {
   EMAIL_ALREADY_USED = 0,
@@ -58,6 +59,11 @@ const RegisterPage: React.FC = () => {
         [RegisterFormField.EMAIL]: 'Please enter your email.',
       };
       haveError = true;
+    } else if (!isValidEmail(registerDetails.nus_email)) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [RegisterFormField.EMAIL]: 'Not a valid NUS email.',
+      };
     }
     if (!registerDetails.password) {
       currFieldErrors = {

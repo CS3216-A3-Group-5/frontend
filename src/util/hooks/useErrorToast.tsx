@@ -1,7 +1,7 @@
 import { useIonToast } from '@ionic/react';
 import { globe } from 'ionicons/icons';
 
-enum ErrorToastErrorType {
+export enum ErrorToastErrorType {
   CONNECTION_FAIL,
   OTHER,
 }

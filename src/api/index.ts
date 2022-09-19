@@ -4,6 +4,7 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import TokenService from '../util/services/tokenService';
 import { REFRESH_TOKEN_PATH } from './constants';
+import { ApiRequestError, ErrorType } from './errorHandling';
 
 const API_BASE_URL = 'https://private-857af0-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
 
@@ -22,6 +23,10 @@ class RequestTokenError extends Error {
 
 axiosInstance.interceptors.request.use(
   (config) => {
+    if (!window.navigator.onLine) {
+      // Not even online, cannot send request
+      return Promise.reject(new ApiRequestError(ErrorType.NO_CONNECTION));
+    }
     const token = TokenService.getLocalAccessToken();
     if (token) {
       if (!config.headers) {

@@ -4,29 +4,25 @@ import { useAuth } from '../util/authentication/AuthContext';
 import { LOGIN_PATH } from './constants';
 
 /**
- * Stanardised format for object received from server on error.
- */
-export interface ErrorResponseData {
-  error_message?: string;
-  error_reason: number;
-}
-
-/**
  * Defines the types of possible errors
  */
 export enum ErrorType {
   UNKNOWN,
-  KNOWN,
-  CONNECTION,
+  NO_CONNECTION,
+  TIMEOUT,
   AUTHENTICATION_FAIL,
 }
 
 /**
- * Standard ApiRequestError to be returned to pages that call apis when they handle erros
+ * Handles any known expected errors, those that come with http code 200.
+ * For example, psasword being wrong on login page is an expected error.
  */
-export interface ApiRequestError {
+export class ApiRequestError extends Error {
   errorType: ErrorType;
-  errorReason: number;
+  constructor(errorType: number, errorMessage?: string) {
+    super(errorMessage);
+    this.errorType = errorType;
+  }
 }
 
 export function useApiRequestErrorHandler() {
@@ -34,39 +30,36 @@ export function useApiRequestErrorHandler() {
   const auth = useAuth();
 
   return function handleApiRequestError(error: unknown): ApiRequestError {
+    if (error instanceof ApiRequestError) {
+      // this is an error that is checked for, like no connection
+      return error;
+    }
     if (axios.isAxiosError(error)) {
       if (error.response) {
         // check if the error from server is an authentication error
         if (error.response.status === 401) {
-          console.log('hello');
           auth.setIsAuthenticated(false);
           // redirect to login screen whenever a 401 occurs
           history.push(LOGIN_PATH);
-          return {
-            errorType: ErrorType.AUTHENTICATION_FAIL,
-            errorReason: 0,
-          };
+          return new ApiRequestError(ErrorType.AUTHENTICATION_FAIL);
         }
-
         // some other error occured at server
-        return {
-          errorType: ErrorType.UNKNOWN,
-          errorReason: 0,
-        };
+        console.log("API requst error: ", error.message);
+        return new ApiRequestError(ErrorType.UNKNOWN);
       } else if (error.request) {
         // no response received from server
-        return { errorType: ErrorType.CONNECTION, errorReason: 0 };
+        return new ApiRequestError(ErrorType.TIMEOUT);
       } else {
         // an unknown error occured
         console.log('API request error: ', error.message);
-        return { errorType: ErrorType.UNKNOWN, errorReason: 0 };
+        return new ApiRequestError(ErrorType.UNKNOWN);;
       }
     } else if (error instanceof Error) {
       console.log('API request error: ', error.message);
-      return { errorType: ErrorType.UNKNOWN, errorReason: 0 };
+      return new ApiRequestError(ErrorType.UNKNOWN);;
     } else {
       console.log('API request error: ', error);
-      return { errorType: ErrorType.UNKNOWN, errorReason: 0 };
+      return new ApiRequestError(ErrorType.UNKNOWN);;
     }
   };
 }

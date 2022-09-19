@@ -3,6 +3,7 @@
  */
 
 import axiosInstance from '.';
+import { AuthenticationResponse } from '../pages/authentication/constants';
 import TokenService from '../util/services/tokenService';
 import {
   REGISTER_PATH,
@@ -51,10 +52,11 @@ export async function verifyAuth() {
 }
 
 export async function login(userLoginDetails: UserLoginDetails) {
-  const response = await axiosInstance.post('/login', userLoginDetails);
+  const response = await axiosInstance.post<AuthenticationResponse>('/login', userLoginDetails);
   const tokenResponseData = response.data as TokenResponseData;
   TokenService.setTokens({
     accessToken: tokenResponseData.access_token,
     refreshToken: tokenResponseData.refresh_token,
   });
+  return response.data;
 }

@@ -4,6 +4,7 @@ import {
   IonCardTitle,
   IonButton,
   IonLoading,
+  IonCardSubtitle,
 } from '@ionic/react';
 import InputField from '../InputField';
 
@@ -12,6 +13,7 @@ export interface InputFormCardField {
   value: string;
   onChange: (value: string) => void;
   errorMessage: string;
+  multiline?: boolean
 }
 
 export interface InputFormCardButton {
@@ -25,12 +27,14 @@ interface InputFormCardProps {
   inputFields: Array<InputFormCardField>;
   buttons: Array<InputFormCardButton>;
   isLoading?: boolean;
+  errorMessage?: string;
 }
 export default function InputFormCard({
   title,
   inputFields,
   buttons,
   isLoading,
+  errorMessage
 }: InputFormCardProps) {
   return (
     <IonCard>
@@ -38,6 +42,11 @@ export default function InputFormCard({
         <IonCardTitle>
           <h1>{title}</h1>
         </IonCardTitle>
+        {errorMessage && (
+          <IonCardSubtitle color="danger">
+            <h2>{errorMessage}</h2>
+          </IonCardSubtitle>
+        )}
       </IonCardHeader>
       {inputFields.map((fieldDetails: InputFormCardField) => (
         <InputField
@@ -48,6 +57,7 @@ export default function InputFormCard({
           debounce={200}
           onChange={fieldDetails.onChange}
           errorMessage={fieldDetails.errorMessage}
+          multiline={fieldDetails.multiline}
         ></InputField>
       ))}
       {buttons.length > 1 ? (
