@@ -13,7 +13,7 @@ import InputField from '../InputField';
 
 export interface InputFormCardField {
   title: string;
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
   errorMessage: string;
   multiline?: boolean;

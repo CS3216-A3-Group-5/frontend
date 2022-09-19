@@ -30,6 +30,10 @@ export function useApiRequestErrorHandler() {
   const auth = useAuth();
 
   return function handleApiRequestError(error: unknown): ApiRequestError {
+    if (!window.navigator.onLine) {
+      // Not even online, cannot send request
+      return new ApiRequestError(ErrorType.NO_CONNECTION);
+    }
     if (error instanceof ApiRequestError) {
       // this is an error that is checked for, like no connection
       return error;
@@ -44,7 +48,7 @@ export function useApiRequestErrorHandler() {
           return new ApiRequestError(ErrorType.AUTHENTICATION_FAIL);
         }
         // some other error occured at server
-        console.log("API requst error: ", error.message);
+        console.log('API requst error: ', error.message);
         return new ApiRequestError(ErrorType.UNKNOWN);
       } else if (error.request) {
         // no response received from server
@@ -52,14 +56,14 @@ export function useApiRequestErrorHandler() {
       } else {
         // an unknown error occured
         console.log('API request error: ', error.message);
-        return new ApiRequestError(ErrorType.UNKNOWN);;
+        return new ApiRequestError(ErrorType.UNKNOWN);
       }
     } else if (error instanceof Error) {
       console.log('API request error: ', error.message);
-      return new ApiRequestError(ErrorType.UNKNOWN);;
+      return new ApiRequestError(ErrorType.UNKNOWN);
     } else {
       console.log('API request error: ', error);
-      return new ApiRequestError(ErrorType.UNKNOWN);;
+      return new ApiRequestError(ErrorType.UNKNOWN);
     }
   };
 }

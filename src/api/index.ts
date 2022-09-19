@@ -23,10 +23,6 @@ class RequestTokenError extends Error {
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    if (!window.navigator.onLine) {
-      // Not even online, cannot send request
-      return Promise.reject(new ApiRequestError(ErrorType.NO_CONNECTION));
-    }
     const token = TokenService.getLocalAccessToken();
     if (token) {
       if (!config.headers) {
@@ -46,6 +42,7 @@ axiosInstance.interceptors.response.use(
     return res;
   },
   async (err: Error | AxiosError) => {
+
     if (!axios.isAxiosError(err)) {
       return Promise.reject(err);
     }

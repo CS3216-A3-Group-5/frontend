@@ -65,7 +65,7 @@ const VerifyPage: React.FC = () => {
         });
     }
   }
-
+  
   function submitResendOtpRequest() {
     setIsLoading(true);
     resendOtp(email)
@@ -101,6 +101,7 @@ const VerifyPage: React.FC = () => {
       title: 'Resend',
       color: 'tertiary',
       onClick: submitResendOtpRequest,
+
     },
     {
       title: 'Submit',

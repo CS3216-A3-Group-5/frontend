@@ -4,6 +4,12 @@ export enum ConnectionStatus {
   PENDING,
 }
 
+export enum ConnectionType {
+  CONNECTED = 0,
+  INCOMING_REQUEST = 1,
+  OUTGOING_REQUEST = 2,
+}
+
 /**
  * Enum used to repesent a User status. If the user does not have a status, then this field would be null or undefined.
  */
@@ -41,7 +47,7 @@ export interface User {
 export interface DetailedUser extends User {
   // link to full profile pic for this user
   profilePic?: string;
-  contact_details: ContactDetails;
+  contactDetails: ContactDetails;
   // year that this user matriculated into NUS
   matriculationYear: string;
   // course they are in

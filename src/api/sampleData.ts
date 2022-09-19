@@ -4,6 +4,7 @@
  */
 
 import {
+  Connection,
   ConnectionStatus,
   DetailedUser,
   UniModule,
@@ -50,8 +51,29 @@ export const sampleModuleData: Array<UniModule> = [
   },
 ];
 
+export const sampleConnectionData: Array<Connection> = [
+  {
+    id: '0',
+    otherUser: sampleUsers[0],
+    uniModule: sampleModuleData[0],
+    dateTime: new Date(),
+  },
+  {
+    id: '1',
+    otherUser: sampleUsers[1],
+    uniModule: sampleModuleData[1],
+    dateTime: new Date(),
+  },
+  {
+    id: '2',
+    otherUser: sampleUsers[2],
+    uniModule: sampleModuleData[2],
+    dateTime: new Date(),
+  },
+];
+
 export const sampleDetailedUser: DetailedUser = {
-  contact_details: {
+  contactDetails: {
     email: 'bob@u.nus.edu',
     telegramHandle: '@bobbybob',
     phoneNumber: '91234567',

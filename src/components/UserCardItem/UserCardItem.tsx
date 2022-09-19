@@ -50,21 +50,21 @@ export default function UserCardItem({ user }: UserCardItemProps) {
             <div className={styles['contact-information']}>
               <div>
                 <IonIcon icon={mail} />
-                <h2>{user.contact_details.email}</h2>
+                <h2>{user.contactDetails.email}</h2>
               </div>
               <div>
                 <IonIcon icon={paperPlaneOutline} />
                 <h2>
-                  {user.contact_details.telegramHandle
-                    ? '@' + user.contact_details.telegramHandle
+                  {user.contactDetails.telegramHandle
+                    ? '@' + user.contactDetails.telegramHandle
                     : 'None'}
                 </h2>
               </div>
               <div>
                 <IonIcon icon={callOutline} />
                 <h2>
-                  {user.contact_details.phoneNumber
-                    ? user.contact_details.phoneNumber
+                  {user.contactDetails.phoneNumber
+                    ? user.contactDetails.phoneNumber
                     : 'None'}
                 </h2>
               </div>
