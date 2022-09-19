@@ -49,15 +49,16 @@ const UserDetailsSlice = createSlice({
     builder.addCase(updateSelfUserDetails.fulfilled, (state, action) => {
       state.user = action.meta.arg;
     });
-  }
+    builder.addCase(getSelfUserDetails.fulfilled, (state, action) => {
+      state.user = action.payload;
+    });
+  },
 });
 
 export const getSelfUserDetails = createAsyncThunk<DetailedUser>(
   'userDetails/getUser',
-  async (_, thunkApi) => {
-    const dispatch = thunkApi.dispatch;
+  async (_, __) => {
     const responseData = await getSelfUser();
-    dispatch(setUser(responseData));
     return responseData;
   }
 );
