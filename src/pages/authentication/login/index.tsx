@@ -2,16 +2,15 @@ import { IonContent, IonPage } from '@ionic/react';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { login, UserLoginDetails } from '../../../api/authentication';
-import {
-  useApiRequestErrorHandler,
-} from '../../../api/errorHandling';
+import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import AppHeader from '../../../components/AppHeader';
-import InputFormCard, { InputFormCardField } from '../../../components/InputFormCard';
-import { HOME } from '../../../routes';
-import { isValidEmail } from '../../../util/authentication/constants';
+import InputFormCard, {
+  InputFormCardField,
+} from '../../../components/InputFormCard';
+import { HOME, REGISTER } from '../../../routes';
+import { isValidEmail } from '../../../util/authentication';
 import useErrorToast from '../../../util/hooks/useErrorToast';
 import { ERROR_FIELD_NAME } from '../constants';
-
 
 enum LoginField {
   EMAIL = 'Email',
@@ -74,7 +73,7 @@ export default function LoginPage() {
       login(userLoginDetails)
         .then((resp) => {
           if (resp.error_message) {
-            // theres an error with logging in 
+            // theres an error with logging in
             setLoginErrorMessage(resp[ERROR_FIELD_NAME]);
             return;
           }
@@ -110,10 +109,18 @@ export default function LoginPage() {
           password: value,
         }),
       errorMessage: fieldErrors[LoginField.PASSWORD],
-    }
+      type: 'password',
+    },
   ];
 
   const formButtons = [
+    {
+      title: 'Register',
+      color: 'tertiary',
+      onClick: () => {
+        history.push(REGISTER);
+      },
+    },
     {
       title: 'Login',
       color: 'primary',

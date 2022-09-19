@@ -1,4 +1,4 @@
-import { IonContent, IonPage, useIonToast } from '@ionic/react';
+import { IonContent, IonPage } from '@ionic/react';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { registerUser, UserLoginDetails } from '../../../api/authentication';
@@ -9,9 +9,9 @@ import InputFormCard, {
   InputFormCardField,
 } from '../../../components/InputFormCard';
 import { useAppDispatch } from '../../../redux/hooks';
-import { setEmail, submitRegisterForm } from '../../../redux/slices/userSlice';
+import { setEmail } from '../../../redux/slices/userSlice';
 import { VERIFY_EMAIL } from '../../../routes';
-import { isValidEmail } from '../../../util/authentication/constants';
+import { isValidEmail } from '../../../util/authentication';
 import useErrorToast from '../../../util/hooks/useErrorToast';
 import useInfoToast from '../../../util/hooks/useInfoToast';
 import { ERROR_FIELD_NAME } from '../constants';
@@ -19,7 +19,7 @@ import { ERROR_FIELD_NAME } from '../constants';
 enum RegisterFormField {
   EMAIL = 'Email',
   PASSWORD = 'Password',
-  CONFIRMATION_PASSWORD = 'Confirmation Password',
+  CONFIRMATION_PASSWORD = 'Confirm Password',
 }
 /**
  * Holds the error messages for each field.
@@ -33,7 +33,7 @@ const RegisterPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const createErrorToast = useErrorToast();
   const presentInfoToast = useInfoToast();
-  const [registerErrorMessage, setRegisterErrorMessage] = useState<string>("");
+  const [registerErrorMessage, setRegisterErrorMessage] = useState<string>('');
   const handleApiRequestError = useApiRequestErrorHandler();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({
@@ -96,12 +96,14 @@ const RegisterPage: React.FC = () => {
       registerUser(registerDetails)
         .then((resp) => {
           if (resp[ERROR_FIELD_NAME]) {
-            // theres an error with logging in 
+            // theres an error with logging in
             setRegisterErrorMessage(resp[ERROR_FIELD_NAME]);
             return;
           }
           dispatch(setEmail(registerDetails.nus_email));
-          presentInfoToast("One-time passcode sent to " + registerDetails.nus_email)
+          presentInfoToast(
+            'One-time passcode sent to ' + registerDetails.nus_email
+          );
           history.push(VERIFY_EMAIL);
         })
         .catch((error) => {
@@ -133,18 +135,20 @@ const RegisterPage: React.FC = () => {
           password: value,
         }),
       errorMessage: fieldErrors[RegisterFormField.PASSWORD],
+      type: 'password',
     },
     {
       title: RegisterFormField.CONFIRMATION_PASSWORD,
       value: confirmPassword,
       onChange: (value) => setConfirmPassword(value),
       errorMessage: fieldErrors[RegisterFormField.CONFIRMATION_PASSWORD],
+      type: 'password',
     },
   ];
 
   const formButtons: Array<InputFormCardButton> = [
     {
-      title: 'Register',
+      title: 'Submit',
       color: 'primary',
       onClick: register,
     },
