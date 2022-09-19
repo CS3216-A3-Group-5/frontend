@@ -1,9 +1,4 @@
-import {
-  IonAvatar,
-  IonContent,
-  IonPage,
-  NavContext,
-} from '@ionic/react';
+import { IonAvatar, IonContent, IonPage, NavContext } from '@ionic/react';
 import { useContext, useEffect, useState } from 'react';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { DetailedUser } from '../../../api/types';
@@ -23,9 +18,8 @@ export default function EditProfile() {
     NAME = 'Name',
     COURSE = 'Course',
     BIO = 'Bio',
-    EMAIL = 'Email',
-    TELEGRAM_HANDLE = 'Telegram',
-    PHONE_NUMBER = 'Phone Number',
+    TELEGRAM_HANDLE = 'Telegram (optional)',
+    PHONE_NUMBER = 'Phone Number (optional)',
   }
 
   type FieldErrors = {
@@ -52,7 +46,6 @@ export default function EditProfile() {
     [EditProfileFormField.NAME]: '',
     [EditProfileFormField.COURSE]: '',
     [EditProfileFormField.BIO]: '',
-    [EditProfileFormField.EMAIL]: '',
     [EditProfileFormField.TELEGRAM_HANDLE]: '',
     [EditProfileFormField.PHONE_NUMBER]: '',
   });
@@ -76,7 +69,6 @@ export default function EditProfile() {
       [EditProfileFormField.NAME]: '',
       [EditProfileFormField.COURSE]: '',
       [EditProfileFormField.BIO]: '',
-      [EditProfileFormField.EMAIL]: '',
       [EditProfileFormField.TELEGRAM_HANDLE]: '',
       [EditProfileFormField.PHONE_NUMBER]: '',
     };
@@ -114,13 +106,6 @@ export default function EditProfile() {
       };
       haveError = true;
     }
-    if (!user.contact_details.email) {
-      currFieldErrors = {
-        ...currFieldErrors,
-        [EditProfileFormField.EMAIL]: 'Please enter your email.',
-      };
-      haveError = true;
-    }
     if (telegram && (telegram.length < 5 || telegram.length > 32)) {
       currFieldErrors = {
         ...currFieldErrors,
@@ -144,15 +129,19 @@ export default function EditProfile() {
     setFieldErrors(currFieldErrors);
 
     if (!haveError) {
-      updateSelfUser(user).then(
-        (response) => {
-          console.log('success');
-          goBack();
-        },
-        (error) => {
-          handleApiRequestError(error);
-        }
-      );
+      updateSelfUser(user)
+        .then(
+          (response) => {
+            console.log('success');
+            goBack();
+          },
+          (error) => {
+            handleApiRequestError(error);
+          }
+        )
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }
 
@@ -187,19 +176,6 @@ export default function EditProfile() {
         }),
       errorMessage: fieldErrors[EditProfileFormField.BIO],
       multiline: true,
-    },
-    {
-      title: EditProfileFormField.EMAIL,
-      value: user.contact_details.email,
-      onChange: (value) =>
-        setUserDetails({
-          ...user,
-          contact_details: {
-            ...user.contact_details,
-            email: value,
-          },
-        }),
-      errorMessage: fieldErrors[EditProfileFormField.EMAIL],
     },
     {
       title: EditProfileFormField.TELEGRAM_HANDLE,
