@@ -7,6 +7,7 @@ export const VERIFY_EMAIL_PATH = '/verify';
 export const VERIFY_AUTHENTICATION = '/authenticate';
 export const GET_LIST_OF_MODULES_PATH = '/modules';
 export const REFRESH_TOKEN_PATH = '/token/refresh';
+export const RESEND_OTP_PATH = '/resend_otp'
 export function getPathForGetListOfUsersForModule(moduleCode: string) {
   return '/modules' + moduleCode + '/users';
 }

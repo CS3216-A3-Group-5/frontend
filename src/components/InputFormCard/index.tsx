@@ -28,23 +28,26 @@ interface InputFormCardProps {
   buttons: Array<InputFormCardButton>;
   isLoading?: boolean;
   errorMessage?: string;
+  image?: string;
 }
 export default function InputFormCard({
   title,
   inputFields,
   buttons,
   isLoading,
-  errorMessage
+  errorMessage,
+  image
 }: InputFormCardProps) {
   return (
     <IonCard>
       <IonCardHeader>
+        <img src={image}></img>
         <IonCardTitle>
           <h1>{title}</h1>
         </IonCardTitle>
         {errorMessage && (
-          <IonCardSubtitle color="danger">
-            <h2>{errorMessage}</h2>
+          <IonCardSubtitle color="danger" mode="md">
+            <h3>{errorMessage}</h3>
           </IonCardSubtitle>
         )}
       </IonCardHeader>
@@ -81,7 +84,7 @@ export default function InputFormCard({
           {buttons[0].title}
         </IonButton>
       )}
-      {isLoading && <IonLoading isOpen={isLoading} />}
+      <IonLoading isOpen={isLoading ? true : false} />
     </IonCard>
   );
 }

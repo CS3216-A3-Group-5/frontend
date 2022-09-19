@@ -1,7 +1,7 @@
-import { IonContent, IonPage } from '@ionic/react';
+import { IonContent, IonPage, useIonToast } from '@ionic/react';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
-import { UserLoginDetails } from '../../../api/authentication';
+import { registerUser, UserLoginDetails } from '../../../api/authentication';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import AppHeader from '../../../components/AppHeader';
 import InputFormCard, {
@@ -9,13 +9,12 @@ import InputFormCard, {
   InputFormCardField,
 } from '../../../components/InputFormCard';
 import { useAppDispatch } from '../../../redux/hooks';
-import { submitRegisterForm } from '../../../redux/slices/userSlice';
+import { setEmail, submitRegisterForm } from '../../../redux/slices/userSlice';
 import { VERIFY_EMAIL } from '../../../routes';
 import { isValidEmail } from '../../../util/authentication/constants';
-
-enum RegisterUserErrorReason {
-  EMAIL_ALREADY_USED = 0,
-}
+import useErrorToast from '../../../util/hooks/useErrorToast';
+import useInfoToast from '../../../util/hooks/useInfoToast';
+import { ERROR_FIELD_NAME } from '../constants';
 
 enum RegisterFormField {
   EMAIL = 'Email',
@@ -32,6 +31,9 @@ type FieldErrors = {
 const RegisterPage: React.FC = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const createErrorToast = useErrorToast();
+  const presentInfoToast = useInfoToast();
+  const [registerErrorMessage, setRegisterErrorMessage] = useState<string>("");
   const handleApiRequestError = useApiRequestErrorHandler();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({
@@ -90,18 +92,20 @@ const RegisterPage: React.FC = () => {
     setFieldErrors(currFieldErrors);
 
     if (!haveError) {
-      dispatch(submitRegisterForm(registerDetails))
-        .then(() => {
+      setIsLoading(true);
+      registerUser(registerDetails)
+        .then((resp) => {
+          if (resp[ERROR_FIELD_NAME]) {
+            // theres an error with logging in 
+            setRegisterErrorMessage(resp[ERROR_FIELD_NAME]);
+            return;
+          }
+          dispatch(setEmail(registerDetails.nus_email));
+          presentInfoToast("One-time passcode sent to " + registerDetails.nus_email)
           history.push(VERIFY_EMAIL);
         })
         .catch((error) => {
-          const errorDetails = handleApiRequestError(error);
-          if (
-            errorDetails.errorReason ===
-            RegisterUserErrorReason.EMAIL_ALREADY_USED
-          ) {
-            //TODO: show toast error
-          }
+          createErrorToast(handleApiRequestError(error));
         })
         .finally(() => {
           setIsLoading(false);
@@ -155,6 +159,7 @@ const RegisterPage: React.FC = () => {
           inputFields={registerInputFields}
           buttons={formButtons}
           isLoading={isLoading}
+          errorMessage={registerErrorMessage}
         />
       </IonContent>
     </IonPage>
