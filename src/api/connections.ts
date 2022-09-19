@@ -2,9 +2,8 @@
  * API call handlers for modules.
  */
 
-import axiosInstance from '.';
 import { sampleConnectionData } from './sampleData';
-import { Connection, ConnectionType, UniModule } from './types';
+import { Connection, UniModule } from './types';
 
 export async function getConnections(
   module?: UniModule

@@ -73,7 +73,7 @@ export const sampleConnectionData: Array<Connection> = [
 ];
 
 export const sampleDetailedUser: DetailedUser = {
-  contact_details: {
+  contactDetails: {
     email: 'bob@u.nus.edu',
     telegramHandle: '@bobbybob',
     phoneNumber: '91234567',

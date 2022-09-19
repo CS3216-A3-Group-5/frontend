@@ -47,7 +47,7 @@ export interface User {
 export interface DetailedUser extends User {
   // link to full profile pic for this user
   profilePic?: string;
-  contact_details: ContactDetails;
+  contactDetails: ContactDetails;
   // year that this user matriculated into NUS
   matriculationYear: string;
   // course they are in

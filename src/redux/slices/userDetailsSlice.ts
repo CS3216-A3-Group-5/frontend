@@ -5,7 +5,7 @@ import { DetailedUser } from '../../api/types';
 import { getSelfUser, updateSelfUser } from '../../api/users';
 
 const initialUser: DetailedUser = {
-  contact_details: {
+  contactDetails: {
     email: '',
     telegramHandle: '',
     phoneNumber: '',
@@ -39,12 +39,17 @@ const UserDetailsSlice = createSlice({
       state.user.bio = action.payload;
     },
     setTelegram: (state, action: PayloadAction<string>) => {
-      state.user.contact_details.telegramHandle = action.payload;
+      state.user.contactDetails.telegramHandle = action.payload;
     },
     setPhoneNumber: (state, action: PayloadAction<string>) => {
-      state.user.contact_details.phoneNumber = action.payload;
+      state.user.contactDetails.phoneNumber = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(updateSelfUserDetails.fulfilled, (state, action) => {
+      state.user = action.meta.arg;
+    });
+  }
 });
 
 export const getSelfUserDetails = createAsyncThunk<DetailedUser>(

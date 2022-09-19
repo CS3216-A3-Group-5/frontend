@@ -12,6 +12,7 @@ import {
   setUser,
   updateSelfUserDetails,
 } from '../../../redux/slices/userDetailsSlice';
+import useErrorToast from '../../../util/hooks/useErrorToast';
 import styles from './styles.module.scss';
 
 /**
@@ -30,6 +31,7 @@ export default function EditProfile() {
     [key in EditProfileFormField]: string;
   };
 
+  const presentErrorToast = useErrorToast();
   const handleApiRequestError = useApiRequestErrorHandler();
   const dispatch = useAppDispatch();
   const { goBack } = useContext(NavContext);
@@ -44,7 +46,7 @@ export default function EditProfile() {
 
   const userStore = useAppSelector((state) => state.userDetails.user);
   const [user, setUserDetails] = useState<DetailedUser>({
-    contact_details: {
+    contactDetails: {
       email: '',
       telegramHandle: '',
       phoneNumber: '',
@@ -72,14 +74,14 @@ export default function EditProfile() {
       [EditProfileFormField.PHONE_NUMBER]: '',
     };
 
-    let telegram = user.contact_details.telegramHandle;
+    let telegram = user.contactDetails.telegramHandle;
     // If user puts @ at start of handle, automatically remove it
-    if (telegram && telegram[0] == '@') {
+    if (telegram && telegram[0] === '@') {
       telegram = telegram.substring(1);
       setUserDetails({
         ...user,
-        contact_details: {
-          ...user.contact_details,
+        contactDetails: {
+          ...user.contactDetails,
           telegramHandle: telegram,
         },
       });
@@ -114,8 +116,8 @@ export default function EditProfile() {
       haveError = true;
     }
     if (
-      user.contact_details.phoneNumber &&
-      isNaN(Number(user.contact_details.phoneNumber))
+      user.contactDetails.phoneNumber &&
+      isNaN(Number(user.contactDetails.phoneNumber))
     ) {
       currFieldErrors = {
         ...currFieldErrors,
@@ -128,15 +130,15 @@ export default function EditProfile() {
     setFieldErrors(currFieldErrors);
 
     if (!haveError) {
+      setIsLoading(true);
       dispatch(updateSelfUserDetails(user))
+        .unwrap()
         .then(
-          (response) => {
-            setUser(user);
-            console.log('success');
+          () => {
             goBack();
           },
           (error) => {
-            handleApiRequestError(error);
+            presentErrorToast(handleApiRequestError(error));
           }
         )
         .finally(() => {
@@ -179,12 +181,12 @@ export default function EditProfile() {
     },
     {
       title: EditProfileFormField.TELEGRAM_HANDLE,
-      value: user.contact_details.telegramHandle,
+      value: user.contactDetails.telegramHandle,
       onChange: (value) =>
         setUserDetails({
           ...user,
-          contact_details: {
-            ...user.contact_details,
+          contactDetails: {
+            ...user.contactDetails,
             telegramHandle: value,
           },
         }),
@@ -192,12 +194,12 @@ export default function EditProfile() {
     },
     {
       title: EditProfileFormField.PHONE_NUMBER,
-      value: user.contact_details.phoneNumber,
+      value: user.contactDetails.phoneNumber,
       onChange: (value) =>
         setUserDetails({
           ...user,
-          contact_details: {
-            ...user.contact_details,
+          contactDetails: {
+            ...user.contactDetails,
             phoneNumber: value,
           },
         }),
