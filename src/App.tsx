@@ -1,4 +1,4 @@
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
@@ -38,14 +38,16 @@ import styles from './styles.module.scss';
 
 import ConnectionsPage from './pages/connections';
 import ModuleView from './pages/modules/ModuleView';
-import RegisterPage from './pages/authentication/register';
-import LoginPage from './pages/authentication/login';
-import VerifyPage from './pages/authentication/verify';
 import EditProfile from './pages/user_profile/edit_profile';
 import { AuthContext, useProvideAuth } from './util/authentication/AuthContext';
 import { useLayoutEffect } from 'react';
 import { verifyAuth } from './api/authentication';
-import { PrivateRoute } from './util/authentication/PrivateRoute';
+import PrivateRoute from './util/authentication/PrivateRoute';
+import { LOGIN, REGISTER, VERIFY_EMAIL } from './routes';
+import LoginPage from './pages/authentication/login';
+import NonAuthRoute from './util/authentication/NonAuthRoute';
+import RegisterPage from './pages/authentication/register';
+import VerifyPage from './pages/authentication/verify';
 
 setupIonicReact();
 
@@ -66,15 +68,15 @@ export default function App() {
         <IonReactRouter>
           <IonTabs>
             <IonRouterOutlet>
-              <Route exact path="/login">
+              <NonAuthRoute exact path={LOGIN}>
                 <LoginPage />
-              </Route>
-              <Route exact path="/register">
+              </NonAuthRoute>
+              <NonAuthRoute exact path={REGISTER}>
                 <RegisterPage />
-              </Route>
-              <Route exact path="/verify">
+              </NonAuthRoute>
+              <NonAuthRoute exact path={VERIFY_EMAIL}>
                 <VerifyPage />
-              </Route>
+              </NonAuthRoute>
               <PrivateRoute exact path="/home">
                 <Home />
               </PrivateRoute>
@@ -100,14 +102,17 @@ export default function App() {
                 path="/user_profile/edit"
                 component={EditProfile}
               />
-              <Route path="/connections">
+              <PrivateRoute exact path="/connections">
                 <ConnectionsPage />
-              </Route>
-              <Route exact path="/">
+              </PrivateRoute>
+              <PrivateRoute exact path="/">
                 <Redirect to="/home" />
-              </Route>
+              </PrivateRoute>
             </IonRouterOutlet>
-            <IonTabBar slot="bottom">
+            <IonTabBar
+              slot="bottom"
+              className={authenticatedUser.isAuthenticated ? '' : 'ion-hide'}
+            >
               <IonTabButton tab="modules" href="/modules">
                 <IonIcon icon={searchOutline} />
                 <IonLabel className={styles['tab_button_text']}>
