@@ -5,10 +5,17 @@ import { updateSelfUser } from '../../../api/users';
 import AppHeader from '../../../components/AppHeader';
 import InputFormCard, {
   InputFormCardButton,
-  InputFormCardField
+  InputFormCardField,
 } from '../../../components/InputFormCard';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { getSelfUserDetails, setBio, setCourse, setName, setPhoneNumber, setTelegram } from '../../../redux/slices/userDetailsSlice';
+import {
+  getSelfUserDetails,
+  setBio,
+  setCourse,
+  setName,
+  setPhoneNumber,
+  setTelegram,
+} from '../../../redux/slices/userDetailsSlice';
 import styles from './styles.module.scss';
 
 /**
@@ -27,23 +34,9 @@ export default function EditProfile() {
     [key in EditProfileFormField]: string;
   };
 
-  // const [user, setUserDetails] = useState<DetailedUser>({
-  //   contact_details: {
-  //     email: '',
-  //     telegramHandle: '',
-  //     phoneNumber: '',
-  //   },
-  //   matriculationYear: '',
-  //   universityCourse: '',
-  //   bio: '',
-  //   id: '',
-  //   name: '',
-  //   connectionStatus: 0,
-  // });
-
   const user = useAppSelector((state) => state.userDetails.user);
   const handleApiRequestError = useApiRequestErrorHandler();
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const { goBack } = useContext(NavContext);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({
@@ -56,11 +49,9 @@ export default function EditProfile() {
 
   // shoot api query before painting to screen
   useEffect(() => {
-    dispatch(getSelfUserDetails()).catch(
-      (error) => {
-        handleApiRequestError(error)
-      }
-    );
+    dispatch(getSelfUserDetails()).catch((error) => {
+      handleApiRequestError(error);
+    });
   }, []);
 
   function updateUser() {
@@ -77,7 +68,7 @@ export default function EditProfile() {
     // If user puts @ at start of handle, automatically remove it
     if (telegram && telegram[0] == '@') {
       telegram = telegram.substring(1);
-      setTelegram(telegram)
+      setTelegram(telegram);
     }
     if (!user.name) {
       currFieldErrors = {

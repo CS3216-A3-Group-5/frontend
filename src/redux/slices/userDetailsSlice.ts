@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import { DetailedUser } from "../../api/types";
-import { getSelfUser, updateSelfUser } from "../../api/users";
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { DetailedUser } from '../../api/types';
+import { getSelfUser, updateSelfUser } from '../../api/users';
 
 const initialUser: DetailedUser = {
   contact_details: {
@@ -16,14 +16,13 @@ const initialUser: DetailedUser = {
   id: '',
   name: '',
   connectionStatus: 0,
-}
-
+};
 
 const initialState = {
-  user: initialUser
-}
+  user: initialUser,
+};
 
-const UserDetailsSlice = createSlice ({
+const UserDetailsSlice = createSlice({
   name: 'userDetails',
   initialState,
   reducers: {
@@ -46,7 +45,7 @@ const UserDetailsSlice = createSlice ({
       state.user.contact_details.phoneNumber = action.payload;
     },
   },
-})
+});
 
 export const getSelfUserDetails = createAsyncThunk<DetailedUser>(
   'userDetails/getUser',
@@ -65,16 +64,23 @@ export const updateSelfUserDetails = createAsyncThunk<void, DetailedUser>(
   }
 );
 
-export const { setUser, setName, setCourse, setBio, setTelegram, setPhoneNumber } = UserDetailsSlice.actions
+export const {
+  setUser,
+  setName,
+  setCourse,
+  setBio,
+  setTelegram,
+  setPhoneNumber,
+} = UserDetailsSlice.actions;
 
 // set up persistence, uses local storage to persist this reducer
-const userPersistConfig = {
+const userDetailsPersistConfig = {
   key: 'userDetails',
   storage,
 };
 
 const persistedUserDetailsReducer = persistReducer(
-  userPersistConfig,
+  userDetailsPersistConfig,
   UserDetailsSlice.reducer
 );
 
