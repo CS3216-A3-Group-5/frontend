@@ -10,6 +10,8 @@ interface InputFieldProps {
   errorMessage?: string;
   placeholder?: string;
   debounce?: number;
+  maxlength?: number;
+  type?: 'password' | 'text';
 }
 
 export default function InputField({
@@ -21,6 +23,8 @@ export default function InputField({
   errorMessage,
   placeholder,
   debounce,
+  maxlength,
+  type,
 }: InputFieldProps) {
   return (
     <IonItem lines="inset">
@@ -40,6 +44,8 @@ export default function InputField({
           placeholder={placeholder}
           debounce={debounce ? debounce : 0}
           onIonChange={onChange ? (e) => onChange(e.detail.value!) : undefined}
+          maxlength={maxlength ? maxlength : undefined}
+          type={type}
         />
       ) : (
         <IonTextarea

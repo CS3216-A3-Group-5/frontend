@@ -5,6 +5,9 @@ import {
   IonButton,
   IonLoading,
   IonCardSubtitle,
+  IonRow,
+  IonGrid,
+  IonCol,
 } from '@ionic/react';
 import InputField from '../InputField';
 
@@ -13,7 +16,9 @@ export interface InputFormCardField {
   value: string;
   onChange: (value: string) => void;
   errorMessage: string;
-  multiline?: boolean
+  multiline?: boolean;
+  maxlength?: number;
+  type?: 'password' | 'text';
 }
 
 export interface InputFormCardButton {
@@ -36,7 +41,7 @@ export default function InputFormCard({
   buttons,
   isLoading,
   errorMessage,
-  image
+  image,
 }: InputFormCardProps) {
   return (
     <IonCard>
@@ -61,19 +66,26 @@ export default function InputFormCard({
           onChange={fieldDetails.onChange}
           errorMessage={fieldDetails.errorMessage}
           multiline={fieldDetails.multiline}
+          maxlength={fieldDetails.maxlength}
+          type={fieldDetails.type}
         ></InputField>
       ))}
       {buttons.length > 1 ? (
-        buttons.map((buttonDetails) => (
-          <IonButton
-            key={buttonDetails.title}
-            color={buttonDetails.color}
-            className="ion-padding-horizontal ion-margin-top"
-            onClick={buttonDetails.onClick}
-          >
-            {buttonDetails.title}
-          </IonButton>
-        ))
+        <IonGrid>
+          <IonRow>
+            {buttons.map((buttonDetails) => (
+              <IonCol key={buttonDetails.title}>
+                <IonButton
+                  color={buttonDetails.color}
+                  onClick={buttonDetails.onClick}
+                  expand="block"
+                >
+                  {buttonDetails.title}
+                </IonButton>
+              </IonCol>
+            ))}
+          </IonRow>
+        </IonGrid>
       ) : (
         <IonButton
           color={buttons[0].color}
