@@ -10,10 +10,10 @@ import InputField from '../InputField';
 
 export interface InputFormCardField {
   title: string;
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
   errorMessage: string;
-  multiline?: boolean
+  multiline?: boolean;
 }
 
 export interface InputFormCardButton {
@@ -34,7 +34,7 @@ export default function InputFormCard({
   inputFields,
   buttons,
   isLoading,
-  errorMessage
+  errorMessage,
 }: InputFormCardProps) {
   return (
     <IonCard>

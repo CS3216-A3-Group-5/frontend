@@ -50,6 +50,7 @@ export default function InputField({
           onIonChange={onChange ? (e) => onChange(e.detail.value!) : undefined}
           rows={rows}
           style={{ height: String(rows + 4) + 'rem' }}
+          autoGrow={true}
         />
       )}
     </IonItem>

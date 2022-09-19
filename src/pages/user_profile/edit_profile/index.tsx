@@ -1,9 +1,7 @@
 import {
   IonAvatar,
-  IonButton,
   IonContent,
   IonPage,
-  IonText,
   NavContext,
 } from '@ionic/react';
 import { useContext, useEffect, useState } from 'react';
@@ -11,37 +9,60 @@ import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { DetailedUser } from '../../../api/types';
 import { getSelfUser, updateSelfUser } from '../../../api/users';
 import AppHeader from '../../../components/AppHeader';
-import InputField from '../../../components/InputField';
+import InputFormCard, {
+  InputFormCardButton,
+  InputFormCardField,
+} from '../../../components/InputFormCard';
 import styles from './styles.module.scss';
 
 /**
  * Page for editing profile
  */
 export default function EditProfile() {
-  const [user, setUserDetails] = useState<DetailedUser>();
-  const [name, setName] = useState<string>();
-  const [uniCourse, setUniCourse] = useState<string>();
-  const [bio, setBio] = useState<string>();
-  const [email, setEmail] = useState<string>();
-  const [telegram, setTelegram] = useState<string>();
-  const [phoneNumber, setPhoneNumber] = useState<string>();
+  enum EditProfileFormField {
+    NAME = 'Name',
+    COURSE = 'Course',
+    BIO = 'Bio',
+    EMAIL = 'Email',
+    TELEGRAM_HANDLE = 'Telegram',
+    PHONE_NUMBER = 'Phone Number',
+  }
 
-  const [errorText, setErrorText] = useState<string>();
-  const { goBack } = useContext(NavContext);
+  type FieldErrors = {
+    [key in EditProfileFormField]: string;
+  };
 
+  const [user, setUserDetails] = useState<DetailedUser>({
+    contact_details: {
+      email: '',
+      telegramHandle: '',
+      phoneNumber: '',
+    },
+    matriculationYear: '',
+    universityCourse: '',
+    bio: '',
+    id: '',
+    name: '',
+    connectionStatus: 0,
+  });
   const handleApiRequestError = useApiRequestErrorHandler();
+  const { goBack } = useContext(NavContext);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({
+    [EditProfileFormField.NAME]: '',
+    [EditProfileFormField.COURSE]: '',
+    [EditProfileFormField.BIO]: '',
+    [EditProfileFormField.EMAIL]: '',
+    [EditProfileFormField.TELEGRAM_HANDLE]: '',
+    [EditProfileFormField.PHONE_NUMBER]: '',
+  });
+
   // shoot api query before painting to screen
   useEffect(() => {
     getSelfUser().then(
       (user) => {
         console.log(user);
         setUserDetails(user);
-        setName(user.name);
-        setUniCourse(user.universityCourse);
-        setBio(user.bio);
-        setEmail(user.contact_details.email);
-        setTelegram(user.contact_details.telegramHandle);
-        setPhoneNumber(user.contact_details.phoneNumber);
       },
       (error) => {
         handleApiRequestError(error);
@@ -50,74 +71,171 @@ export default function EditProfile() {
   }, []);
 
   function updateUser() {
-    setErrorText('');
-    if (!user) {
-      setErrorText('An unexpected error has ocurred');
-      return;
-    }
-    if (!name) {
-      setErrorText('Please fill in your name');
-      return;
-    }
-    if (!email) {
-      setErrorText('Please fill in an email address');
-      return;
-    }
-    if (!uniCourse) {
-      setErrorText('Please fill in a university course');
-      return;
-    }
-    if (!bio) {
-      setErrorText('Please fill in a bio');
-      return;
-    }
-
-    // If user puts @ at start of handle, automatically remove it
-    if (telegram && telegram[0] == '@') {
-      setTelegram(telegram.substring(1));
-    }
-
-    if (telegram && (telegram.length < 5 || telegram.length > 32)) {
-      setErrorText(
-        'Telegram handle length must be between 5 and 32 characters'
-      );
-      return;
-    }
-
-    if (phoneNumber && isNaN(Number(phoneNumber))) {
-      setErrorText('Phone number must only contain numerals');
-      return;
-    }
-
-    const newUser: DetailedUser = {
-      contact_details: {
-        email: email,
-        telegramHandle: telegram,
-        phoneNumber: phoneNumber,
-      },
-      matriculationYear: user.matriculationYear,
-      universityCourse: uniCourse,
-      bio: bio,
-      id: user.id,
-      name: name,
-      connectionStatus: 0,
+    let haveError = false;
+    let currFieldErrors = {
+      [EditProfileFormField.NAME]: '',
+      [EditProfileFormField.COURSE]: '',
+      [EditProfileFormField.BIO]: '',
+      [EditProfileFormField.EMAIL]: '',
+      [EditProfileFormField.TELEGRAM_HANDLE]: '',
+      [EditProfileFormField.PHONE_NUMBER]: '',
     };
 
-    updateSelfUser(newUser).then(
-      (response) => {
-        console.log('success');
-        goBack();
-      },
-      (error) => {
-        handleApiRequestError(error);
-      }
-    );
+    let telegram = user.contact_details.telegramHandle;
+    // If user puts @ at start of handle, automatically remove it
+    if (telegram && telegram[0] == '@') {
+      telegram = telegram.substring(1);
+      setUserDetails({
+        ...user,
+        contact_details: {
+          ...user.contact_details,
+          telegramHandle: telegram,
+        },
+      });
+    }
+    if (!user.name) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [EditProfileFormField.NAME]: 'Please enter your name.',
+      };
+      haveError = true;
+    }
+    if (!user.universityCourse) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [EditProfileFormField.COURSE]: 'Please enter your course.',
+      };
+      haveError = true;
+    }
+    if (!user.bio) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [EditProfileFormField.BIO]: 'Please enter your bio.',
+      };
+      haveError = true;
+    }
+    if (!user.contact_details.email) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [EditProfileFormField.EMAIL]: 'Please enter your email.',
+      };
+      haveError = true;
+    }
+    if (telegram && (telegram.length < 5 || telegram.length > 32)) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [EditProfileFormField.TELEGRAM_HANDLE]:
+          'Telegram handle length must be between 5 and 32 characters',
+      };
+      haveError = true;
+    }
+    if (
+      user.contact_details.phoneNumber &&
+      isNaN(Number(user.contact_details.phoneNumber))
+    ) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [EditProfileFormField.PHONE_NUMBER]:
+          'Phone number must only contain numerals',
+      };
+      haveError = true;
+    }
+
+    setFieldErrors(currFieldErrors);
+
+    if (!haveError) {
+      updateSelfUser(user).then(
+        (response) => {
+          console.log('success');
+          goBack();
+        },
+        (error) => {
+          handleApiRequestError(error);
+        }
+      );
+    }
   }
 
-  const inputFieldStyle = {
-    width: '60%',
-    minWidth: '20rem',
-  };
+  const registerInputFields: Array<InputFormCardField> = [
+    {
+      title: EditProfileFormField.NAME,
+      value: user.name,
+      onChange: (value) =>
+        setUserDetails({
+          ...user,
+          name: value,
+        }),
+      errorMessage: fieldErrors[EditProfileFormField.NAME],
+    },
+    {
+      title: EditProfileFormField.COURSE,
+      value: user.universityCourse,
+      onChange: (value) =>
+        setUserDetails({
+          ...user,
+          universityCourse: value,
+        }),
+      errorMessage: fieldErrors[EditProfileFormField.COURSE],
+    },
+    {
+      title: EditProfileFormField.BIO,
+      value: user.bio,
+      onChange: (value) =>
+        setUserDetails({
+          ...user,
+          bio: value,
+        }),
+      errorMessage: fieldErrors[EditProfileFormField.BIO],
+      multiline: true,
+    },
+    {
+      title: EditProfileFormField.EMAIL,
+      value: user.contact_details.email,
+      onChange: (value) =>
+        setUserDetails({
+          ...user,
+          contact_details: {
+            ...user.contact_details,
+            email: value,
+          },
+        }),
+      errorMessage: fieldErrors[EditProfileFormField.EMAIL],
+    },
+    {
+      title: EditProfileFormField.TELEGRAM_HANDLE,
+      value: user.contact_details.telegramHandle,
+      onChange: (value) =>
+        setUserDetails({
+          ...user,
+          contact_details: {
+            ...user.contact_details,
+            telegramHandle: value,
+          },
+        }),
+      errorMessage: fieldErrors[EditProfileFormField.TELEGRAM_HANDLE],
+    },
+    {
+      title: EditProfileFormField.PHONE_NUMBER,
+      value: user.contact_details.phoneNumber,
+      onChange: (value) =>
+        setUserDetails({
+          ...user,
+          contact_details: {
+            ...user.contact_details,
+            phoneNumber: value,
+          },
+        }),
+      errorMessage: fieldErrors[EditProfileFormField.PHONE_NUMBER],
+    },
+  ];
+
+  const formButtons: Array<InputFormCardButton> = [
+    {
+      title: 'Save',
+      color: 'primary',
+      onClick: updateUser,
+    },
+  ];
 
   if (user) {
     return (
@@ -135,43 +253,13 @@ export default function EditProfile() {
                 }
               ></img>
             </IonAvatar>
-            <InputField
-              value={name}
-              setter={setName}
-              label={'Name'}
-              haveError
-              errorMessage="Name cannot be blank"
-            />
-            <InputField
-              value={uniCourse}
-              setter={setUniCourse}
-              label={'Course'}
-            />
-            <InputField
-              value={bio}
-              setter={setBio}
-              label={'Bio'}
-              multiline={true}
-              rows={7}
-            />
-            <InputField value={email} setter={setEmail} label={'Email'} />
-            <InputField
-              value={telegram}
-              setter={setTelegram}
-              label={'Telegram (optional)'}
-            />
-            <InputField
-              value={phoneNumber}
-              setter={setPhoneNumber}
-              label={'Phone Number (optional)'}
-            />
-            {errorText && (
-              <IonText className={styles['error-text']} color="danger">
-                {errorText}
-              </IonText>
-            )}
-            <IonButton onClick={updateUser}>Save</IonButton>
           </div>
+          <InputFormCard
+            title="Edit Profile"
+            inputFields={registerInputFields}
+            buttons={formButtons}
+            isLoading={isLoading}
+          />
         </IonContent>
       </IonPage>
     );
