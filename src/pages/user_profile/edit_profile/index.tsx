@@ -1,13 +1,14 @@
 import { IonAvatar, IonContent, IonPage, NavContext } from '@ionic/react';
 import { useContext, useEffect, useState } from 'react';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
-import { DetailedUser } from '../../../api/types';
-import { getSelfUser, updateSelfUser } from '../../../api/users';
+import { updateSelfUser } from '../../../api/users';
 import AppHeader from '../../../components/AppHeader';
 import InputFormCard, {
   InputFormCardButton,
-  InputFormCardField,
+  InputFormCardField
 } from '../../../components/InputFormCard';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { getSelfUserDetails, setBio, setCourse, setName, setPhoneNumber, setTelegram } from '../../../redux/slices/userDetailsSlice';
 import styles from './styles.module.scss';
 
 /**
@@ -26,20 +27,23 @@ export default function EditProfile() {
     [key in EditProfileFormField]: string;
   };
 
-  const [user, setUserDetails] = useState<DetailedUser>({
-    contact_details: {
-      email: '',
-      telegramHandle: '',
-      phoneNumber: '',
-    },
-    matriculationYear: '',
-    universityCourse: '',
-    bio: '',
-    id: '',
-    name: '',
-    connectionStatus: 0,
-  });
+  // const [user, setUserDetails] = useState<DetailedUser>({
+  //   contact_details: {
+  //     email: '',
+  //     telegramHandle: '',
+  //     phoneNumber: '',
+  //   },
+  //   matriculationYear: '',
+  //   universityCourse: '',
+  //   bio: '',
+  //   id: '',
+  //   name: '',
+  //   connectionStatus: 0,
+  // });
+
+  const user = useAppSelector((state) => state.userDetails.user);
   const handleApiRequestError = useApiRequestErrorHandler();
+  const dispatch = useAppDispatch()
   const { goBack } = useContext(NavContext);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({
@@ -52,13 +56,9 @@ export default function EditProfile() {
 
   // shoot api query before painting to screen
   useEffect(() => {
-    getSelfUser().then(
-      (user) => {
-        console.log(user);
-        setUserDetails(user);
-      },
+    dispatch(getSelfUserDetails()).catch(
       (error) => {
-        handleApiRequestError(error);
+        handleApiRequestError(error)
       }
     );
   }, []);
@@ -77,13 +77,7 @@ export default function EditProfile() {
     // If user puts @ at start of handle, automatically remove it
     if (telegram && telegram[0] == '@') {
       telegram = telegram.substring(1);
-      setUserDetails({
-        ...user,
-        contact_details: {
-          ...user.contact_details,
-          telegramHandle: telegram,
-        },
-      });
+      setTelegram(telegram)
     }
     if (!user.name) {
       currFieldErrors = {
@@ -149,58 +143,32 @@ export default function EditProfile() {
     {
       title: EditProfileFormField.NAME,
       value: user.name,
-      onChange: (value) =>
-        setUserDetails({
-          ...user,
-          name: value,
-        }),
+      onChange: (value) => setName(value),
       errorMessage: fieldErrors[EditProfileFormField.NAME],
     },
     {
       title: EditProfileFormField.COURSE,
       value: user.universityCourse,
-      onChange: (value) =>
-        setUserDetails({
-          ...user,
-          universityCourse: value,
-        }),
+      onChange: (value) => setCourse(value),
       errorMessage: fieldErrors[EditProfileFormField.COURSE],
     },
     {
       title: EditProfileFormField.BIO,
       value: user.bio,
-      onChange: (value) =>
-        setUserDetails({
-          ...user,
-          bio: value,
-        }),
+      onChange: (value) => setBio(value),
       errorMessage: fieldErrors[EditProfileFormField.BIO],
       multiline: true,
     },
     {
       title: EditProfileFormField.TELEGRAM_HANDLE,
       value: user.contact_details.telegramHandle,
-      onChange: (value) =>
-        setUserDetails({
-          ...user,
-          contact_details: {
-            ...user.contact_details,
-            telegramHandle: value,
-          },
-        }),
+      onChange: (value) => setTelegram(value),
       errorMessage: fieldErrors[EditProfileFormField.TELEGRAM_HANDLE],
     },
     {
       title: EditProfileFormField.PHONE_NUMBER,
       value: user.contact_details.phoneNumber,
-      onChange: (value) =>
-        setUserDetails({
-          ...user,
-          contact_details: {
-            ...user.contact_details,
-            phoneNumber: value,
-          },
-        }),
+      onChange: (value) => setPhoneNumber(value),
       errorMessage: fieldErrors[EditProfileFormField.PHONE_NUMBER],
     },
   ];

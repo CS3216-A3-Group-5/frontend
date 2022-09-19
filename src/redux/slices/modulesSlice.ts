@@ -8,4 +8,3 @@ const initialState: ModuleState = {
   listOfModules: []
   
 }
-export {}

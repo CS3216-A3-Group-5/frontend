@@ -1,26 +1,22 @@
-import { IonContent, IonPage, IonButton } from '@ionic/react';
-import AppHeader from '../../components/AppHeader';
-import { useEffect, useState } from 'react';
-import { DetailedUser } from '../../api/types';
-import { getSelfUser } from '../../api/users';
-import styles from './styles.module.scss';
-import UserCardItem from '../../components/UserCardItem/UserCardItem';
+import { IonButton, IonContent, IonPage } from '@ionic/react';
+import { useEffect } from 'react';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
+import AppHeader from '../../components/AppHeader';
+import UserCardItem from '../../components/UserCardItem/UserCardItem';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { getSelfUserDetails } from '../../redux/slices/userDetailsSlice';
+import styles from './styles.module.scss';
 
 export default function UserProfile() {
-  const [user, setUserDetails] = useState<DetailedUser>();
+  const user = useAppSelector((state) => state.userDetails.user);
   const handleApiRequestError = useApiRequestErrorHandler();
+  const dispatch = useAppDispatch()
 
   // shoot api query before painting to screen
   useEffect(() => {
-    getSelfUser().then(
-      (user) => {
-        console.log(user);
-        setUserDetails(user);
-      },
+    dispatch(getSelfUserDetails()).catch(
       (error) => {
-        // console.log(error)
-        handleApiRequestError(error);
+        handleApiRequestError(error)
       }
     );
   }, []);
