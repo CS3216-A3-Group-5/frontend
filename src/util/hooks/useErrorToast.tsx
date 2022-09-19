@@ -1,35 +1,49 @@
 import { useIonToast } from '@ionic/react';
-import { globe } from 'ionicons/icons';
+import { globe, alert } from 'ionicons/icons';
+import { ApiRequestError, ErrorType } from '../../api/errorHandling';
 
-export enum ErrorToastErrorType {
-  CONNECTION_FAIL,
-  OTHER,
-}
 
-function getIconForErrorType(errorType: ErrorToastErrorType) {
-  switch (errorType) {
-    case ErrorToastErrorType.CONNECTION_FAIL:
-      return globe;
-    default:
-      return '';
+function getIconForErrorType(errorType: ErrorType) {
+  if (errorType === ErrorType.NO_CONNECTION || errorType === ErrorType.TIMEOUT) {
+    return globe;
+  } else {
+    return alert;
   }
 }
 
 /**
- * Hook that returns a function to present an error toast to user.
+ * Hook that returns a function that takes in an Api error and presents an error toast to user.
  */
 export default function useErrorToast() {
   const [present] = useIonToast();
   const presentToast = (
-    errorMessage: string,
-    errorType: ErrorToastErrorType
+    apiError: ApiRequestError,
+    errorMessage?: string,
   ) => {
+    let message = "";
+    switch (apiError.errorType) {
+      case (ErrorType.AUTHENTICATION_FAIL):
+        message = "Authentication failed. Please try again.";
+        break;
+      case (ErrorType.NO_CONNECTION):
+        message = "You are not connected to the internet";
+        break;
+      case (ErrorType.TIMEOUT):
+        message = "Could not reach server. Please try again.";
+        break;
+      default:
+        if (errorMessage) {
+          message = errorMessage;
+        } else {
+          message = "An unknown error occured. Please try again.";
+        }
+    }
     void present({
-      message: errorMessage,
+      message,
       color: 'danger',
       duration: 2000,
       position: 'top',
-      icon: getIconForErrorType(errorType),
+      icon: getIconForErrorType(apiError.errorType),
     });
   };
   return presentToast;

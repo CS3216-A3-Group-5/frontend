@@ -7,6 +7,7 @@ import { AuthenticationResponse } from '../pages/authentication/constants';
 import TokenService from '../util/services/tokenService';
 import {
   REGISTER_PATH,
+  RESEND_OTP_PATH,
   VERIFY_AUTHENTICATION,
   VERIFY_EMAIL_PATH,
 } from './constants';
@@ -22,11 +23,12 @@ export interface UserLoginDetails {
 }
 
 export async function registerUser(userRegisterDetails: UserLoginDetails) {
-  await axiosInstance.post(REGISTER_PATH, userRegisterDetails);
+  const response = await axiosInstance.post<AuthenticationResponse>(REGISTER_PATH, userRegisterDetails);
+  return response.data;
 }
 
 export async function verifyEmail(nus_email: string, otp: string) {
-  const response = await axiosInstance.post(VERIFY_EMAIL_PATH, {
+  const response = await axiosInstance.post<AuthenticationResponse>(VERIFY_EMAIL_PATH, {
     nus_email,
     otp,
   });
@@ -37,6 +39,14 @@ export async function verifyEmail(nus_email: string, otp: string) {
     accessToken: tokenResponseData.access_token,
     refreshToken: tokenResponseData.refresh_token,
   });
+  return response.data;
+}
+
+export async function resendOtp(nus_email: string) {
+  const response = await axiosInstance.post<AuthenticationResponse>(RESEND_OTP_PATH, {
+    nus_email
+  })
+  return response.data;
 }
 
 /**

@@ -1,16 +1,15 @@
-import { IonPage } from '@ionic/react';
+import { IonContent, IonPage } from '@ionic/react';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { login, UserLoginDetails } from '../../../api/authentication';
 import {
-  ErrorType,
   useApiRequestErrorHandler,
 } from '../../../api/errorHandling';
 import AppHeader from '../../../components/AppHeader';
+import InputFormCard, { InputFormCardField } from '../../../components/InputFormCard';
+import { HOME } from '../../../routes';
 import { isValidEmail } from '../../../util/authentication/constants';
-import useErrorToast, {
-  ErrorToastErrorType,
-} from '../../../util/hooks/useErrorToast';
+import useErrorToast from '../../../util/hooks/useErrorToast';
 import { ERROR_FIELD_NAME } from '../constants';
 
 
@@ -18,7 +17,6 @@ enum LoginField {
   EMAIL = 'Email',
   PASSWORD = 'Password',
 }
-
 
 /**
  * Holds the error messages for each field.
@@ -72,47 +70,63 @@ export default function LoginPage() {
 
     setFieldErrors(currFieldErrors);
     if (!haveError) {
-      setIsLoading(false);
+      setIsLoading(true);
       login(userLoginDetails)
         .then((resp) => {
-          if (resp[ERROR_FIELD_NAME]) {
+          if (resp.error_message) {
             // theres an error with logging in 
             setLoginErrorMessage(resp[ERROR_FIELD_NAME]);
+            return;
           }
           // login success
-          history.push('/home');
+          history.push(HOME);
         })
         .catch((error) => {
-          const apiError = handleApiError(error);
-          if (apiError.errorType === ErrorType.TIMEOUT) {
-            createErrorToast(
-              
-            )
-          } else if (apiError.errorType === ErrorType.NO_CONNECTION) {
-            createErrorToast(
-              'You are not connected to the internet',
-              ErrorToastErrorType.CONNECTION_FAIL
-            );
-          } else if (apiError.errorType === ErrorType.AUTHENTICATION_FAIL) {
-          } else {
-            createErrorToast(
-              'An unknown error occured.',
-              ErrorToastErrorType.OTHER
-            );
-          }
+          createErrorToast(handleApiError(error));
         })
         .finally(() => {
-          setIsLoading(true);
+          setIsLoading(false);
         });
     }
   }
+
+  const loginInputFields: Array<InputFormCardField> = [
+    {
+      title: LoginField.EMAIL,
+      value: userLoginDetails.nus_email,
+      onChange: (value) =>
+        setUserLoginDetails({
+          ...userLoginDetails,
+          nus_email: value,
+        }),
+      errorMessage: fieldErrors[LoginField.EMAIL],
+    },
+    {
+      title: LoginField.PASSWORD,
+      value: userLoginDetails.password,
+      onChange: (value) =>
+        setUserLoginDetails({
+          ...userLoginDetails,
+          password: value,
+        }),
+      errorMessage: fieldErrors[LoginField.PASSWORD],
+    }
+  ];
+
+  const formButtons = [
+    {
+      title: 'Login',
+      color: 'primary',
+      onClick: submitLogin,
+    },
+  ];
 
   return (
     <IonPage>
       <AppHeader />
       <IonContent fullscreen>
         <InputFormCard
-          title="Register"
+          title="Login"
           inputFields={loginInputFields}
           buttons={formButtons}
           isLoading={isLoading}
