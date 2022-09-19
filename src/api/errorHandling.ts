@@ -38,6 +38,7 @@ export function useApiRequestErrorHandler() {
       if (error.response) {
         // check if the error from server is an authentication error
         if (error.response.status === 401) {
+          console.log('hello');
           auth.setIsAuthenticated(false);
           // redirect to login screen whenever a 401 occurs
           history.push(LOGIN_PATH);
@@ -48,18 +49,9 @@ export function useApiRequestErrorHandler() {
         }
 
         // some other error occured at server
-        const errorData = error.response.data as ErrorResponseData;
-        if (errorData.error_reason === 0) {
-          // this error is one which client does not need to know about
-          console.log(errorData.error_message);
-          return {
-            errorType: ErrorType.UNKNOWN,
-            errorReason: errorData.error_reason - 1,
-          };
-        }
         return {
-          errorType: ErrorType.KNOWN,
-          errorReason: errorData.error_reason,
+          errorType: ErrorType.UNKNOWN,
+          errorReason: 0,
         };
       } else if (error.request) {
         // no response received from server

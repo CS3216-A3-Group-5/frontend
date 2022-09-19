@@ -11,7 +11,7 @@ import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { DetailedUser } from '../../../api/types';
 import { getSelfUser, updateSelfUser } from '../../../api/users';
 import AppHeader from '../../../components/AppHeader';
-import InputField from '../../../components/InputField/InputField';
+import InputField from '../../../components/InputField';
 import styles from './styles.module.scss';
 
 /**
@@ -139,39 +139,31 @@ export default function EditProfile() {
               value={name}
               setter={setName}
               label={'Name'}
-              style={inputFieldStyle}
+              haveError
+              errorMessage="Name cannot be blank"
             />
             <InputField
               value={uniCourse}
               setter={setUniCourse}
               label={'Course'}
-              style={inputFieldStyle}
             />
             <InputField
               value={bio}
               setter={setBio}
               label={'Bio'}
-              style={inputFieldStyle}
               multiline={true}
               rows={7}
             />
-            <InputField
-              value={email}
-              setter={setEmail}
-              label={'Email'}
-              style={inputFieldStyle}
-            />
+            <InputField value={email} setter={setEmail} label={'Email'} />
             <InputField
               value={telegram}
               setter={setTelegram}
               label={'Telegram (optional)'}
-              style={inputFieldStyle}
             />
             <InputField
               value={phoneNumber}
               setter={setPhoneNumber}
               label={'Phone Number (optional)'}
-              style={inputFieldStyle}
             />
             {errorText && (
               <IonText className={styles['error-text']} color="danger">
