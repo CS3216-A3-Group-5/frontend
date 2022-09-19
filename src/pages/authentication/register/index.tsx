@@ -1,67 +1,155 @@
-import { IonButton, IonContent, IonInput, IonPage } from '@ionic/react';
+import { IonContent, IonPage } from '@ionic/react';
 import { useState } from 'react';
-import { useLocation } from 'react-router';
-import { registerUser } from '../../../api/authentication';
+import { useHistory } from 'react-router';
+import { UserLoginDetails } from '../../../api/authentication';
+import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import AppHeader from '../../../components/AppHeader';
+import InputFormCard, {
+  InputFormCardButton,
+  InputFormCardField,
+} from '../../../components/InputFormCard';
+import { useAppDispatch } from '../../../redux/hooks';
+import { submitRegisterForm } from '../../../redux/slices/userSlice';
+import { VERIFY_EMAIL } from '../../../routes';
 
 enum RegisterUserErrorReason {
   EMAIL_ALREADY_USED = 0,
 }
 
-const RegisterPage: React.FC = () => {
-  const currentPath = useLocation().pathname;
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
-  const [confirmPassword, setConfirmPassword] = useState<string>();
-  const [errorText, setErrorText] = useState<string>();
+enum RegisterFormField {
+  EMAIL = 'Email',
+  PASSWORD = 'Password',
+  CONFIRMATION_PASSWORD = 'Confirmation Password',
+}
+/**
+ * Holds the error messages for each field.
+ */
+type FieldErrors = {
+  [key in RegisterFormField]: string;
+};
 
-  const [registerResult, setRegisterResult] = useState<boolean>(false);
+const RegisterPage: React.FC = () => {
+  const history = useHistory();
+  const dispatch = useAppDispatch();
+  const handleApiRequestError = useApiRequestErrorHandler();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({
+    [RegisterFormField.EMAIL]: '',
+    [RegisterFormField.PASSWORD]: '',
+    [RegisterFormField.CONFIRMATION_PASSWORD]: '',
+  });
+
+  const [registerDetails, setRegisterDetails] = useState<UserLoginDetails>({
+    nus_email: '',
+    password: '',
+  });
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
 
   const register = () => {
-    if (!email || !password || !confirmPassword) {
-      setErrorText('Please fill in all the fields');
-      return;
+    let haveError = false;
+    let currFieldErrors = {
+      [RegisterFormField.EMAIL]: '',
+      [RegisterFormField.PASSWORD]: '',
+      [RegisterFormField.CONFIRMATION_PASSWORD]: '',
+    };
+    if (!registerDetails.nus_email) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [RegisterFormField.EMAIL]: 'Please enter your email.',
+      };
+      haveError = true;
     }
-    registerUser(email, password).then(
-      function (registerResult) {
-        setRegisterResult(registerResult);
-      },
-      function (error: Error) {
-        setErrorText(error.message);
-      }
-    );
+    if (!registerDetails.password) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [RegisterFormField.PASSWORD]: 'Please enter your password.',
+      };
+      haveError = true;
+    }
+    if (!confirmPassword) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [RegisterFormField.CONFIRMATION_PASSWORD]:
+          'Please confirm your password.',
+      };
+      haveError = true;
+    } else if (confirmPassword !== registerDetails.password) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [RegisterFormField.CONFIRMATION_PASSWORD]: 'Passwords do not match.',
+      };
+      haveError = true;
+    }
+
+    setFieldErrors(currFieldErrors);
+
+    if (!haveError) {
+      dispatch(submitRegisterForm(registerDetails))
+        .then(() => {
+          history.push(VERIFY_EMAIL);
+        })
+        .catch((error) => {
+          const errorDetails = handleApiRequestError(error);
+          if (
+            errorDetails.errorReason ===
+            RegisterUserErrorReason.EMAIL_ALREADY_USED
+          ) {
+            //TODO: show toast error
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   };
+
+  const registerInputFields: Array<InputFormCardField> = [
+    {
+      title: RegisterFormField.EMAIL,
+      value: registerDetails.nus_email,
+      onChange: (value) =>
+        setRegisterDetails({
+          ...registerDetails,
+          nus_email: value,
+        }),
+      errorMessage: fieldErrors[RegisterFormField.EMAIL],
+    },
+    {
+      title: RegisterFormField.PASSWORD,
+      value: registerDetails.password,
+      onChange: (value) =>
+        setRegisterDetails({
+          ...registerDetails,
+          password: value,
+        }),
+      errorMessage: fieldErrors[RegisterFormField.PASSWORD],
+    },
+    {
+      title: RegisterFormField.CONFIRMATION_PASSWORD,
+      value: confirmPassword,
+      onChange: (value) => setConfirmPassword(value),
+      errorMessage: fieldErrors[RegisterFormField.CONFIRMATION_PASSWORD],
+    },
+  ];
+
+  const formButtons: Array<InputFormCardButton> = [
+    {
+      title: 'Register',
+      color: 'primary',
+      onClick: register,
+    },
+  ];
 
   return (
     <IonPage>
       <AppHeader />
       <IonContent fullscreen>
-        <h1>Register</h1>
-        <IonInput
-          value={email}
-          placeholder="Email"
-          onIonChange={(e) => setEmail(e.detail.value!)}
-        ></IonInput>
-        <IonInput
-          value={password}
-          placeholder="Password"
-          onIonChange={(e) => setPassword(e.detail.value!)}
-        ></IonInput>
-        <IonInput
-          value={confirmPassword}
-          placeholder="Confirm Password"
-          onIonChange={(e) => setConfirmPassword(e.detail.value!)}
-        ></IonInput>
-        <IonButton color="primary" onClick={register}>
-          Register
-        </IonButton>
-        <h1>
-          {errorText
-            ? errorText
-            : registerResult
-            ? 'register success'
-            : 'register not succeeded yet'}
-        </h1>
+        <InputFormCard
+          title="Register"
+          inputFields={registerInputFields}
+          buttons={formButtons}
+          isLoading={isLoading}
+        />
       </IonContent>
     </IonPage>
   );

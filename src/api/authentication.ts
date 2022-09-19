@@ -15,8 +15,13 @@ interface TokenResponseData {
   refresh_token: string;
 }
 
-export async function registerUser(nus_email: string, password: string) {
-  await axiosInstance.post(REGISTER_PATH, { nus_email, password });
+export interface UserLoginDetails {
+  nus_email: string;
+  password: string;
+}
+
+export async function registerUser(userRegisterDetails: UserLoginDetails) {
+  await axiosInstance.post(REGISTER_PATH, userRegisterDetails);
 }
 
 export async function verifyEmail(nus_email: string, otp: string) {
@@ -45,8 +50,8 @@ export async function verifyAuth() {
   }
 }
 
-export async function login(nus_email: string, password: string) {
-  const response = await axiosInstance.post('/login', { nus_email, password });
+export async function login(userLoginDetails: UserLoginDetails) {
+  const response = await axiosInstance.post('/login', userLoginDetails);
   const tokenResponseData = response.data as TokenResponseData;
   TokenService.setTokens({
     accessToken: tokenResponseData.access_token,
