@@ -5,3 +5,4 @@
 export const LOGIN = '/login';
 export const REGISTER = '/register';
 export const VERIFY_EMAIL = '/register';
+export const HOME = '/home';
