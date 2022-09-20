@@ -11,7 +11,7 @@ export async function getConnections(
   module?: UniModule
 ): Promise<Connection[]> {
   const response = await axiosInstance.get<ConnectionResponseFormat[]>(
-    CONNECTIONS_PATH,
+    CONNECTIONS_PATH + '/',
     {
       params: {
         type: ConnectionType.CONNECTED,
@@ -30,7 +30,7 @@ export async function getIncomingConnectionsRequests(
   module?: UniModule
 ): Promise<Connection[]> {
   const response = await axiosInstance.get<ConnectionResponseFormat[]>(
-    CONNECTIONS_PATH,
+    CONNECTIONS_PATH + '/',
     {
       params: {
         type: ConnectionType.INCOMING_REQUEST,
@@ -49,7 +49,7 @@ export async function getOutgoingConnectionsRequests(
   module?: UniModule
 ): Promise<Connection[]> {
   const response = await axiosInstance.get<ConnectionResponseFormat[]>(
-    CONNECTIONS_PATH,
+    CONNECTIONS_PATH + '/',
     {
       params: {
         type: ConnectionType.OUTGOING_REQUEST,
