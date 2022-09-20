@@ -22,19 +22,28 @@ export interface SimpleUserResponseFormat {
   thumbnail_pic: string;
   connection_status: ConnectionStatus;
   user_status: UserStatusResponse;
+  year: number;
+  major: string;
 }
 
-export interface DetailedUserResponseFormat {
-  id: number;
-  name: string;
+export interface DetailedUserResponseFormat extends SimpleUserResponseFormat {
   profile_pic: string;
   nus_email: string;
   telegram_id: string;
   phone_number: string;
+  bio: string;
+}
+
+interface DetailedUserPostRequestDataFormat {
+  id: number;
+  name: string;
+  connection_status: ConnectionStatus;
   year: number;
   major: string;
+  nus_email: string;
+  telegram_id: string;
+  phone_number: string;
   bio: string;
-  connection_status: ConnectionStatus;
 }
 
 export interface ConnectionResponseFormat {
@@ -46,6 +55,7 @@ export interface ConnectionResponseFormat {
 export interface ModuleResponseFormat {
   title: string;
   module_code: string;
+  is_enrolled: boolean;
 }
 
 export function responseToSimpleUser(data: SimpleUserResponseFormat): User {
@@ -55,19 +65,10 @@ export function responseToSimpleUser(data: SimpleUserResponseFormat): User {
     thumbnailPic: data.thumbnail_pic,
     connectionStatus: data.connection_status,
     userStatus: responseToUserStatus(data.user_status),
+    matriculationYear: String(data.year),
+    universityCourse: data.major,
   };
   return newUser;
-}
-
-export function simpleUserToResponse(user: User): SimpleUserResponseFormat {
-  const response: SimpleUserResponseFormat = {
-    id: Number(user.id),
-    name: user.name,
-    thumbnail_pic: user.thumbnailPic ? user.thumbnailPic : '',
-    user_status: userStatusToResponse(user.userStatus),
-    connection_status: user.connectionStatus,
-  };
-  return response;
 }
 
 export function responseToDetailedUser(
@@ -92,8 +93,8 @@ export function responseToDetailedUser(
 
 export function detailedUserToResponse(
   user: DetailedUser
-): DetailedUserResponseFormat {
-  const userResponse: DetailedUserResponseFormat = {
+): DetailedUserPostRequestDataFormat {
+  const userRequestData: DetailedUserPostRequestDataFormat = {
     id: Number(user.id),
     name: user.name,
     nus_email: user.contactDetails.email,
@@ -106,10 +107,9 @@ export function detailedUserToResponse(
     year: Number(user.matriculationYear),
     major: user.universityCourse,
     bio: user.bio,
-    profile_pic: user.profilePic ? user.profilePic : '',
     connection_status: user.connectionStatus,
   };
-  return userResponse;
+  return userRequestData;
 }
 
 export function responseToConnection(
@@ -125,55 +125,23 @@ export function responseToConnection(
   return newConnection;
 }
 
-export function connectionToResponse(
-  connection: Connection
-): ConnectionResponseFormat {
-  const userResponse = simpleUserToResponse(connection.otherUser);
-  const moduleResponse = moduleToResponse(connection.uniModule);
-  const response: ConnectionResponseFormat = {
-    id: Number(connection.id),
-    other_user: userResponse,
-    module: moduleResponse,
-  };
-  return response;
-}
-
 export function responseToModule(data: ModuleResponseFormat): UniModule {
   const newModule: UniModule = {
     code: data.module_code,
     name: data.title,
+    isEnrolled: data.is_enrolled,
   };
   return newModule;
-}
-
-export function moduleToResponse(module: UniModule): ModuleResponseFormat {
-  const moduleResponse: ModuleResponseFormat = {
-    title: module.name,
-    module_code: module.code,
-  };
-  return moduleResponse;
 }
 
 export function responseToUserStatus(
   data: UserStatusResponse
 ): UserStatus | undefined {
-  if (data == UserStatusResponse.NO_STATUS) {
+  if (data === UserStatusResponse.NO_STATUS) {
     return undefined;
-  } else if (data == UserStatusResponse.LOOKING_FOR_A_FRIEND) {
+  } else if (data === UserStatusResponse.LOOKING_FOR_A_FRIEND) {
     return UserStatus.LOOKING_FOR_A_FRIEND;
   } else {
     return UserStatus.WILLING_TO_HELP;
-  }
-}
-
-export function userStatusToResponse(
-  userStatus: UserStatus | undefined
-): UserStatusResponse {
-  if (userStatus == undefined) {
-    return UserStatusResponse.NO_STATUS;
-  } else if (userStatus == UserStatus.LOOKING_FOR_A_FRIEND) {
-    return UserStatusResponse.LOOKING_FOR_A_FRIEND;
-  } else {
-    return UserStatusResponse.WILLING_TO_HELP;
   }
 }

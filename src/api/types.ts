@@ -36,7 +36,7 @@ export interface User {
   name: string;
   // link to thumbnail image for this user
   thumbnailPic?: string;
-  matriculationYear: number;
+  matriculationYear: string;
   connectionStatus: ConnectionStatus;
   // course they are in
   universityCourse: string;

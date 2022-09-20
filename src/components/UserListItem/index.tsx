@@ -1,6 +1,5 @@
 import {
   IonAvatar,
-  IonBackButton,
   IonButton,
   IonButtons,
   IonHeader,
@@ -9,7 +8,6 @@ import {
   IonLabel,
   IonLoading,
   IonModal,
-  IonPage,
   IonToolbar,
 } from '@ionic/react';
 import { checkmarkCircle, hourglass } from 'ionicons/icons';
@@ -125,10 +123,7 @@ export default function UserListItem({ user }: UserListItemProps) {
         <IonHeader>
           <IonToolbar>
             <IonButtons>
-              <IonButton
-                slot="start"
-                onClick={() => setIsModalOpen(false)}
-              >
+              <IonButton slot="start" onClick={() => setIsModalOpen(false)}>
                 Back
               </IonButton>
             </IonButtons>
