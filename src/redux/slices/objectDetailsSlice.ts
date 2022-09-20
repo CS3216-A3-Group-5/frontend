@@ -3,18 +3,18 @@
  * There is a limit to how many of each type of object can be stored, the implementation is done using an LRU.
  */
 
-const MAX_STORABLE_MODULES = 20;
-const MAX_STORABLE_USERS = 100;
-
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { getStudentsOfModule } from '../../api/modules';
-import { DetailedUser, UniModule, User } from '../../api/types';
-import { getUser } from '../../api/users';
+import { DetailedUser, User } from '../../api/types';
 import { LRUMap } from 'lru_map';
 import { RootState } from '../store';
 import axios from 'axios';
+import { getDetailedUser } from '../../api/users';
+
+const MAX_STORABLE_MODULES = 20;
+const MAX_STORABLE_USERS = 100;
 
 export enum DataRetrievalErrorType {
   NONE,
@@ -111,7 +111,7 @@ export const getUserDetails = createAsyncThunk<
   { state: RootState }
 >('objectDetails/getUserDetails', async (id, thunkApi) => {
   try {
-    const responseData = await getUser(id);
+    const responseData = await getDetailedUser(id);
     return { errorType: DataRetrievalErrorType.NONE, data: responseData };
   } catch (error) {
     usersLRU = new LRUMap<string, DetailedUser>(

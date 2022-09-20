@@ -55,7 +55,7 @@ export async function updateSelfDetailedUser(user: DetailedUser) {
  * Get all modules user (self) is in
  */
 export async function getModulesOfUser(
-  search_term: string
+  search_term?: string
 ): Promise<UniModule[]> {
   const response = await axiosInstance.get<ModuleResponseFormat[]>(
     GET_MODULES_OF_STUDENT_PATH,
@@ -66,6 +66,7 @@ export async function getModulesOfUser(
       },
     }
   );
+
   const modules = response.data.map((moduleResponse) =>
     responseToModule(moduleResponse)
   );
