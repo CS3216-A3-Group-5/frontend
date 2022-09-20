@@ -7,11 +7,9 @@ import {
   IonPage,
   IonSearchbar,
   IonTitle,
-  IonToolbar,
 } from '@ionic/react';
 import { useLayoutEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
-import { getModule } from '../../../api/modules';
 import { UniModule } from '../../../api/types';
 import AppHeader from '../../../components/AppHeader';
 import UserListItem from '../../../components/UserListItem';
@@ -37,13 +35,8 @@ export default function ModuleView({
       <IonPage>
         <AppHeader />
         <IonContent fullscreen>
-          <IonToolbar>
-            <IonTitle>
-              <h1>{uniModule.code}</h1>
-              <h4>{uniModule.name}</h4>
-            </IonTitle>
-            <IonTitle></IonTitle>
-          </IonToolbar>
+          <h1 className="ion-padding-start">{uniModule.code}</h1>
+          <h4 className="ion-padding-start">{uniModule.name}</h4>
           <IonListHeader>
             <IonLabel>
               <h1>Students</h1>

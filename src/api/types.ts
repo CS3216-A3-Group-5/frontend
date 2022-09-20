@@ -36,7 +36,10 @@ export interface User {
   name: string;
   // link to thumbnail image for this user
   thumbnailPic?: string;
+  matriculationYear: number;
   connectionStatus: ConnectionStatus;
+  // course they are in
+  universityCourse: string;
   // the status of this user in the mod
   userStatus?: UserStatus;
 }
@@ -48,10 +51,6 @@ export interface DetailedUser extends User {
   // link to full profile pic for this user
   profilePic?: string;
   contactDetails: ContactDetails;
-  // year that this user matriculated into NUS
-  matriculationYear: string;
-  // course they are in
-  universityCourse: string;
   // short writeup about user
   bio: string;
 }
@@ -63,6 +62,7 @@ export interface UniModule {
   // code guaranteed to be unique for each module
   code: string;
   name: string;
+  isEnrolled: boolean; //true if user is enrolled in this mod
   // optional since sometimes we may want the module simple details without enrolled students
   enrolledStudents?: Array<User>;
 }

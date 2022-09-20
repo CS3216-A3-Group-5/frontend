@@ -48,6 +48,7 @@ import LoginPage from './pages/authentication/login';
 import NonAuthRoute from './util/authentication/NonAuthRoute';
 import RegisterPage from './pages/authentication/register';
 import VerifyPage from './pages/authentication/verify';
+import EnrolledModuleView from './pages/home/EnrolledModuleView';
 
 setupIonicReact();
 
@@ -82,7 +83,7 @@ export default function App() {
               </PrivateRoute>
               <PrivateRoute
                 path="/home/modules/:moduleCode"
-                component={ModuleView}
+                component={EnrolledModuleView}
               />
               <PrivateRoute exact path="/modules">
                 <ModulesPage />

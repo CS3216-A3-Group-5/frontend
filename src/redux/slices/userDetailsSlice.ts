@@ -10,7 +10,7 @@ const initialUser: DetailedUser = {
     telegramHandle: '',
     phoneNumber: '',
   },
-  matriculationYear: '',
+  matriculationYear: 0,
   universityCourse: '',
   bio: '',
   id: '',

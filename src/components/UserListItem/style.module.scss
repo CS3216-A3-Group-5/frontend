@@ -1,0 +1,15 @@
+.name-label-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 48px;
+  height: auto;
+}
+
+.connection-status-icon {
+  font-size: 24px;
+}

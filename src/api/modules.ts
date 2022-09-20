@@ -1,19 +1,12 @@
 /**
  * API call handlers for modules.
  */
+import axiosInstance from '.';
+import { getPathForGetListOfUsersForModule } from './constants';
+import { User } from './types';
 
-import { sampleModuleData } from './sampleData';
-import { UniModule } from './types';
 
-/**
- * Returns the full Module object given module code.
- */
-export function getModule(moduleCode: string): UniModule {
-  //TODO: make actual api call, now is just sample data
-  for (const module of sampleModuleData) {
-    if (module.code === moduleCode) {
-      return module;
-    }
-  }
-  throw Error('GET module: Module with given module code does not exist.');
+export async function getStudentsOfModule(moduleCode: string) {
+  const response = await axiosInstance.get<Array<User>>(getPathForGetListOfUsersForModule(moduleCode));
+  return response.data;
 }

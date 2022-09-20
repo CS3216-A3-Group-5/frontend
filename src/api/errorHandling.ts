@@ -25,6 +25,7 @@ export class ApiRequestError extends Error {
   }
 }
 
+
 export function useApiRequestErrorHandler() {
   const history = useHistory();
   const auth = useAuth();
