@@ -7,6 +7,7 @@ import { AuthenticationResponse } from '../../pages/authentication/constants';
 const initialState = {
   id: '',
   email: '',
+  isInProcessOfVerifyingEmail: false,
 };
 
 const UserSlice = createSlice({
@@ -19,26 +20,30 @@ const UserSlice = createSlice({
     setId: (state, action: PayloadAction<string>) => {
       state.id = action.payload;
     },
+    setIsInProcessOfVerifyingEmail: (state, action: PayloadAction<boolean>) => {
+      state.isInProcessOfVerifyingEmail = action.payload;
+    },
   },
 });
 
+export const submitRegisterForm = createAsyncThunk<
+  AuthenticationResponse,
+  UserLoginDetails
+>('user/submitRegisterForm', async (userLoginDetails, thunkApi) => {
+  const dispatch = thunkApi.dispatch;
+  const responseData = await registerUser(userLoginDetails);
+  dispatch(setEmail(userLoginDetails.nus_email));
+  return responseData;
+});
 
-export const submitRegisterForm = createAsyncThunk<AuthenticationResponse, UserLoginDetails>(
-  'user/submitRegisterForm',
-  async (userLoginDetails, thunkApi) => {
-    const dispatch = thunkApi.dispatch;
-    const responseData = await registerUser(userLoginDetails);
-    dispatch(setEmail(userLoginDetails.nus_email));
-    return responseData;
-  }
-);
-
-export const { setEmail, setId } = UserSlice.actions;
+export const { setEmail, setId, setIsInProcessOfVerifyingEmail } =
+  UserSlice.actions;
 
 // set up persistence, uses local storage to persist this reducer
 const userPersistConfig = {
   key: 'user',
   storage,
+  blacklist: ['isInProcessOfVerifyingEmail'],
 };
 
 const persistedUserReducer = persistReducer(

@@ -9,7 +9,10 @@ import InputFormCard, {
   InputFormCardField,
 } from '../../../components/InputFormCard';
 import { useAppDispatch } from '../../../redux/hooks';
-import { setEmail } from '../../../redux/slices/userSlice';
+import {
+  setEmail,
+  setIsInProcessOfVerifyingEmail,
+} from '../../../redux/slices/userSlice';
 import { VERIFY_EMAIL } from '../../../routes';
 import { isValidEmail } from '../../../util/authentication';
 import useErrorToast from '../../../util/hooks/useErrorToast';
@@ -104,6 +107,7 @@ const RegisterPage: React.FC = () => {
           presentInfoToast(
             'One-time passcode sent to ' + registerDetails.nus_email
           );
+          dispatch(setIsInProcessOfVerifyingEmail(true));
           history.push(VERIFY_EMAIL);
         })
         .catch((error) => {

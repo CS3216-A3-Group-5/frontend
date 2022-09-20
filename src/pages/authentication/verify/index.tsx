@@ -1,18 +1,16 @@
 import { IonContent, IonPage } from '@ionic/react';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import {
-  resendOtp,
-  verifyEmail,
-} from '../../../api/authentication';
+import { resendOtp, verifyEmail } from '../../../api/authentication';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import AppHeader from '../../../components/AppHeader';
 import InputFormCard, {
   InputFormCardField,
 } from '../../../components/InputFormCard';
 import { APP_NAME } from '../../../constants';
-import { useAppSelector } from '../../../redux/hooks';
-import { HOME } from '../../../routes';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { setIsInProcessOfVerifyingEmail } from '../../../redux/slices/userSlice';
+import { HOME, REGISTER } from '../../../routes';
 import useErrorToast from '../../../util/hooks/useErrorToast';
 import useInfoToast from '../../../util/hooks/useInfoToast';
 import { ERROR_FIELD_NAME } from '../constants';
@@ -21,14 +19,27 @@ const OTP_LENGTH = 6;
 
 const VerifyPage: React.FC = () => {
   const history = useHistory();
+  const dispatch = useAppDispatch();
   const email = useAppSelector((state) => state.user.email);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const isInProcessOfVerifyingEmail = useAppSelector(
+    (state) => state.user.isInProcessOfVerifyingEmail
+  );
   const handleApiError = useApiRequestErrorHandler();
   const presentInfoToast = useInfoToast();
   const createErrorToast = useErrorToast();
   const [otp, setOtp] = useState<string>('');
   const [fieldErrorMessage, setFieldErrorMessage] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+
+  /**
+   * Check before paint if we didnt come from a register page.
+   */
+  useLayoutEffect(() => {
+    if (!isInProcessOfVerifyingEmail) {
+      history.push(REGISTER);
+    }
+  }, []);
 
   function submitOtp() {
     let haveError = false;
@@ -55,6 +66,7 @@ const VerifyPage: React.FC = () => {
           presentInfoToast(
             'One-time passcode verified. Enjoy using ' + APP_NAME + '!'
           );
+          dispatch(setIsInProcessOfVerifyingEmail(false));
           history.push(HOME);
         })
         .catch((error) => {
@@ -65,7 +77,7 @@ const VerifyPage: React.FC = () => {
         });
     }
   }
-  
+
   function submitResendOtpRequest() {
     setIsLoading(true);
     resendOtp(email)
@@ -101,7 +113,6 @@ const VerifyPage: React.FC = () => {
       title: 'Resend',
       color: 'tertiary',
       onClick: submitResendOtpRequest,
-
     },
     {
       title: 'Submit',
