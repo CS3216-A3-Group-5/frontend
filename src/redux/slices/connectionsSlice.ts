@@ -12,15 +12,16 @@ import {
 } from '../../api/connections';
 import { Connection } from '../../api/types';
 
-const initialConnections: Connection[] = [];
-const initialIncoming: Connection[] = [];
-const initialOutgoing: Connection[] = [];
-
+interface ConnectionState {
+  connections: Connection[];
+  incoming: Connection[];
+  outgoing: Connection[];
+}
 const initialState = {
-  connections: initialConnections,
-  incoming: initialIncoming,
-  outgoing: initialOutgoing,
-};
+  connections: [],
+  incoming: [],
+  outgoing: [],
+} as ConnectionState;
 
 const ConnectionsSlice = createSlice({
   name: 'userDetails',
@@ -37,23 +38,20 @@ const ConnectionsSlice = createSlice({
       state.outgoing = action.payload;
     });
     builder.addCase(acceptIncoming.fulfilled, (state, action) => {
-      const index = state.incoming.indexOf(action.meta.arg);
-      if (index !== -1) {
-        state.connections.push(state.incoming[index]);
-        state.incoming.splice(index, 1);
-      }
+      state.connections.push(action.meta.arg);
+      state.incoming = state.incoming.filter(
+        ({ id }) => id !== action.meta.arg.id
+      );
     });
     builder.addCase(rejectIncoming.fulfilled, (state, action) => {
-      const index = state.incoming.indexOf(action.meta.arg);
-      if (index !== -1) {
-        state.incoming.splice(index, 1);
-      }
+      state.incoming = state.incoming.filter(
+        ({ id }) => id !== action.meta.arg.id
+      );
     });
     builder.addCase(cancelOutgoing.fulfilled, (state, action) => {
-      const index = state.outgoing.indexOf(action.meta.arg);
-      if (index !== -1) {
-        state.outgoing.splice(index, 1);
-      }
+      state.outgoing = state.outgoing.filter(
+        ({ id }) => id !== action.meta.arg.id
+      );
     });
     builder.addCase(createConnection.fulfilled, (state, action) => {
       state.outgoing.push(action.payload);

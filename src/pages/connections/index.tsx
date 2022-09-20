@@ -3,13 +3,12 @@ import {
   IonLabel,
   IonList,
   IonListHeader,
+  IonLoading,
   IonPage,
   IonSearchbar,
   IonToolbar,
 } from '@ionic/react';
 import { useState, useEffect } from 'react';
-
-
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import { ConnectionType } from '../../api/types';
 import AppHeader from '../../components/AppHeader';
@@ -40,32 +39,15 @@ export default function ConnectionsPage() {
   useEffect(() => {
     setIsLoading(true);
     Promise.all([
-      dispatch(getIncoming()).catch((error) => {
+      dispatch(getIncoming()),
+      dispatch(getOutgoing()),
+      dispatch(getConnections()),
+    ])
+      .catch((error) => {
         presentErrorToast(handleApiRequestError(error));
-      }),
-      dispatch(getOutgoing()).catch((error) => {
-        presentErrorToast(handleApiRequestError(error));
-      }),
-      dispatch(getConnections()).catch((error) => {
-        presentErrorToast(handleApiRequestError(error));
-      }),
-    ]).finally(() => setIsLoading(false));
+      })
+      .finally(() => setIsLoading(false));
   }, []);
-
-  if (isLoading) {
-    return (
-      <IonPage>
-        <AppHeader>
-          <IonToolbar>
-            <IonSearchbar />
-          </IonToolbar>
-        </AppHeader>
-        <IonContent fullscreen>
-          <h1>Loading...</h1>
-        </IonContent>
-      </IonPage>
-    );
-  }
 
   return (
     <IonPage>
@@ -75,11 +57,13 @@ export default function ConnectionsPage() {
         </IonToolbar>
       </AppHeader>
       <IonContent fullscreen>
-        <IonListHeader>
-          <IonLabel>
-            <h1>Incoming Requests</h1>
-          </IonLabel>
-        </IonListHeader>
+        {incomingRequests.length > 0 && (
+          <IonListHeader>
+            <IonLabel>
+              <h1>Incoming Requests</h1>
+            </IonLabel>
+          </IonListHeader>
+        )}
         <IonList className="ion-no-padding">
           {incomingRequests
             ? incomingRequests.map((request) => (
@@ -91,11 +75,13 @@ export default function ConnectionsPage() {
               ))
             : null}
         </IonList>
-        <IonListHeader>
-          <IonLabel>
-            <h1>Outgoing Requests</h1>
-          </IonLabel>
-        </IonListHeader>
+        {outgoingRequests.length > 0 && (
+          <IonListHeader>
+            <IonLabel>
+              <h1>Outgoing Requests</h1>
+            </IonLabel>
+          </IonListHeader>
+        )}
         <IonList className="ion-no-padding">
           {outgoingRequests
             ? outgoingRequests.map((request) => (
@@ -107,11 +93,13 @@ export default function ConnectionsPage() {
               ))
             : null}
         </IonList>
-        <IonListHeader>
-          <IonLabel>
-            <h1>Connections</h1>
-          </IonLabel>
-        </IonListHeader>
+        {connections.length > 0 && (
+          <IonListHeader>
+            <IonLabel>
+              <h1>Connections</h1>
+            </IonLabel>
+          </IonListHeader>
+        )}
         <IonList className="ion-no-padding">
           {connections
             ? connections.map((request) => (
@@ -123,6 +111,7 @@ export default function ConnectionsPage() {
               ))
             : null}
         </IonList>
+        <IonLoading isOpen={isLoading ? true : false} />
       </IonContent>
     </IonPage>
   );
