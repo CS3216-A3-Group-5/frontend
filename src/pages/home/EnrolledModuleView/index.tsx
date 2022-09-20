@@ -1,19 +1,16 @@
 import {
   IonContent,
-  IonHeader,
   IonLabel,
   IonList,
   IonListHeader,
   IonLoading,
   IonPage,
   IonSearchbar,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/react';
 import { useLayoutEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
-import { UniModule, User } from '../../../api/types';
+import { User } from '../../../api/types';
 import AppHeader from '../../../components/AppHeader';
 import UserListItem from '../../../components/UserListItem';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
@@ -77,7 +74,7 @@ export default function EnrolledModuleView({
         <IonList className="ion-no-padding">
           {students
             ? students.map((user) => (
-                <UserListItem user={user} key={user.id} />
+                <UserListItem user={user} key={user.id} module={module.code} />
               ))
             : null}
         </IonList>
