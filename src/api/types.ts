@@ -5,9 +5,9 @@ export enum ConnectionStatus {
 }
 
 export enum ConnectionType {
-  CONNECTED = 0,
-  INCOMING_REQUEST = 1,
-  OUTGOING_REQUEST = 2,
+  INCOMING_REQUEST = 0,
+  OUTGOING_REQUEST = 1,
+  CONNECTED = 2,
 }
 
 /**
