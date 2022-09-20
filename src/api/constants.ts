@@ -17,7 +17,7 @@ export function getPathForGetUserDetails(userId: string) {
 }
 export const OWN_USER_DETAILS_PATH = '/user';
 export const ENROLL_MODULE_PATH = '/user/modules/enroll';
-export const CONNECTIONS_PATH = '/user/connections';
+export const CONNECTIONS_PATH = '/user/connections/';
 export function getPathForSetModuleStatusForUser(moduleCode: string) {
   return '/user/status/' + moduleCode;
 }
