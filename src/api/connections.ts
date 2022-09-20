@@ -7,7 +7,7 @@ import { CONNECTIONS_PATH } from './constants';
 import { ConnectionResponseFormat, responseToConnection } from './formats';
 import { Connection, ConnectionType, UniModule } from './types';
 
-export async function getConnections(
+export async function getConnectedConnections(
   module?: UniModule
 ): Promise<Connection[]> {
   const response = await axiosInstance.get<ConnectionResponseFormat[]>(
@@ -88,9 +88,13 @@ export async function cancelOutgoingRequest(connection: Connection) {
 export async function createConnectionRequest(
   otherUserId: string,
   module_code: string
-) {
-  await axiosInstance.post<Connection[]>(CONNECTIONS_PATH, {
-    other_user: Number(otherUserId),
-    module_code: module_code,
-  });
+): Promise<Connection> {
+  const response = await axiosInstance.post<ConnectionResponseFormat>(
+    CONNECTIONS_PATH,
+    {
+      other_user: Number(otherUserId),
+      module_code: module_code,
+    }
+  );
+  return responseToConnection(response.data);
 }

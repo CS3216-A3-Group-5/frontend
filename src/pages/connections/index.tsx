@@ -8,53 +8,65 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { useState, useEffect } from 'react';
-import {
-  getConnections,
-  getIncomingConnectionsRequests,
-  getOutgoingConnectionsRequests,
-} from '../../api/connections';
+
+
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
-import { Connection, ConnectionType } from '../../api/types';
+import { ConnectionType } from '../../api/types';
 import AppHeader from '../../components/AppHeader';
 import ConnectionListItem from '../../components/ConnectionListItem/ConnectionListItem';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  getConnections,
+  getIncoming,
+  getOutgoing,
+} from '../../redux/slices/connectionsSlice';
+import useErrorToast from '../../util/hooks/useErrorToast';
 
 export default function ConnectionsPage() {
-  const [incomingRequests, setIncomingRequests] = useState<Connection[]>();
-  const [outgoingRequests, setOutgoingRequests] = useState<Connection[]>();
-  const [connections, setConnections] = useState<Connection[]>();
+  const incomingRequests = useAppSelector(
+    (state) => state.connections.incoming
+  );
+  const outgoingRequests = useAppSelector(
+    (state) => state.connections.outgoing
+  );
+  const connections = useAppSelector((state) => state.connections.connections);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const presentErrorToast = useErrorToast();
   const handleApiRequestError = useApiRequestErrorHandler();
+  const dispatch = useAppDispatch();
   //TODO: add filtering and sorting
 
   // shoot api query before painting to screen
   useEffect(() => {
-    getIncomingConnectionsRequests().then(
-      (incoming) => {
-        console.log(incoming);
-        setIncomingRequests(incoming);
-      },
-      (error) => {
-        handleApiRequestError(error);
-      }
-    );
-    getOutgoingConnectionsRequests().then(
-      (ougoing) => {
-        console.log(ougoing);
-        setOutgoingRequests(ougoing);
-      },
-      (error) => {
-        handleApiRequestError(error);
-      }
-    );
-    getConnections().then(
-      (connections) => {
-        console.log(connections);
-        setConnections(connections);
-      },
-      (error) => {
-        handleApiRequestError(error);
-      }
-    );
+    setIsLoading(true);
+    Promise.all([
+      dispatch(getIncoming()).catch((error) => {
+        presentErrorToast(handleApiRequestError(error));
+      }),
+      dispatch(getOutgoing()).catch((error) => {
+        presentErrorToast(handleApiRequestError(error));
+      }),
+      dispatch(getConnections()).catch((error) => {
+        presentErrorToast(handleApiRequestError(error));
+      }),
+    ]).finally(() => setIsLoading(false));
   }, []);
+
+  if (isLoading) {
+    return (
+      <IonPage>
+        <AppHeader>
+          <IonToolbar>
+            <IonSearchbar />
+          </IonToolbar>
+        </AppHeader>
+        <IonContent fullscreen>
+          <h1>Loading...</h1>
+        </IonContent>
+      </IonPage>
+    );
+  }
+
   return (
     <IonPage>
       <AppHeader>
