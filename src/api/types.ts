@@ -5,9 +5,9 @@ export enum ConnectionStatus {
 }
 
 export enum ConnectionType {
-  CONNECTED = 0,
-  INCOMING_REQUEST = 1,
-  OUTGOING_REQUEST = 2,
+  INCOMING_REQUEST = 0,
+  OUTGOING_REQUEST = 1,
+  CONNECTED = 2,
 }
 
 /**
@@ -72,5 +72,4 @@ export interface Connection {
   // other user thats associated with this connction
   otherUser: User;
   uniModule: UniModule;
-  dateTime: Date;
 }

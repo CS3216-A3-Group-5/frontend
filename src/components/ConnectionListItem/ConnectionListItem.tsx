@@ -14,9 +14,14 @@ function ConnectionAction({
 }) {
   if (connectionType === ConnectionType.CONNECTED) {
     return <IonIcon icon={checkmarkCircle} />;
-  } else if (connectionType === ConnectionType.INCOMING_REQUEST) {
-    return null;
-  } else if (connectionType === ConnectionType.OUTGOING_REQUEST) {
+  } else if (connectionType == ConnectionType.INCOMING_REQUEST) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <IonButton color="success">Accept</IonButton>
+        <IonButton color="danger">Reject</IonButton>
+      </div>
+    );
+  } else if (connectionType == ConnectionType.OUTGOING_REQUEST) {
     return <IonButton color="danger">Cancel</IonButton>;
   } else {
     return null;

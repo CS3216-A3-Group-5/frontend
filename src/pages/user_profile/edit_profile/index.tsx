@@ -8,10 +8,7 @@ import InputFormCard, {
   InputFormCardField,
 } from '../../../components/InputFormCard';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import {
-  setUser,
-  updateSelfUserDetails,
-} from '../../../redux/slices/userDetailsSlice';
+import { updateSelfUserDetails } from '../../../redux/slices/userDetailsSlice';
 import useErrorToast from '../../../util/hooks/useErrorToast';
 import styles from './styles.module.scss';
 

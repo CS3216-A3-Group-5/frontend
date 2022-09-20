@@ -2,73 +2,92 @@
  * API call handlers for all user specific information.
  */
 
-import { _ActionCreatorWithPreparedPayload } from '@reduxjs/toolkit/dist/createAction';
-import { responseEncoding } from 'axios';
 import axiosInstance from '.';
 import {
+  ENROLL_MODULE_PATH,
   getPathForGetUserDetails,
   GET_MODULES_OF_STUDENT_PATH,
   OWN_USER_DETAILS_PATH,
 } from './constants';
+import {
+  responseToDetailedUser,
+  detailedUserToResponse,
+  DetailedUserResponseFormat,
+  ModuleResponseFormat,
+  responseToModule,
+} from './formats';
 import { DetailedUser, UniModule } from './types';
+
+/**
+ * Returns detailed user object of user with provided userId
+ */
+export async function getDetailedUser(userId: string): Promise<DetailedUser> {
+  const pathForUserDetails = getPathForGetUserDetails(userId);
+  const response = await axiosInstance.get<DetailedUserResponseFormat>(
+    pathForUserDetails
+  );
+  return responseToDetailedUser(response.data);
+}
 
 /**
  * Returns detailed user object of self
  */
-export async function getSelfUser(): Promise<DetailedUser> {
-  const response = await axiosInstance.get<DetailedUser>(OWN_USER_DETAILS_PATH);
-  return response.data;
+export async function getSelfDetailedUser(): Promise<DetailedUser> {
+  const response = await axiosInstance.get<DetailedUserResponseFormat>(
+    OWN_USER_DETAILS_PATH
+  );
+  return responseToDetailedUser(response.data);
 }
 
 /**
  * Updates user profile of self
  */
-export async function updateSelfUser(user: DetailedUser) {
-  const response = await axiosInstance.put<DetailedUser>(
+export async function updateSelfDetailedUser(user: DetailedUser) {
+  const userResponse = detailedUserToResponse(user);
+  const response = await axiosInstance.put<DetailedUserResponseFormat>(
     OWN_USER_DETAILS_PATH,
-    user
+    userResponse
   );
-  //TODO: remove console.log
   console.log(response);
 }
 
-export async function getUser(id: string) {
-  const response = await axiosInstance.get<DetailedUser>(
-    getPathForGetUserDetails(id)
+/**
+ * Get all modules user (self) is in
+ */
+export async function getModulesOfUser(
+  search_term: string
+): Promise<UniModule[]> {
+  const response = await axiosInstance.get<ModuleResponseFormat[]>(
+    GET_MODULES_OF_STUDENT_PATH,
+    {
+      params: {
+        q: search_term,
+        page: 1,
+      },
+    }
   );
-  //TODO: change when the converter done
-  return {
-    id: 3,
-    name: 'Timmy Tan',
-
-    contactDetails: {
-      telegramHandle: 'timmytim',
-      phoneNumber: '91234567',
-      email: 'timmy@u.nus.edu',
-    },
-
-    matriculationYear: 2022,
-    universityCourse: 'Computer Science',
-    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    userStatus: 0,
-    connectionStatus: 0,
-  };
-  //return response.data;
+  const modules = response.data.map((moduleResponse) =>
+    responseToModule(moduleResponse)
+  );
+  return modules;
 }
 
 /**
- * Returns list of modules that a student is in.
+ * Enroll self in a module
  */
-export async function getModulesOfUser() {
-  const response = await axiosInstance.get<
-    Array<{ title: string; module_code: string; is_enrolled: boolean }>
-  >(GET_MODULES_OF_STUDENT_PATH);
-  return response.data.map(
-    (module) =>
-      ({
-        code: module.module_code,
-        name: module.title,
-        isEnrolled: module.is_enrolled,
-      } as UniModule)
-  );
+export async function enrollModule(moduleCode: string) {
+  await axiosInstance.post(ENROLL_MODULE_PATH, {
+    module_code: moduleCode,
+  });
+}
+
+/**
+ * Unenroll self from a module
+ */
+export async function unenrollModule(moduleCode: string) {
+  await axiosInstance.delete(ENROLL_MODULE_PATH, {
+    data: {
+      module_code: moduleCode,
+    },
+  });
 }

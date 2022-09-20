@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { DetailedUser } from '../../api/types';
-import { getSelfUser, updateSelfUser } from '../../api/users';
+import { getSelfDetailedUser, updateSelfDetailedUser } from '../../api/users';
 
 const initialUser: DetailedUser = {
   contactDetails: {
@@ -58,7 +58,7 @@ const UserDetailsSlice = createSlice({
 export const getSelfUserDetails = createAsyncThunk<DetailedUser>(
   'userDetails/getUser',
   async (_, __) => {
-    const responseData = await getSelfUser();
+    const responseData = await getSelfDetailedUser();
     return responseData;
   }
 );
@@ -66,7 +66,7 @@ export const getSelfUserDetails = createAsyncThunk<DetailedUser>(
 export const updateSelfUserDetails = createAsyncThunk<void, DetailedUser>(
   'userDetails/updateUser',
   async (user, _) => {
-    await updateSelfUser(user);
+    await updateSelfDetailedUser(user);
   }
 );
 
