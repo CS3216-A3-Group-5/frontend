@@ -20,6 +20,7 @@ export default function EditProfile() {
     NAME = 'Name',
     COURSE = 'Course',
     BIO = 'Bio',
+    MATRICULATION_YEAR = 'Matriculation Year',
     TELEGRAM_HANDLE = 'Telegram (optional)',
     PHONE_NUMBER = 'Phone Number (optional)',
   }
@@ -37,6 +38,7 @@ export default function EditProfile() {
     [EditProfileFormField.NAME]: '',
     [EditProfileFormField.COURSE]: '',
     [EditProfileFormField.BIO]: '',
+    [EditProfileFormField.MATRICULATION_YEAR]: '',
     [EditProfileFormField.TELEGRAM_HANDLE]: '',
     [EditProfileFormField.PHONE_NUMBER]: '',
   });
@@ -67,6 +69,7 @@ export default function EditProfile() {
       [EditProfileFormField.NAME]: '',
       [EditProfileFormField.COURSE]: '',
       [EditProfileFormField.BIO]: '',
+      [EditProfileFormField.MATRICULATION_YEAR]: '',
       [EditProfileFormField.TELEGRAM_HANDLE]: '',
       [EditProfileFormField.PHONE_NUMBER]: '',
     };
@@ -101,6 +104,22 @@ export default function EditProfile() {
       currFieldErrors = {
         ...currFieldErrors,
         [EditProfileFormField.BIO]: 'Please enter your bio.',
+      };
+      haveError = true;
+    }
+    if (!user.matriculationYear) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [EditProfileFormField.MATRICULATION_YEAR]:
+          'Please enter your matriculation year.',
+      };
+      haveError = true;
+    }
+    if (isNaN(Number(user.matriculationYear))) {
+      currFieldErrors = {
+        ...currFieldErrors,
+        [EditProfileFormField.MATRICULATION_YEAR]:
+          'Matriculation year must only contain numerals',
       };
       haveError = true;
     }
@@ -175,6 +194,16 @@ export default function EditProfile() {
         }),
       errorMessage: fieldErrors[EditProfileFormField.BIO],
       multiline: true,
+    },
+    {
+      title: EditProfileFormField.MATRICULATION_YEAR,
+      value: user.matriculationYear,
+      onChange: (value) =>
+        setUserDetails({
+          ...user,
+          matriculationYear: value,
+        }),
+      errorMessage: fieldErrors[EditProfileFormField.MATRICULATION_YEAR],
     },
     {
       title: EditProfileFormField.TELEGRAM_HANDLE,
