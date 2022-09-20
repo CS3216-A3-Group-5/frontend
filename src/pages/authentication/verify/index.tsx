@@ -34,6 +34,7 @@ const VerifyPage: React.FC = () => {
 
   /**
    * Check before paint if we didnt come from a register page.
+   * TODO: check when api is done whether this is needed, as the NonAuthRoute takes care of it.
    */
   useLayoutEffect(() => {
     if (!isInProcessOfVerifyingEmail) {
