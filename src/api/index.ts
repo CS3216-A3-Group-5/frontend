@@ -4,9 +4,8 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import TokenService from '../util/services/tokenService';
 import { REFRESH_TOKEN_PATH } from './constants';
-import { ApiRequestError, ErrorType } from './errorHandling';
 
-const API_BASE_URL = 'https://private-857af0-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
+const API_BASE_URL = 'https://private-26272e-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -42,7 +41,6 @@ axiosInstance.interceptors.response.use(
     return res;
   },
   async (err: Error | AxiosError) => {
-
     if (!axios.isAxiosError(err)) {
       return Promise.reject(err);
     }

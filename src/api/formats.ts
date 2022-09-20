@@ -20,8 +20,8 @@ export interface SimpleUserResponseFormat {
   id: number;
   name: string;
   thumbnail_pic: string;
-  user_status: UserStatusResponse;
   connection_status: ConnectionStatus;
+  user_status: UserStatusResponse;
 }
 
 export interface DetailedUserResponseFormat {
