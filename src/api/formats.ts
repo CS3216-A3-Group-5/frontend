@@ -26,12 +26,18 @@ export interface SimpleUserResponseFormat {
   major: string;
 }
 
-export interface DetailedUserResponseFormat extends SimpleUserResponseFormat {
+export interface DetailedUserResponseFormat {
+  id: number;
+  name: string;
+  thumbnail_pic: string;
+  connection_status: ConnectionStatus;
   profile_pic: string;
   nus_email: string;
   telegram_id: string;
   phone_number: string;
   bio: string;
+  year: number;
+  major: string;
 }
 
 interface DetailedUserPostRequestDataFormat {

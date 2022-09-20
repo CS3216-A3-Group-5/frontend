@@ -26,6 +26,7 @@ import styles from './style.module.scss';
 
 interface UserListItemProps {
   user: User;
+  module?: string; // when viewing this user from a module page
 }
 
 /**
@@ -57,7 +58,7 @@ function renderConnectionStatusIcon(connectionStatus: ConnectionStatus) {
 /**
  * Takes in a User object and creates a user list item for use in lists.
  */
-export default function UserListItem({ user }: UserListItemProps) {
+export default function UserListItem({ user, module }: UserListItemProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<DetailedUser>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -79,7 +80,7 @@ export default function UserListItem({ user }: UserListItemProps) {
           // couldnt get fresh data from server
           presentConnectionIssueToast(returnObject.errorType);
         }
-        setUserDetails(returnObject.data);
+        setUserDetails({ userStatus: user.userStatus, ...returnObject.data });
         setIsModalOpen(true);
       })
       .catch((error) => {
@@ -129,7 +130,7 @@ export default function UserListItem({ user }: UserListItemProps) {
             </IonButtons>
           </IonToolbar>
         </IonHeader>
-        <UserCardItem user={userDetails!} />
+        <UserCardItem user={userDetails!} module={module} />
       </IonModal>
     </div>
   );

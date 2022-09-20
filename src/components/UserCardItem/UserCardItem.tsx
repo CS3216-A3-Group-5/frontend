@@ -6,13 +6,19 @@ import styles from './styles.module.scss';
 
 interface UserCardItemProps {
   user: DetailedUser;
+  module?: string; //when viewing this user from within a module
 }
 
-function UserDetails({ user }: UserCardItemProps) {
+function UserDetails({ user, module }: UserCardItemProps) {
   return (
     <div>
       <h1 className={styles['name']}>{user.name}</h1>
       <h2 className={styles['major']}>Majoring in {user.universityCourse}</h2>
+      {module && (
+        <h3>
+          Status in {module}: {user.userStatus}
+        </h3>
+      )}
     </div>
   );
 }
@@ -20,7 +26,7 @@ function UserDetails({ user }: UserCardItemProps) {
 /**
  * Takes in a User object and creates a user card item for viewing full user details
  */
-export default function UserCardItem({ user }: UserCardItemProps) {
+export default function UserCardItem({ user, module }: UserCardItemProps) {
   const [isDesktop, setDesktop] = useState<boolean>(window.innerWidth >= 500);
   const updateMedia = () => {
     setDesktop(window.innerWidth >= 500);
@@ -46,7 +52,7 @@ export default function UserCardItem({ user }: UserCardItemProps) {
           </IonAvatar>
 
           <div className={styles['user-information']}>
-            {isDesktop && <UserDetails user={user} />}
+            {isDesktop && <UserDetails user={user} module={module} />}
             <div className={styles['contact-information']}>
               <div>
                 <IonIcon icon={mail} />
