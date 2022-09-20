@@ -58,7 +58,7 @@ export async function getModulesOfUser(
   search_term?: string
 ): Promise<UniModule[]> {
   const response = await axiosInstance.get<ModuleResponseFormat[]>(
-    GET_MODULES_OF_STUDENT_PATH + '/',
+    GET_MODULES_OF_STUDENT_PATH,
     {
       params: {
         q: search_term,
