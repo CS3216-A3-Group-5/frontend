@@ -5,7 +5,15 @@
 import axiosInstance from '.';
 import { ConnectionStatus, DetailedUser } from './types';
 
-interface UserResponseFormat {
+interface SimpleUserResponseFormat {
+  id: number;
+  name: string;
+  thumbnail_pic: string | undefined;
+  user_status: UserStatusResponse | undefined;
+  connection_status: ConnectionStatus | undefined;
+}
+
+interface DetailedUserResponseFormat {
   id: number;
   name: string;
   nus_email: string;
@@ -14,6 +22,7 @@ interface UserResponseFormat {
   year: number;
   major: string;
   bio: string;
+  profile_pic: string | undefined;
   user_status: UserStatusResponse | undefined;
   connection_status: ConnectionStatus | undefined;
 }
@@ -28,7 +37,7 @@ enum UserStatusResponse {
  * Returns detailed user object of self
  */
 export async function getSelfUser(): Promise<DetailedUser> {
-  const response = await axiosInstance.get<UserResponseFormat>('/user');
+  const response = await axiosInstance.get<DetailedUserResponseFormat>('/user');
   console.log(response.data);
   const newUser: DetailedUser = {
     contactDetails: {
@@ -51,7 +60,7 @@ export async function getSelfUser(): Promise<DetailedUser> {
  * Updates user profile of self
  */
 export async function updateSelfUser(user: DetailedUser) {
-  const userResponse: UserResponseFormat = {
+  const userResponse: DetailedUserResponseFormat = {
     id: Number(user.id),
     name: user.name,
     nus_email: user.contactDetails.email,
@@ -60,10 +69,11 @@ export async function updateSelfUser(user: DetailedUser) {
     year: Number(user.matriculationYear),
     major: user.universityCourse,
     bio: user.bio,
+    profile_pic: user.profilePic,
     user_status: undefined,
     connection_status: undefined,
   };
-  const response = await axiosInstance.put<UserResponseFormat>(
+  const response = await axiosInstance.put<DetailedUserResponseFormat>(
     '/user',
     userResponse
   );
