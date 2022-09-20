@@ -72,5 +72,4 @@ export interface Connection {
   // other user thats associated with this connction
   otherUser: User;
   uniModule: UniModule;
-  dateTime: Date;
 }

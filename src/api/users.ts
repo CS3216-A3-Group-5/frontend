@@ -3,79 +3,91 @@
  */
 
 import axiosInstance from '.';
-import { ConnectionStatus, DetailedUser } from './types';
+import {
+  ENROLL_MODULE_PATH,
+  getPathForGetUserDetails,
+  GET_MODULES_OF_STUDENT_PATH,
+  OWN_USER_DETAILS_PATH,
+} from './constants';
+import {
+  responseToDetailedUser,
+  detailedUserToResponse,
+  DetailedUserResponseFormat,
+  ModuleResponseFormat,
+  responseToModule,
+} from './formats';
+import { DetailedUser, UniModule } from './types';
 
-interface SimpleUserResponseFormat {
-  id: number;
-  name: string;
-  thumbnail_pic: string | undefined;
-  user_status: UserStatusResponse | undefined;
-  connection_status: ConnectionStatus | undefined;
-}
-
-interface DetailedUserResponseFormat {
-  id: number;
-  name: string;
-  nus_email: string;
-  telegram_id: string | undefined;
-  phone_number: string | undefined;
-  year: number;
-  major: string;
-  bio: string;
-  profile_pic: string | undefined;
-  user_status: UserStatusResponse | undefined;
-  connection_status: ConnectionStatus | undefined;
-}
-
-enum UserStatusResponse {
-  NO_STATUS = 0,
-  LOOKING_FOR_A_FRIEND = 1,
-  WILLING_TO_HELP = 2,
+/**
+ * Returns detailed user object of user with provided userId
+ */
+export async function getDetailedUser(userId: string): Promise<DetailedUser> {
+  const pathForUserDetails = getPathForGetUserDetails(userId);
+  const response = await axiosInstance.get<DetailedUserResponseFormat>(
+    pathForUserDetails
+  );
+  return responseToDetailedUser(response.data);
 }
 
 /**
  * Returns detailed user object of self
  */
-export async function getSelfUser(): Promise<DetailedUser> {
-  const response = await axiosInstance.get<DetailedUserResponseFormat>('/user');
-  console.log(response.data);
-  const newUser: DetailedUser = {
-    contactDetails: {
-      email: response.data.nus_email,
-      telegramHandle: response.data.telegram_id,
-      phoneNumber: response.data.phone_number,
-    },
-    matriculationYear: String(response.data.year),
-    universityCourse: response.data.major,
-    bio: response.data.bio,
-    id: String(response.data.id),
-    name: response.data.name,
-    connectionStatus: 0,
-  };
-  console.log(newUser);
-  return newUser;
+export async function getSelfDetailedUser(): Promise<DetailedUser> {
+  const response = await axiosInstance.get<DetailedUserResponseFormat>(
+    OWN_USER_DETAILS_PATH
+  );
+  return responseToDetailedUser(response.data);
 }
 
 /**
  * Updates user profile of self
  */
-export async function updateSelfUser(user: DetailedUser) {
-  const userResponse: DetailedUserResponseFormat = {
-    id: Number(user.id),
-    name: user.name,
-    nus_email: user.contactDetails.email,
-    telegram_id: user.contactDetails.telegramHandle,
-    phone_number: user.contactDetails.phoneNumber,
-    year: Number(user.matriculationYear),
-    major: user.universityCourse,
-    bio: user.bio,
-    profile_pic: user.profilePic,
-    user_status: undefined,
-    connection_status: undefined,
-  };
+export async function updateSelfDetailedUser(user: DetailedUser) {
+  const userResponse = detailedUserToResponse(user);
   const response = await axiosInstance.put<DetailedUserResponseFormat>(
-    '/user',
+    OWN_USER_DETAILS_PATH,
     userResponse
   );
   console.log(response);
+}
+
+/**
+ * Get all modules user (self) is in
+ */
+export async function getModulesOfUser(
+  search_term: string
+): Promise<UniModule[]> {
+  const response = await axiosInstance.get<ModuleResponseFormat[]>(
+    GET_MODULES_OF_STUDENT_PATH,
+    {
+      params: {
+        q: search_term,
+        page: 1,
+      },
+    }
+  );
+  const modules = response.data.map((moduleResponse) =>
+    responseToModule(moduleResponse)
+  );
+  return modules;
+}
+
+/**
+ * Enroll self in a module
+ */
+export async function enrollModule(moduleCode: string) {
+  await axiosInstance.post(ENROLL_MODULE_PATH, {
+    module_code: moduleCode,
+  });
+}
+
+/**
+ * Unenroll self from a module
+ */
+export async function unenrollModule(moduleCode: string) {
+  await axiosInstance.delete(ENROLL_MODULE_PATH, {
+    data: {
+      module_code: moduleCode,
+    },
+  });
 }
