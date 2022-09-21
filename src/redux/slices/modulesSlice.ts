@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { logEvent } from 'firebase/analytics';
 import { getExploreModulesFromApi } from '../../api/modules';
 import { UniModule } from '../../api/types';
+import { analytics } from '../../firebase';
 import { RootState } from '../store';
 
 interface ModuleState {
@@ -55,6 +57,11 @@ const ModuleSlice = createSlice({
           mods[module.code] = module;
         }
         state.modules = mods;
+        if (action.meta.arg) {
+          logEvent(analytics, 'search', {
+            search_term: action.meta.arg,
+          });
+        }
       }
     );
   },

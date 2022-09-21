@@ -1,4 +1,5 @@
 import { IonContent, IonPage } from '@ionic/react';
+import { logEvent } from 'firebase/analytics';
 import { useLayoutEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { resendOtp, verifyEmail } from '../../../api/authentication';
@@ -8,6 +9,7 @@ import InputFormCard, {
   InputFormCardField,
 } from '../../../components/InputFormCard';
 import { APP_NAME } from '../../../constants';
+import { analytics } from '../../../firebase';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setIsInProcessOfVerifyingEmail } from '../../../redux/slices/userSlice';
 import { HOME, REGISTER } from '../../../routes';
@@ -68,6 +70,7 @@ const VerifyPage: React.FC = () => {
             'One-time passcode verified. Enjoy using ' + APP_NAME + '!'
           );
           dispatch(setIsInProcessOfVerifyingEmail(false));
+          logEvent(analytics, 'sign_up');
           history.push(HOME);
         })
         .catch((error) => {
