@@ -61,46 +61,70 @@ const ConnectionsSlice = createSlice({
 
 export const getConnections = createAsyncThunk<Connection[]>(
   'connections/getConnections',
-  async (_, __) => {
-    const responseData = await getConnectedConnections();
-    return responseData;
+  async (_, thunkApi) => {
+    try {
+      const responseData = await getConnectedConnections();
+      return responseData;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 
 export const getIncoming = createAsyncThunk<Connection[]>(
   'connections/getIncoming',
-  async (_, __) => {
-    const responseData = await getIncomingConnectionsRequests();
-    return responseData;
+  async (_, thunkApi) => {
+    try {
+      const responseData = await getIncomingConnectionsRequests();
+      return responseData;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 
 export const getOutgoing = createAsyncThunk<Connection[]>(
   'connections/getOutgoing',
-  async (_, __) => {
-    const responseData = await getOutgoingConnectionsRequests();
-    return responseData;
+  async (_, thunkApi) => {
+    try {
+      const responseData = await getOutgoingConnectionsRequests();
+      return responseData;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 
 export const acceptIncoming = createAsyncThunk<void, Connection>(
   'connections/acceptIncoming',
-  async (connection, _) => {
-    await acceptIncomingRequest(connection);
+  async (connection, thunkApi) => {
+    try {
+      await acceptIncomingRequest(connection);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 
 export const rejectIncoming = createAsyncThunk<void, Connection>(
   'connections/rejectIncoming',
-  async (connection, _) => {
-    await rejectIncomingRequest(connection);
+  async (connection, thunkApi) => {
+    try {
+      await rejectIncomingRequest(connection);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 
 export const cancelOutgoing = createAsyncThunk<void, Connection>(
   'connections/cancelOutgoing',
-  async (connection, _) => {
-    await cancelOutgoingRequest(connection);
+  async (connection, thunkApi) => {
+    try {
+      await cancelOutgoingRequest(connection);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 
@@ -112,12 +136,16 @@ interface CreateConnectionParameters {
 export const createConnection = createAsyncThunk<
   Connection,
   CreateConnectionParameters
->('connections/createConnection', async (connection, __) => {
-  const response = await createConnectionRequest(
-    connection.otherUserId,
-    connection.module_code
-  );
-  return response;
+>('connections/createConnection', async (connection, thunkApi) => {
+  try {
+    const response = await createConnectionRequest(
+      connection.otherUserId,
+      connection.module_code
+    );
+    return response;
+  } catch (error) {
+    return thunkApi.rejectWithValue(error);
+  }
 });
 
 const connectionsPersistConfig = {
