@@ -4,6 +4,11 @@ import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import { Connection, ConnectionType } from '../../api/types';
 import { useAppDispatch } from '../../redux/hooks';
 import {
+  acceptIncomingInList,
+  cancelOutgoingInList,
+  rejectIncomingInList,
+} from '../../redux/slices/connectionListSlice';
+import {
   acceptIncoming,
   cancelOutgoing,
   rejectIncoming,
@@ -13,32 +18,52 @@ import useErrorToast from '../../util/hooks/useErrorToast';
 interface ConnectionListItemProps {
   connection: Connection;
   connectionType: ConnectionType;
+  inList: boolean;
 }
 
 function ConnectionAction({
   connection,
   connectionType,
+  inList,
 }: ConnectionListItemProps) {
   const dispatch = useAppDispatch();
   const presentErrorToast = useErrorToast();
   const handleApiRequestError = useApiRequestErrorHandler();
 
   function acceptIncomingRequest() {
-    dispatch(acceptIncoming(connection)).catch((error) => {
-      presentErrorToast(handleApiRequestError(error));
-    });
+    if (inList) {
+      dispatch(acceptIncomingInList(connection)).catch((error) => {
+        presentErrorToast(handleApiRequestError(error));
+      });
+    } else {
+      dispatch(acceptIncoming(connection)).catch((error) => {
+        presentErrorToast(handleApiRequestError(error));
+      });
+    }
   }
 
   function rejectIncomingRequest() {
-    dispatch(rejectIncoming(connection)).catch((error) => {
-      presentErrorToast(handleApiRequestError(error));
-    });
+    if (inList) {
+      dispatch(rejectIncomingInList(connection)).catch((error) => {
+        presentErrorToast(handleApiRequestError(error));
+      });
+    } else {
+      dispatch(rejectIncoming(connection)).catch((error) => {
+        presentErrorToast(handleApiRequestError(error));
+      });
+    }
   }
 
   function cancelOutgoingRequest() {
-    dispatch(cancelOutgoing(connection)).catch((error) => {
-      presentErrorToast(handleApiRequestError(error));
-    });
+    if (inList) {
+      dispatch(cancelOutgoingInList(connection)).catch((error) => {
+        presentErrorToast(handleApiRequestError(error));
+      });
+    } else {
+      dispatch(cancelOutgoing(connection)).catch((error) => {
+        presentErrorToast(handleApiRequestError(error));
+      });
+    }
   }
 
   if (connectionType === ConnectionType.CONNECTED) {
@@ -71,6 +96,7 @@ function ConnectionAction({
 export default function ConnectionListItem({
   connection,
   connectionType,
+  inList,
 }: ConnectionListItemProps) {
   return (
     <IonItem className="connection-list-item">
@@ -91,6 +117,7 @@ export default function ConnectionListItem({
       <ConnectionAction
         connection={connection}
         connectionType={connectionType}
+        inList={inList}
       />
     </IonItem>
   );

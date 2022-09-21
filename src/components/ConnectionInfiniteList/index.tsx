@@ -93,7 +93,6 @@ export default function ConnectionInfiniteList({
   }
 
   useLayoutEffect(() => {
-    // get initial page of modules, default is ordered by alphabet from backend
     getInitialConnections();
   }, []);
 
@@ -109,6 +108,7 @@ export default function ConnectionInfiniteList({
               <ConnectionListItem
                 connection={connection}
                 connectionType={connectionType}
+                inList={true}
                 key={connection.id}
               />
             ))}

@@ -1,8 +1,15 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
+import {
+  acceptIncomingRequest,
+  cancelOutgoingRequest,
   getConnectedConnections,
   getIncomingConnectionsRequests,
   getOutgoingConnectionsRequests,
+  rejectIncomingRequest,
 } from '../../api/connections';
 import { Connection, ConnectionType } from '../../api/types';
 import { RootState } from '../store';
@@ -62,6 +69,21 @@ const ConnectionListSlice = createSlice({
         state.connections = newConnections;
       }
     );
+    builder.addCase(acceptIncomingInList.fulfilled, (state, action) => {
+      const newConnections = { ...state.connections };
+      delete newConnections[action.meta.arg.id];
+      state.connections = newConnections;
+    });
+    builder.addCase(rejectIncomingInList.fulfilled, (state, action) => {
+      const newConnections = { ...state.connections };
+      delete newConnections[action.meta.arg.id];
+      state.connections = newConnections;
+    });
+    builder.addCase(cancelOutgoingInList.fulfilled, (state, action) => {
+      const newConnections = { ...state.connections };
+      delete newConnections[action.meta.arg.id];
+      state.connections = newConnections;
+    });
   },
 });
 
@@ -113,6 +135,27 @@ export const getNewPageOfConnections = createAsyncThunk<
   );
   return responseData;
 });
+
+export const acceptIncomingInList = createAsyncThunk<void, Connection>(
+  'connectionList/acceptIncomingInList',
+  async (connection, _) => {
+    await acceptIncomingRequest(connection);
+  }
+);
+
+export const rejectIncomingInList = createAsyncThunk<void, Connection>(
+  'connectionList/rejectIncomingInList',
+  async (connection, _) => {
+    await rejectIncomingRequest(connection);
+  }
+);
+
+export const cancelOutgoingInList = createAsyncThunk<void, Connection>(
+  'connectionList/cancelOutgoingInList',
+  async (connection, _) => {
+    await cancelOutgoingRequest(connection);
+  }
+);
 
 export const { setListType, resetConnections } = ConnectionListSlice.actions;
 

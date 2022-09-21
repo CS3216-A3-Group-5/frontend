@@ -78,6 +78,7 @@ export default function ConnectionsPage() {
                 <ConnectionListItem
                   connection={request}
                   connectionType={ConnectionType.INCOMING_REQUEST}
+                  inList={false}
                   key={request.id}
                 />
               ))
@@ -96,6 +97,7 @@ export default function ConnectionsPage() {
                 <ConnectionListItem
                   connection={request}
                   connectionType={ConnectionType.OUTGOING_REQUEST}
+                  inList={false}
                   key={request.id}
                 />
               ))
@@ -114,6 +116,7 @@ export default function ConnectionsPage() {
                 <ConnectionListItem
                   connection={request}
                   connectionType={ConnectionType.CONNECTED}
+                  inList={false}
                   key={request.id}
                 />
               ))
