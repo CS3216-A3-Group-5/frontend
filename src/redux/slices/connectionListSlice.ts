@@ -1,8 +1,4 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  PayloadAction,
-} from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   acceptIncomingRequest,
   cancelOutgoingRequest,
@@ -112,12 +108,16 @@ export const getPageOfConnectionsWithNewKeyword = createAsyncThunk<
       ConnectionListSlice.actions.setKeyword(keyword ? keyword : '')
     );
     thunkApi.dispatch(ConnectionListSlice.actions.setPage(1));
-    const responseData = await getConnectionsOfType(
-      thunkApi.getState().connectionList.listType,
-      keyword,
-      1
-    );
-    return responseData;
+    try {
+      const responseData = await getConnectionsOfType(
+        thunkApi.getState().connectionList.listType,
+        keyword,
+        1
+      );
+      return responseData;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 
@@ -128,32 +128,48 @@ export const getNewPageOfConnections = createAsyncThunk<
 >('connectionList/getNewPageOfConnections', async (_, thunkApi) => {
   const keyword = thunkApi.getState().connectionList.keyword;
   const page = thunkApi.getState().connectionList.page;
-  const responseData = await getConnectionsOfType(
-    thunkApi.getState().connectionList.listType,
-    keyword,
-    page
-  );
-  return responseData;
+  try {
+    const responseData = await getConnectionsOfType(
+      thunkApi.getState().connectionList.listType,
+      keyword,
+      page
+    );
+    return responseData;
+  } catch (error) {
+    return thunkApi.rejectWithValue(error);
+  }
 });
 
 export const acceptIncomingInList = createAsyncThunk<void, Connection>(
   'connectionList/acceptIncomingInList',
-  async (connection, _) => {
-    await acceptIncomingRequest(connection);
+  async (connection, thunkApi) => {
+    try {
+      await acceptIncomingRequest(connection);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 
 export const rejectIncomingInList = createAsyncThunk<void, Connection>(
   'connectionList/rejectIncomingInList',
-  async (connection, _) => {
-    await rejectIncomingRequest(connection);
+  async (connection, thunkApi) => {
+    try {
+      await rejectIncomingRequest(connection);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 
 export const cancelOutgoingInList = createAsyncThunk<void, Connection>(
   'connectionList/cancelOutgoingInList',
-  async (connection, _) => {
-    await cancelOutgoingRequest(connection);
+  async (connection, thunkApi) => {
+    try {
+      await cancelOutgoingRequest(connection);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 

@@ -1,6 +1,8 @@
 import { IonAvatar, IonContent, IonPage, NavContext } from '@ionic/react';
 import { useContext, useEffect, useState } from 'react';
+import { getFullURL } from '../../../api';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
+import { uploadImage } from '../../../api/pictures';
 import { DetailedUser } from '../../../api/types';
 import AppHeader from '../../../components/AppHeader';
 import InputFormCard, {
@@ -57,11 +59,22 @@ export default function EditProfile() {
     name: '',
     connectionStatus: 0,
   });
+  const [selectedFile, setSelectedFile] = useState<File>();
+  const [tempUrl, setTempUrl] = useState<string>('');
 
   // shoot api query before painting to screen
   useEffect(() => {
     setUserDetails(userStore);
   }, []);
+
+  useEffect(() => {
+    if (selectedFile) {
+      const objectUrl = URL.createObjectURL(selectedFile);
+      setTempUrl(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [selectedFile]);
 
   function updateUser() {
     let haveError = false;
@@ -148,9 +161,13 @@ export default function EditProfile() {
     if (!haveError) {
       setIsLoading(true);
       dispatch(updateSelfUserDetails(user))
-        .unwrap()
         .then(
           () => {
+            if (selectedFile) {
+              uploadImage(selectedFile).catch((error) => {
+                presentErrorToast(handleApiRequestError(error));
+              });
+            }
             goBack();
           },
           (error) => {
@@ -247,16 +264,29 @@ export default function EditProfile() {
         <AppHeader />
         <IonContent fullscreen>
           <div className={styles['container']}>
-            <IonAvatar slot="start" className={styles['profile-picture']}>
-              <img
-                alt="user picture"
-                src={
-                  user.profilePic
-                    ? user.profilePic
-                    : 'assets/user_default_icon.svg'
-                }
-              ></img>
-            </IonAvatar>
+            <label htmlFor="upload">
+              <IonAvatar slot="start" className={styles['profile-picture']}>
+                <img
+                  alt="user picture"
+                  src={
+                    tempUrl
+                      ? tempUrl
+                      : user.profilePic
+                      ? getFullURL(user.profilePic)
+                      : 'assets/user_default_icon.svg'
+                  }
+                ></img>
+              </IonAvatar>
+            </label>
+            <input
+              type="file"
+              id="upload"
+              accept="image/*"
+              onChange={(e) =>
+                setSelectedFile(e.target.files ? e.target.files[0] : undefined)
+              }
+              style={{ display: 'none' }}
+            />
           </div>
           <InputFormCard
             title="Edit Profile"

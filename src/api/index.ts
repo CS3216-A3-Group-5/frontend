@@ -88,4 +88,8 @@ function createAxiosAuthenticationInterceptor() {
   );
 }
 
+export function getFullURL(url: string): string {
+  return API_BASE_URL + url;
+}
+
 export default axiosInstance;

@@ -9,7 +9,6 @@ import {
   IonLoading,
   IonModal,
   IonPage,
-  IonSearchbar,
   IonToolbar,
 } from '@ionic/react';
 import { useState, useLayoutEffect } from 'react';
@@ -59,11 +58,7 @@ export default function ConnectionsPage() {
 
   return (
     <IonPage>
-      <AppHeader>
-        <IonToolbar>
-          <IonSearchbar />
-        </IonToolbar>
-      </AppHeader>
+      <AppHeader></AppHeader>
       <IonContent fullscreen>
         {incomingRequests.length > 0 && (
           <ConnectionListHeader
@@ -182,20 +177,18 @@ function ConnectionInfiniteListModal({
 }: ConnectionInfiniteListModalProps) {
   return (
     <IonModal isOpen={isModalOpen} onWillDismiss={() => setIsModalOpen(false)}>
-      <IonPage>
-        <IonContent fullscreen>
-          <IonHeader>
-            <IonToolbar>
-              <IonButtons>
-                <IonButton slot="start" onClick={() => setIsModalOpen(false)}>
-                  Back
-                </IonButton>
-              </IonButtons>
-            </IonToolbar>
-          </IonHeader>
-          <ConnectionInfiniteList connectionType={connectionType} />
-        </IonContent>
-      </IonPage>
+      <IonContent fullscreen>
+        <IonHeader>
+          <IonToolbar>
+            <IonButtons>
+              <IonButton slot="start" onClick={() => setIsModalOpen(false)}>
+                Back
+              </IonButton>
+            </IonButtons>
+          </IonToolbar>
+        </IonHeader>
+        <ConnectionInfiniteList connectionType={connectionType} />
+      </IonContent>
     </IonModal>
   );
 }

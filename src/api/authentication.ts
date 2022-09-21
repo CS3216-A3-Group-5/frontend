@@ -77,14 +77,23 @@ export async function verifyAuth() {
 }
 
 export async function login(userLoginDetails: UserLoginDetails) {
-  const response = await axiosInstance.post<AuthenticationResponse>(
-    '/login',
-    JSON.stringify(userLoginDetails)
-  );
+  const response = await axiosInstance.post<AuthenticationResponse>('/login');
   const tokenResponseData = response.data as TokenResponseData;
   TokenService.setTokens({
     accessToken: tokenResponseData.access,
     refreshToken: tokenResponseData.refresh,
   });
   return response.data;
+}
+
+export async function logout() {
+  const tokens = TokenService.getTokens();
+  if (!tokens) {
+    // throw error?
+    return;
+  }
+  const { refreshToken } = tokens;
+  await axiosInstance.post('/logout', {
+    refresh: refreshToken,
+  });
 }
