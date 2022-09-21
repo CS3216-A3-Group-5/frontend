@@ -5,7 +5,9 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import TokenService from '../util/services/tokenService';
 import { REFRESH_TOKEN_PATH } from './constants';
 
-const API_BASE_URL = 'https://private-26272e-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
+const APIARY_BASE_URL = 'https://private-26272e-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
+
+const API_BASE_URL = 'https://modulekakis-kxgwq.ondigitalocean.app/backend/';
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,

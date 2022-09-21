@@ -19,25 +19,12 @@ export function getPathForGetStudentsOfModule(moduleCode: string) {
   return '/modules/' + moduleCode + '/users';
 }
 export const OWN_USER_DETAILS_PATH = '/user';
-export const ENROLL_MODULE_PATH = '/user/modules/enroll';
+export const ENROLL_MODULE_PATH = '/modules/enroll';
 export const CONNECTIONS_PATH = '/user/connections';
 export function getPathForSetModuleStatusForUser(moduleCode: string) {
   return '/user/status/' + moduleCode;
 }
+
+export const OWN_USER_MODULE_STATUS = '/user/modules/status';
 // TODO: check how we want to implement profile picture viewing logic
 export const PROFILE_PICTURE_PATH = '/picture';
-
-export enum PagedDataRequestResult {
-  HAVE_MORE_DATA,
-  NO_MORE_DATA,
-}
-
-/**
- * Useful wrapper for data that is queried in pages.
- * User this on pages that request for more data using infinite scroll,
- * and check the status to see what feedback to display to user.
- */
-export interface PagedData<T> {
-  status: PagedDataRequestResult;
-  data: T;
-}

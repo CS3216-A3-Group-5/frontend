@@ -1,16 +1,27 @@
 import {
+  AlertButton,
+  IonAlert,
+  IonButton,
   IonContent,
+  IonFooter,
+  IonIcon,
   IonLabel,
   IonList,
   IonListHeader,
   IonLoading,
   IonPage,
   IonSearchbar,
+  IonSelect,
+  IonSelectOption,
+  IonToolbar,
+  isPlatform,
 } from '@ionic/react';
+import { helpCircleOutline } from 'ionicons/icons';
 import { useLayoutEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
-import { User } from '../../../api/types';
+import { User, UserStatus } from '../../../api/types';
+import { enrollModule, unenrollModule } from '../../../api/users';
 import AppHeader from '../../../components/AppHeader';
 import UserListItem from '../../../components/UserListItem';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
@@ -18,9 +29,19 @@ import {
   DataRetrievalErrorType,
   getModuleStudents,
 } from '../../../redux/slices/objectDetailsSlice';
+import {
+  getUserStatusForModule,
+  updateUserStatusForModule,
+} from '../../../redux/slices/userSlice';
 import useConnectionIssueToast from '../../../util/hooks/useConnectionIssueToast';
 import useErrorToast from '../../../util/hooks/useErrorToast';
+import styles from './styles.module.scss';
 
+const statusSubHeader =
+  'Your status indicates to other students in this module whether you would like to connect with someone.';
+
+const statusExplanation =
+  'Looking for a friend: You are actively looking to connect with someone.<br><br>Willing To help: You are not actively looking, but would like others to connect with you.<br><br>No Status: You are not looking for connections at this time.';
 /**
  * Page to view full details of an enrolled university module.
  */
@@ -33,9 +54,18 @@ export default function ModuleView({
   const presentConnectionIssueToast = useConnectionIssueToast();
   const presentErrorToast = useErrorToast();
   const handleApiError = useApiRequestErrorHandler();
-  const module = useAppSelector((state) => state.home.modules)[
+  const module = useAppSelector((state) => state.modules.modules)[
     match.params.moduleCode
   ];
+  const userStatus = useAppSelector(
+    (state) => state.user.moduleStatuses[module.code]
+  ); //eslint-disable-line
+  const [isEnrolled, setIsEnrolled] = useState<boolean>(module.isEnrolled);
+  const [isStatusExplanationShowing, setIsStatusExplanationShowing] =
+    useState<boolean>(false);
+
+  const [isUnenrollAlertShowing, setIsUnenrollAlertShowing] =
+    useState<boolean>(false);
 
   function getStudents() {
     setIsLoading(true);
@@ -54,17 +84,162 @@ export default function ModuleView({
       .finally(() => setIsLoading(false));
   }
 
+  function submitUserEnrollRequest() {
+    setIsLoading(true);
+    enrollModule(module.code)
+      .then(() => {
+        setIsEnrolled(true);
+      })
+      .catch((error) => {
+        presentErrorToast(handleApiError(error));
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
+  function submitUserUnenrollRequest() {
+    setIsLoading(true);
+    unenrollModule(module.code)
+      .then(() => {
+        setIsEnrolled(false);
+      })
+      .catch((error) => {
+        presentErrorToast(handleApiError(error));
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
+  function getUserStatus() {
+    dispatch(getUserStatusForModule(module.code))
+      .unwrap()
+      .catch((error) => {
+        presentErrorToast(handleApiError(error));
+      });
+  }
+
+  function updateStatus(status: UserStatus) {
+    setIsLoading(true);
+    dispatch(
+      updateUserStatusForModule({ moduleCode: module.code, newStatus: status })
+    )
+      .unwrap()
+      .catch((error) => {
+        presentErrorToast(handleApiError(error));
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
   // shoot api query to get list of students of this module before paint
   useLayoutEffect(() => {
     getStudents();
+    getUserStatus();
   }, [match.params.moduleCode]);
+
+  // user status interface stuff
+  function getSelectInterfaceType() {
+    if (isPlatform('mobile')) {
+      return 'action-sheet';
+    } else {
+      return 'popover';
+    }
+  }
+
+  /* eslint-disable */
+  function onSelectionChange(e: any) {
+    updateStatus(e.target.value);
+  }
+
+  // unenroll alert stuff
+  const unenrollAlertButtons: Array<AlertButton> = [
+    {
+      text: 'Cancel',
+      handler: () => {
+        setIsUnenrollAlertShowing(false);
+      },
+    },
+    {
+      text: 'Ok',
+      handler: () => {
+        submitUserUnenrollRequest();
+      },
+    },
+  ];
 
   return (
     <IonPage>
-      <AppHeader />
+      <AppHeader
+        button={
+          isEnrolled && (
+            <>
+              <IonButton
+                fill="clear"
+                onClick={() => {
+                  setIsUnenrollAlertShowing(true);
+                }}
+              >
+                Unenroll
+              </IonButton>
+              <IonAlert
+                isOpen={isUnenrollAlertShowing}
+                header="Are you sure?"
+                subHeader="You will no longer be seen as a student of this module."
+                onDidDismiss={() => {
+                  setIsUnenrollAlertShowing(false);
+                }}
+                buttons={unenrollAlertButtons}
+              ></IonAlert>
+            </>
+          )
+        }
+      />
       <IonContent fullscreen>
-        <h1 className="ion-padding-start">{module.code}</h1>
-        <h4 className="ion-padding-start">{module.name}</h4>
+        <IonToolbar>
+          <div className={styles['header-enroll-container']}>
+            <div className={styles['header-text']}>
+              {module.code}
+              <h4>{module.name}</h4>
+            </div>
+          </div>
+          {isEnrolled && (
+            <div className={styles['user-status-container']}>
+              <div>My status:</div>
+              <IonSelect
+                interface={getSelectInterfaceType()}
+                selectedText={userStatus}
+                onIonChange={onSelectionChange}
+              >
+                <IonSelectOption color="medium">
+                  {UserStatus.LOOKING_FOR_A_FRIEND}
+                </IonSelectOption>
+                <IonSelectOption>{UserStatus.WILLING_TO_HELP}</IonSelectOption>
+                <IonSelectOption>{UserStatus.NO_STATUS}</IonSelectOption>
+              </IonSelect>
+              <IonButton
+                fill="clear"
+                onClick={() => {
+                  setIsStatusExplanationShowing(true);
+                }}
+              >
+                <IonIcon icon={helpCircleOutline} />
+              </IonButton>
+              <IonAlert
+                isOpen={isStatusExplanationShowing}
+                header="What is a status?"
+                subHeader={statusSubHeader}
+                message={statusExplanation}
+                onDidDismiss={() => {
+                  setIsStatusExplanationShowing(false);
+                }}
+                buttons={['OK']}
+              ></IonAlert>
+            </div>
+          )}
+        </IonToolbar>
         <IonListHeader>
           <IonLabel>
             <h1>Students</h1>
@@ -78,8 +253,17 @@ export default function ModuleView({
               ))
             : null}
         </IonList>
-        <IonLoading isOpen={isLoading}></IonLoading>
       </IonContent>
+      <IonLoading isOpen={isLoading}></IonLoading>
+      {!isEnrolled && (
+        <IonFooter>
+          <IonToolbar>
+            <IonButton expand="block" onClick={submitUserEnrollRequest}>
+              Enroll
+            </IonButton>
+          </IonToolbar>
+        </IonFooter>
+      )}
     </IonPage>
   );
 }

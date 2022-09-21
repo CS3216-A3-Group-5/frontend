@@ -1,9 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   getExploreModulesFromApi,
-  getStudentsOfModule,
 } from '../../api/modules';
-import { UniModule, User } from '../../api/types';
+import { UniModule } from '../../api/types';
 import { RootState } from '../store';
 
 interface ModuleState {
@@ -30,13 +29,13 @@ const ModuleSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // TODO: check if Immer does this properly
+    /*
     builder.addCase(
       updateListOfStudentsInExploreModule.fulfilled,
       (state, action) => {
         state.modules[action.meta.arg]!.enrolledStudents = action.payload; // module code definitely exist
       }
-    );
+    ); */
     builder.addCase(getNewPageOfExploreModules.fulfilled, (state, action) => {
       if (action.payload.length > 0) {
         // only if a non empty page received then increment page
@@ -91,6 +90,7 @@ export const getPageOfExploreModulesWithNewKeyword = createAsyncThunk<
   }
 );
 
+/*
 export const updateListOfStudentsInExploreModule = createAsyncThunk<
   Array<User>,
   string
@@ -98,5 +98,6 @@ export const updateListOfStudentsInExploreModule = createAsyncThunk<
   const responseData = await getStudentsOfModule(moduleCode);
   return responseData;
 });
+*/
 
 export default ModuleSlice.reducer;

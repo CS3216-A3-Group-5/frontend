@@ -8,6 +8,7 @@ import {
   getPathForGetUserDetails,
   GET_MODULES_OF_STUDENT_PATH,
   OWN_USER_DETAILS_PATH,
+  OWN_USER_MODULE_STATUS,
 } from './constants';
 import {
   responseToDetailedUser,
@@ -15,8 +16,11 @@ import {
   DetailedUserResponseFormat,
   ModuleResponseFormat,
   responseToModule,
+  userStatusToRequest,
+  GetUserStatusResponseFormat,
+  responseToUserStatus,
 } from './formats';
-import { DetailedUser, UniModule } from './types';
+import { DetailedUser, UniModule, UserStatus } from './types';
 
 /**
  * Returns detailed user object of user with provided userId
@@ -90,6 +94,33 @@ export async function unenrollModule(moduleCode: string) {
   await axiosInstance.delete(ENROLL_MODULE_PATH, {
     data: {
       module_code: moduleCode,
+    },
+  });
+}
+
+/**
+ * Get the status of user in a module
+ */
+export async function getUserStatus(moduleCode: string) {
+  const resp = await axiosInstance.get<GetUserStatusResponseFormat>(
+    OWN_USER_MODULE_STATUS,
+    {
+      data: {
+        module_code: moduleCode,
+      },
+    }
+  );
+  return responseToUserStatus(resp.data.status);
+}
+
+export async function updateUserStatus(
+  moduleCode: string,
+  newStatus: UserStatus
+) {
+  await axiosInstance.put(OWN_USER_MODULE_STATUS, {
+    data: {
+      module_code: moduleCode,
+      status: userStatusToRequest(newStatus),
     },
   });
 }

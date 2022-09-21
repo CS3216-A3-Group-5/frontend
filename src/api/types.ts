@@ -14,6 +14,7 @@ export enum ConnectionType {
  * Enum used to repesent a User status. If the user does not have a status, then this field would be null or undefined.
  */
 export enum UserStatus {
+  NO_STATUS = 'No Status',
   LOOKING_FOR_A_FRIEND = 'Looking for a friend',
   WILLING_TO_HELP = 'Willing to help',
 }

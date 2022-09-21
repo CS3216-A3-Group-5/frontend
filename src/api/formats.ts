@@ -64,6 +64,10 @@ export interface ModuleResponseFormat {
   is_enrolled: boolean;
 }
 
+export interface GetUserStatusResponseFormat {
+  status: UserStatusResponse;
+}
+
 export function responseToSimpleUser(data: SimpleUserResponseFormat): User {
   const newUser: User = {
     id: String(data.id),
@@ -140,14 +144,23 @@ export function responseToModule(data: ModuleResponseFormat): UniModule {
   return newModule;
 }
 
-export function responseToUserStatus(
-  data: UserStatusResponse
-): UserStatus | undefined {
+export function responseToUserStatus(data: UserStatusResponse): UserStatus {
   if (data === UserStatusResponse.NO_STATUS) {
-    return undefined;
+    return UserStatus.NO_STATUS;
   } else if (data === UserStatusResponse.LOOKING_FOR_A_FRIEND) {
     return UserStatus.LOOKING_FOR_A_FRIEND;
   } else {
     return UserStatus.WILLING_TO_HELP;
+  }
+}
+
+export function userStatusToRequest(status: UserStatus) {
+  switch (status) {
+    case UserStatus.LOOKING_FOR_A_FRIEND:
+      return 1;
+    case UserStatus.WILLING_TO_HELP:
+      return 2;
+    default:
+      return 0;
   }
 }
