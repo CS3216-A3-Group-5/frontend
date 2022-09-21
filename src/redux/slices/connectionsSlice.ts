@@ -24,7 +24,7 @@ const initialState: ConnectionState = {
 };
 
 const ConnectionsSlice = createSlice({
-  name: 'userDetails',
+  name: 'connections',
   initialState,
   reducers: {},
   extraReducers: (builder) => {

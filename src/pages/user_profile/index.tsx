@@ -1,15 +1,18 @@
 import { IonButton, IonContent, IonPage } from '@ionic/react';
 import { useEffect } from 'react';
+import { useHistory } from 'react-router';
 import { logout } from '../../api/authentication';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import AppHeader from '../../components/AppHeader';
 import UserCardItem from '../../components/UserCardItem/UserCardItem';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getSelfUserDetails } from '../../redux/slices/userDetailsSlice';
+import { LOGIN } from '../../routes';
 import useErrorToast from '../../util/hooks/useErrorToast';
 import styles from './styles.module.scss';
 
 export default function UserProfile() {
+  const history = useHistory();
   const user = useAppSelector((state) => state.userDetails.user);
   const handleApiRequestError = useApiRequestErrorHandler();
   const createErrorToast = useErrorToast();
@@ -23,9 +26,13 @@ export default function UserProfile() {
   }, []);
 
   function logoutUser() {
-    logout().catch((error) => {
-      createErrorToast(handleApiRequestError(error));
-    });
+    logout()
+      .then(() => {
+        history.push(LOGIN);
+      })
+      .catch((error) => {
+        createErrorToast(handleApiRequestError(error));
+      });
   }
 
   if (user) {

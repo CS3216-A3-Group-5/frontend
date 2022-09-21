@@ -16,7 +16,7 @@ const initialState: ModuleState = {
 };
 
 const ModuleSlice = createSlice({
-  name: 'module',
+  name: 'modules',
   initialState,
   reducers: {
     setKeyword: (state, action: PayloadAction<string>) => {

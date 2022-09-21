@@ -1,4 +1,4 @@
-import { Redirect } from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
@@ -88,9 +88,9 @@ export default function App() {
           <IonReactRouter>
             <IonTabs>
               <IonRouterOutlet>
-                <NonAuthRoute exact path={LOGIN}>
+                <Route exact path={LOGIN}>
                   <LoginPage />
-                </NonAuthRoute>
+                </Route>
                 <NonAuthRoute exact path={REGISTER}>
                   <RegisterPage />
                 </NonAuthRoute>

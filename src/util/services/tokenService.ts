@@ -6,21 +6,25 @@ export interface Tokens {
   refreshToken: string;
 }
 
-const TOKENS_LOCALSTORAGE_KEY = 'tokens'
+const TOKENS_LOCALSTORAGE_KEY = 'tokens';
 
 class NoTokenInStorage extends Error {
   constructor() {
-    super("No token stored in local storage");
+    super('No token stored in local storage');
   }
 }
 
-function getTokens(): Tokens | null{
+function getTokens(): Tokens | null {
   const tokensJson = localStorage.getItem(TOKENS_LOCALSTORAGE_KEY);
   if (!tokensJson) {
     return null;
   }
   const tokens = JSON.parse(tokensJson) as Tokens;
   return tokens;
+}
+
+function removeTokens() {
+  localStorage.removeItem(TOKENS_LOCALSTORAGE_KEY);
 }
 
 function setTokens(tokens: Tokens) {
@@ -37,7 +41,7 @@ function getLocalAccessToken() {
   return tokens ? tokens.accessToken : null;
 }
 
-function updateAccessToken(accessToken : string) : void {
+function updateAccessToken(accessToken: string): void {
   const tokens = getTokens();
   if (!tokens) {
     throw new NoTokenInStorage();
@@ -51,7 +55,8 @@ const TokenService = {
   setTokens,
   getLocalAccessToken,
   getLocalRefreshToken,
-  updateAccessToken
+  updateAccessToken,
+  removeTokens,
 };
 
 export default TokenService;

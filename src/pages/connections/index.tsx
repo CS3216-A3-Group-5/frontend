@@ -1,3 +1,4 @@
+/* eslint-ignore */
 import {
   IonButton,
   IonButtons,

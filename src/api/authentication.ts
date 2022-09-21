@@ -77,7 +77,10 @@ export async function verifyAuth() {
 }
 
 export async function login(userLoginDetails: UserLoginDetails) {
-  const response = await axiosInstance.post<AuthenticationResponse>('/login');
+  const response = await axiosInstance.post<AuthenticationResponse>(
+    '/login',
+    userLoginDetails
+  );
   const tokenResponseData = response.data as TokenResponseData;
   TokenService.setTokens({
     accessToken: tokenResponseData.access,
@@ -87,12 +90,8 @@ export async function login(userLoginDetails: UserLoginDetails) {
 }
 
 export async function logout() {
-  const tokens = TokenService.getTokens();
-  if (!tokens) {
-    // throw error?
-    return;
-  }
-  const { refreshToken } = tokens;
+  const refreshToken = TokenService.getTokens()?.refreshToken;
+  TokenService.removeTokens();
   await axiosInstance.post('/logout', {
     refresh: refreshToken,
   });
