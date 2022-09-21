@@ -8,7 +8,7 @@ import {
   IonSearchbar,
   IonToolbar,
 } from '@ionic/react';
-import { useState, useEffect } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import { ConnectionType } from '../../api/types';
 import AppHeader from '../../components/AppHeader';
@@ -36,7 +36,7 @@ export default function ConnectionsPage() {
   //TODO: add filtering and sorting
 
   // shoot api query before painting to screen
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIsLoading(true);
     Promise.all([
       dispatch(getIncoming()),
@@ -113,6 +113,7 @@ export default function ConnectionsPage() {
         </IonList>
         <IonLoading isOpen={isLoading ? true : false} />
       </IonContent>
+      <IonLoading isOpen={isLoading}></IonLoading>
     </IonPage>
   );
 }
