@@ -1,5 +1,6 @@
 import { IonAvatar, IonButton, IonIcon, IonItem, IonLabel } from '@ionic/react';
 import { checkmarkCircle } from 'ionicons/icons';
+import { getFullURL } from '../../api';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import { Connection, ConnectionType } from '../../api/types';
 import { useAppDispatch } from '../../redux/hooks';
@@ -105,7 +106,7 @@ export default function ConnectionListItem({
           alt="user thumbnail"
           src={
             connection.otherUser.thumbnailPic
-              ? connection.otherUser.thumbnailPic
+              ? getFullURL(connection.otherUser.thumbnailPic)
               : 'assets/user_default_icon.svg'
           }
         ></img>

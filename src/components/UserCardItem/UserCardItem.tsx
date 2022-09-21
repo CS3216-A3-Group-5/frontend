@@ -1,6 +1,7 @@
 import { IonCard, IonCardContent, IonAvatar, IonIcon } from '@ionic/react';
 import { callOutline, mail, paperPlaneOutline } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
+import { getFullURL } from '../../api';
 import { DetailedUser } from '../../api/types';
 import styles from './styles.module.scss';
 
@@ -45,7 +46,7 @@ export default function UserCardItem({ user, module }: UserCardItemProps) {
               alt="user picture"
               src={
                 user.profilePic
-                  ? user.profilePic
+                  ? getFullURL(user.profilePic)
                   : 'assets/user_default_icon.svg'
               }
             ></img>
