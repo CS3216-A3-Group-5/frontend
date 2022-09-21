@@ -26,3 +26,18 @@ export function getPathForSetModuleStatusForUser(moduleCode: string) {
 }
 // TODO: check how we want to implement profile picture viewing logic
 export const PROFILE_PICTURE_PATH = '/picture';
+
+export enum PagedDataRequestResult {
+  HAVE_MORE_DATA,
+  NO_MORE_DATA,
+}
+
+/**
+ * Useful wrapper for data that is queried in pages.
+ * User this on pages that request for more data using infinite scroll,
+ * and check the status to see what feedback to display to user.
+ */
+export interface PagedData<T> {
+  status: PagedDataRequestResult;
+  data: T;
+}

@@ -13,7 +13,6 @@ import { IonReactRouter } from '@ionic/react-router';
 import { home, searchOutline, person, people } from 'ionicons/icons';
 import Home from './pages/home';
 import ModulesPage from './pages/modules';
-import NotificationsPage from './pages/notifications';
 import UserProfile from './pages/user_profile';
 
 /* Core CSS required for Ionic components to work properly */
@@ -92,9 +91,6 @@ export default function App() {
                 path="/modules/:moduleCode"
                 component={ModuleView}
               />
-              <PrivateRoute path="/notifications">
-                <NotificationsPage />
-              </PrivateRoute>
               <PrivateRoute exact path="/user_profile">
                 <UserProfile />
               </PrivateRoute>

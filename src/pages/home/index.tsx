@@ -1,8 +1,9 @@
 import {
   IonCard,
   IonCardContent,
-  IonCardHeader,
   IonContent,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
   IonLabel,
   IonList,
   IonListHeader,
@@ -12,27 +13,76 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { useLayoutEffect, useState } from 'react';
-import { StaticRouter, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
-import { sampleModuleData } from '../../api/sampleData';
-import { UniModule } from '../../api/types';
+
 import AppHeader from '../../components/AppHeader';
+import { PAGE_SIZE } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { getModules } from '../../redux/slices/homeSlice';
+import {
+  getNewPageOfModules,
+  getPageOfModulesWithNewKeyword,
+} from '../../redux/slices/homeSlice';
 import useErrorToast from '../../util/hooks/useErrorToast';
+import useInfoToast from '../../util/hooks/useInfoToast';
 import ModuleListItem from '../modules/ModuleListItem';
 
 export default function Homepage() {
   const modules = useAppSelector((state) => state.home.modules);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const presentInfoToast = useInfoToast();
   const createErrorToast = useErrorToast();
+  const [isInfiniteScrollDisabled, setIsInfiniteScrollDisabled] =
+    useState<boolean>(false);
   const handleApiError = useApiRequestErrorHandler();
   const dispatch = useAppDispatch();
 
+  function getPageOfModulesOnSearch(keyword?: string | null) {
+    setIsLoading(true);
+    dispatch(getPageOfModulesWithNewKeyword(keyword))
+      .unwrap()
+      .catch((error) => {
+        createErrorToast(handleApiError(error));
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
+  function handleSearchbarChange(ev: Event) {
+    const target = ev.target as HTMLIonSearchbarElement;
+    getPageOfModulesOnSearch(target.value);
+  }
+
+  /* eslint-disable */
+  function handleInfiniteScroll(ev: any) {
+    dispatch(getNewPageOfModules())
+      .unwrap()
+      .then((addedModules) => {
+        // check the length of addedModules, if they have not changed,
+        // then no more data to fetch for this keyword.
+        if (addedModules.length <= 0) {
+          presentInfoToast('No more modules to display');
+        }
+      })
+      .catch((error) => {
+        createErrorToast(handleApiError(error));
+      })
+      .finally(() => {
+        ev.target.complete();
+      });
+  }
+
   function getModulesOfUser() {
     setIsLoading(true);
-    dispatch(getModules())
+    dispatch(getPageOfModulesWithNewKeyword())
       .unwrap()
+      .then((addedModules) => {
+        // disable infinite scroll if initial data is already less than a page size
+        if (addedModules.length < PAGE_SIZE) {
+          setIsInfiniteScrollDisabled(true);
+        }
+      })
       .catch((error) => {
         createErrorToast(handleApiError(error));
       })
@@ -49,7 +99,7 @@ export default function Homepage() {
     <IonPage>
       <AppHeader>
         <IonToolbar>
-          <IonSearchbar />
+          <IonSearchbar debounce={1000} onIonChange={handleSearchbarChange} />
         </IonToolbar>
       </AppHeader>
       <IonContent fullscreen>
@@ -75,8 +125,15 @@ export default function Homepage() {
             ))
           )}
         </IonList>
-        <IonLoading isOpen={isLoading ? true : false} />
+        <IonInfiniteScroll
+          onIonInfinite={handleInfiniteScroll}
+          threshold="50px"
+          disabled={isInfiniteScrollDisabled}
+        >
+          <IonInfiniteScrollContent loadingSpinner="circles"></IonInfiniteScrollContent>
+        </IonInfiniteScroll>
       </IonContent>
+      <IonLoading isOpen={isLoading} />
     </IonPage>
   );
 }

@@ -1,10 +1,102 @@
-import Module from "module"
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  getExploreModulesFromApi,
+  getStudentsOfModule,
+} from '../../api/modules';
+import { UniModule, User } from '../../api/types';
+import { RootState } from '../store';
 
 interface ModuleState {
-  listOfModules: Array<Module>
+  modules: { [key: string]: UniModule };
+  keyword: string;
+  page: number;
 }
 
 const initialState: ModuleState = {
-  listOfModules: []
-  
-}
+  modules: {},
+  keyword: '',
+  page: 1, // data until and including this page number are stored in the redux store
+};
+
+const ModuleSlice = createSlice({
+  name: 'module',
+  initialState,
+  reducers: {
+    setKeyword: (state, action: PayloadAction<string>) => {
+      state.keyword = action.payload;
+    },
+    setPage: (state, action: PayloadAction<number>) => {
+      state.page = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    // TODO: check if Immer does this properly
+    builder.addCase(
+      updateListOfStudentsInExploreModule.fulfilled,
+      (state, action) => {
+        state.modules[action.meta.arg]!.enrolledStudents = action.payload; // module code definitely exist
+      }
+    );
+    builder.addCase(getNewPageOfExploreModules.fulfilled, (state, action) => {
+      if (action.payload.length > 0) {
+        // only if a non empty page received then increment page
+        state.page += 1;
+        const mods = Object.create(state.modules) as {
+          [key: string]: UniModule;
+        };
+        for (const module of action.payload) {
+          mods[module.code] = module;
+        }
+        state.modules = mods;
+      }
+    });
+    builder.addCase(
+      getPageOfExploreModulesWithNewKeyword.fulfilled,
+      (state, action) => {
+        const mods: { [key: string]: UniModule } = {};
+        for (const module of action.payload) {
+          mods[module.code] = module;
+        }
+        state.modules = mods;
+      }
+    );
+  },
+});
+
+export const getNewPageOfExploreModules = createAsyncThunk<
+  Array<UniModule>,
+  undefined,
+  { state: RootState }
+>('modules/getNewPageOfExploreModules', async (_, thunkApi) => {
+  const keyword = thunkApi.getState().modules.keyword;
+  const page = thunkApi.getState().modules.page;
+  const responseData = await getExploreModulesFromApi(page + 1, keyword);
+  return responseData;
+});
+
+export const getPageOfExploreModulesWithNewKeyword = createAsyncThunk<
+  Array<UniModule>,
+  string | undefined | null,
+  { state: RootState }
+>(
+  'modules/getPageOfExploreModulesWithNewKeyword',
+  async (keyword, thunkApi) => {
+    thunkApi.dispatch(ModuleSlice.actions.setKeyword(keyword ? keyword : ''));
+    thunkApi.dispatch(ModuleSlice.actions.setPage(1));
+    const responseData = await getExploreModulesFromApi(
+      1,
+      keyword ? keyword : ''
+    );
+    return responseData;
+  }
+);
+
+export const updateListOfStudentsInExploreModule = createAsyncThunk<
+  Array<User>,
+  string
+>('modules/updateListOfStudentsInModule', async (moduleCode: string) => {
+  const responseData = await getStudentsOfModule(moduleCode);
+  return responseData;
+});
+
+export default ModuleSlice.reducer;

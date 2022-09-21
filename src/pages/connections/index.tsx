@@ -3,11 +3,12 @@ import {
   IonLabel,
   IonList,
   IonListHeader,
+  IonLoading,
   IonPage,
   IonSearchbar,
   IonToolbar,
 } from '@ionic/react';
-import { useState, useEffect } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import {
   getConnections,
   getIncomingConnectionsRequests,
@@ -23,10 +24,12 @@ export default function ConnectionsPage() {
   const [outgoingRequests, setOutgoingRequests] = useState<Connection[]>();
   const [connections, setConnections] = useState<Connection[]>();
   const handleApiRequestError = useApiRequestErrorHandler();
+  //TODO: handle this state to display loading icon when fetching data
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   //TODO: add filtering and sorting
 
   // shoot api query before painting to screen
-  useEffect(() => {
+  useLayoutEffect(() => {
     getIncomingConnectionsRequests().then(
       (incoming) => {
         console.log(incoming);
@@ -112,6 +115,7 @@ export default function ConnectionsPage() {
             : null}
         </IonList>
       </IonContent>
+      <IonLoading isOpen={isLoading}></IonLoading>
     </IonPage>
   );
 }
