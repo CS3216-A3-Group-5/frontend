@@ -17,7 +17,7 @@ export async function getConnectedConnections(
       params: {
         type: ConnectionType.CONNECTED,
         q: keyword ? keyword : '',
-        page: { page },
+        page: page,
       },
     }
   );
@@ -37,7 +37,7 @@ export async function getIncomingConnectionsRequests(
       params: {
         type: ConnectionType.INCOMING_REQUEST,
         q: keyword ? keyword : '',
-        page: { page },
+        page: page,
       },
     }
   );
@@ -57,7 +57,7 @@ export async function getOutgoingConnectionsRequests(
       params: {
         type: ConnectionType.OUTGOING_REQUEST,
         q: keyword ? keyword : '',
-        page: { page },
+        page: page,
       },
     }
   );

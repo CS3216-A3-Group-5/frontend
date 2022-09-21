@@ -25,11 +25,17 @@ const ConnectionListSlice = createSlice({
   name: 'connectionList',
   initialState,
   reducers: {
+    setListType: (state, action: PayloadAction<ConnectionType>) => {
+      state.listType = action.payload;
+    },
     setKeyword: (state, action: PayloadAction<string>) => {
       state.keyword = action.payload;
     },
     setPage: (state, action: PayloadAction<number>) => {
       state.page = action.payload;
+    },
+    resetConnections: (state, action: PayloadAction<void>) => {
+      state.connections = {};
     },
   },
   extraReducers: (builder) => {
@@ -97,7 +103,7 @@ export const getNewPageOfConnections = createAsyncThunk<
   Array<Connection>,
   undefined,
   { state: RootState }
->('connectionList/getPageOfConnectionsWithNewKeyword', async (_, thunkApi) => {
+>('connectionList/getNewPageOfConnections', async (_, thunkApi) => {
   const keyword = thunkApi.getState().connectionList.keyword;
   const page = thunkApi.getState().connectionList.page;
   const responseData = await getConnectionsOfType(
@@ -107,5 +113,7 @@ export const getNewPageOfConnections = createAsyncThunk<
   );
   return responseData;
 });
+
+export const { setListType, resetConnections } = ConnectionListSlice.actions;
 
 export default ConnectionListSlice.reducer;

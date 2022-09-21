@@ -1,10 +1,13 @@
 import {
   IonButton,
+  IonButtons,
   IonContent,
+  IonHeader,
   IonLabel,
   IonList,
   IonListHeader,
   IonLoading,
+  IonModal,
   IonPage,
   IonSearchbar,
   IonToolbar,
@@ -13,6 +16,7 @@ import { useState, useLayoutEffect } from 'react';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import { ConnectionType } from '../../api/types';
 import AppHeader from '../../components/AppHeader';
+import ConnectionInfiniteList from '../../components/ConnectionInfiniteList';
 import ConnectionListItem from '../../components/ConnectionListItem/ConnectionListItem';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -31,6 +35,9 @@ export default function ConnectionsPage() {
   );
   const connections = useAppSelector((state) => state.connections.connections);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalConnectionType, setModalConnectionType] =
+    useState<ConnectionType>(ConnectionType.CONNECTED);
   const presentErrorToast = useErrorToast();
   const handleApiRequestError = useApiRequestErrorHandler();
   const dispatch = useAppDispatch();
@@ -59,7 +66,11 @@ export default function ConnectionsPage() {
       </AppHeader>
       <IonContent fullscreen>
         {incomingRequests.length > 0 && (
-          <ConnectionListHeader header="Incoming Requests" />
+          <ConnectionListHeader
+            header_type={ConnectionType.INCOMING_REQUEST}
+            setIsModalOpen={setIsModalOpen}
+            setModalConnectionType={setModalConnectionType}
+          />
         )}
         <IonList className="ion-no-padding">
           {incomingRequests
@@ -73,7 +84,11 @@ export default function ConnectionsPage() {
             : null}
         </IonList>
         {outgoingRequests.length > 0 && (
-          <ConnectionListHeader header="Outgoing Requests" />
+          <ConnectionListHeader
+            header_type={ConnectionType.OUTGOING_REQUEST}
+            setIsModalOpen={setIsModalOpen}
+            setModalConnectionType={setModalConnectionType}
+          />
         )}
         <IonList className="ion-no-padding">
           {outgoingRequests
@@ -87,7 +102,11 @@ export default function ConnectionsPage() {
             : null}
         </IonList>
         {connections.length > 0 && (
-          <ConnectionListHeader header="Connections" />
+          <ConnectionListHeader
+            header_type={ConnectionType.CONNECTED}
+            setIsModalOpen={setIsModalOpen}
+            setModalConnectionType={setModalConnectionType}
+          />
         )}
         <IonList className="ion-no-padding">
           {connections
@@ -101,6 +120,11 @@ export default function ConnectionsPage() {
             : null}
         </IonList>
         <IonLoading isOpen={isLoading ? true : false} />
+        <ConnectionInfiniteListModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          connectionType={modalConnectionType}
+        />
       </IonContent>
       <IonLoading isOpen={isLoading}></IonLoading>
     </IonPage>
@@ -108,16 +132,67 @@ export default function ConnectionsPage() {
 }
 
 interface ConnectionListHeaderProps {
-  header: string;
+  header_type: ConnectionType;
+  setModalConnectionType: (type: ConnectionType) => void;
+  setIsModalOpen: (isOpen: boolean) => void;
 }
 
-function ConnectionListHeader({ header }: ConnectionListHeaderProps) {
+function ConnectionListHeader({
+  header_type,
+  setModalConnectionType,
+  setIsModalOpen,
+}: ConnectionListHeaderProps) {
+  const header: string =
+    header_type == ConnectionType.CONNECTED
+      ? 'Connected'
+      : header_type == ConnectionType.INCOMING_REQUEST
+      ? 'Incoming Request'
+      : 'Outgoing Request';
+
+  function openModal() {
+    setModalConnectionType(header_type);
+    setIsModalOpen(true);
+  }
+
   return (
     <IonListHeader className="ion-padding-top">
       <IonLabel>
         <h2>{header}</h2>
       </IonLabel>
-      <IonButton color="medium">View All</IonButton>
+      <IonButton color="medium" onClick={openModal}>
+        View All
+      </IonButton>
     </IonListHeader>
+  );
+}
+
+interface ConnectionInfiniteListModalProps {
+  isModalOpen: boolean;
+  setIsModalOpen: (isOpen: boolean) => void;
+  connectionType: ConnectionType;
+}
+
+function ConnectionInfiniteListModal({
+  isModalOpen,
+  setIsModalOpen,
+  connectionType,
+}: ConnectionInfiniteListModalProps) {
+  return (
+    <IonModal isOpen={isModalOpen} onWillDismiss={() => setIsModalOpen(false)}>
+      <IonPage>
+        <IonContent fullscreen>
+          <IonHeader>
+            <IonToolbar>
+              <IonButtons>
+                <IonButton slot="start" onClick={() => setIsModalOpen(false)}>
+                  Back
+                </IonButton>
+              </IonButtons>
+            </IonToolbar>
+          </IonHeader>
+          <ConnectionInfiniteList connectionType={connectionType} />
+        </IonContent>
+      </IonPage>
+    </IonModal>
   );
 }
