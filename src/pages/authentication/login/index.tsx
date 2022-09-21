@@ -1,4 +1,5 @@
 import { IonContent, IonPage } from '@ionic/react';
+import { logEvent } from 'firebase/analytics';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { login, UserLoginDetails } from '../../../api/authentication';
@@ -7,6 +8,7 @@ import AppHeader from '../../../components/AppHeader';
 import InputFormCard, {
   InputFormCardField,
 } from '../../../components/InputFormCard';
+import { analytics } from '../../../firebase';
 import { HOME, REGISTER } from '../../../routes';
 import { isValidEmail } from '../../../util/authentication';
 import useErrorToast from '../../../util/hooks/useErrorToast';
@@ -78,6 +80,7 @@ export default function LoginPage() {
             return;
           }
           // login success
+          logEvent(analytics, 'login');
           history.push(HOME);
         })
         .catch((error) => {

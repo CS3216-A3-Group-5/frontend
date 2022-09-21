@@ -16,6 +16,7 @@ import {
   IonToolbar,
   isPlatform,
 } from '@ionic/react';
+import { logEvent } from 'firebase/analytics';
 import { helpCircleOutline } from 'ionicons/icons';
 import { useLayoutEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
@@ -24,6 +25,7 @@ import { User, UserStatus } from '../../../api/types';
 import { enrollModule, unenrollModule } from '../../../api/users';
 import AppHeader from '../../../components/AppHeader';
 import UserListItem from '../../../components/UserListItem';
+import { analytics } from '../../../firebase';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import {
   DataRetrievalErrorType,
@@ -94,6 +96,9 @@ export default function ModuleView({
         presentErrorToast(handleApiError(error));
       })
       .finally(() => {
+        logEvent(analytics, 'join_group', {
+          group_id: module.code,
+        });
         setIsLoading(false);
       });
   }
