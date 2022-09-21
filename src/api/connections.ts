@@ -5,18 +5,19 @@
 import axiosInstance from '.';
 import { CONNECTIONS_PATH } from './constants';
 import { ConnectionResponseFormat, responseToConnection } from './formats';
-import { Connection, ConnectionType, UniModule } from './types';
+import { Connection, ConnectionType } from './types';
 
-export async function getConnections(
-  module?: UniModule
+export async function getConnectedConnections(
+  keyword?: string,
+  page = 1
 ): Promise<Connection[]> {
   const response = await axiosInstance.get<ConnectionResponseFormat[]>(
     CONNECTIONS_PATH,
     {
       params: {
         type: ConnectionType.CONNECTED,
-        module_code: module ? module.code : '',
-        page: 1,
+        q: keyword ? keyword : '',
+        page: page,
       },
     }
   );
@@ -27,15 +28,16 @@ export async function getConnections(
 }
 
 export async function getIncomingConnectionsRequests(
-  module?: UniModule
+  keyword?: string,
+  page = 1
 ): Promise<Connection[]> {
   const response = await axiosInstance.get<ConnectionResponseFormat[]>(
     CONNECTIONS_PATH,
     {
       params: {
         type: ConnectionType.INCOMING_REQUEST,
-        module_code: module ? module.code : '',
-        page: 1,
+        q: keyword ? keyword : '',
+        page: page,
       },
     }
   );
@@ -46,15 +48,16 @@ export async function getIncomingConnectionsRequests(
 }
 
 export async function getOutgoingConnectionsRequests(
-  module?: UniModule
+  keyword?: string,
+  page = 1
 ): Promise<Connection[]> {
   const response = await axiosInstance.get<ConnectionResponseFormat[]>(
     CONNECTIONS_PATH,
     {
       params: {
         type: ConnectionType.OUTGOING_REQUEST,
-        module_code: module ? module.code : '',
-        page: 1,
+        q: keyword ? keyword : '',
+        page: page,
       },
     }
   );
@@ -88,9 +91,13 @@ export async function cancelOutgoingRequest(connection: Connection) {
 export async function createConnectionRequest(
   otherUserId: string,
   module_code: string
-) {
-  await axiosInstance.post<Connection[]>(CONNECTIONS_PATH, {
-    other_user: Number(otherUserId),
-    module_code: module_code,
-  });
+): Promise<Connection> {
+  const response = await axiosInstance.post<ConnectionResponseFormat>(
+    CONNECTIONS_PATH,
+    {
+      other_user: Number(otherUserId),
+      module_code: module_code,
+    }
+  );
+  return responseToConnection(response.data);
 }

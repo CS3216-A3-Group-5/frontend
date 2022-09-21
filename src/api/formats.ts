@@ -128,7 +128,7 @@ export function responseToConnection(
   const newUser: User = responseToSimpleUser(data.other_user);
   const newModule: UniModule = responseToModule(data.module);
   const newConnection: Connection = {
-    id: '',
+    id: String(data.id),
     otherUser: newUser,
     uniModule: newModule,
   };
