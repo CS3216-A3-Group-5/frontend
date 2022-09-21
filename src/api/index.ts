@@ -5,8 +5,7 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import TokenService from '../util/services/tokenService';
 import { REFRESH_TOKEN_PATH } from './constants';
 
-const API_BASE_URL_APIARY =
-  'https://private-26272e-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
+const API_BASE_URL_a = 'https://private-26272e-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
 
 const API_BASE_URL = 'https://goldfish-app-4g8cm.ondigitalocean.app';
 
@@ -32,6 +31,7 @@ axiosInstance.interceptors.request.use(
       }
       config.headers['Authorization'] = token;
     }
+
     return config;
   },
   (error) => {
@@ -72,6 +72,10 @@ function createAxiosAuthenticationInterceptor() {
             });
             createAxiosAuthenticationInterceptor();
           } catch (_error) {
+            // if 400 on refresh token sending, means also an issue with authentication
+            if (axios.isAxiosError(_error) && _error.response?.status === 400) {
+              _error.response.status = 401;
+            }
             // if 401 returned here, than need to login again
             createAxiosAuthenticationInterceptor();
             return Promise.reject(_error);

@@ -2,6 +2,7 @@
  * API call handlers for authentication.
  */
 
+import axios from 'axios';
 import axiosInstance from '.';
 import { AuthenticationResponse } from '../pages/authentication/constants';
 import TokenService from '../util/services/tokenService';
@@ -13,8 +14,8 @@ import {
 } from './constants';
 
 interface TokenResponseData {
-  access_token: string;
-  refresh_token: string;
+  access: string;
+  refresh: string;
 }
 
 export interface UserLoginDetails {
@@ -23,29 +24,38 @@ export interface UserLoginDetails {
 }
 
 export async function registerUser(userRegisterDetails: UserLoginDetails) {
-  const response = await axiosInstance.post<AuthenticationResponse>(REGISTER_PATH, userRegisterDetails);
+  const response = await axiosInstance.post<AuthenticationResponse>(
+    REGISTER_PATH,
+    userRegisterDetails
+  );
   return response.data;
 }
 
 export async function verifyEmail(nus_email: string, otp: string) {
-  const response = await axiosInstance.post<AuthenticationResponse>(VERIFY_EMAIL_PATH, {
-    nus_email,
-    otp,
-  });
+  const response = await axiosInstance.post<AuthenticationResponse>(
+    VERIFY_EMAIL_PATH,
+    {
+      nus_email,
+      otp,
+    }
+  );
 
   // user should be created on backend at this point, now user can immediately be directed to home page
   const tokenResponseData = response.data as TokenResponseData;
   TokenService.setTokens({
-    accessToken: tokenResponseData.access_token,
-    refreshToken: tokenResponseData.refresh_token,
+    accessToken: tokenResponseData.access,
+    refreshToken: tokenResponseData.refresh,
   });
   return response.data;
 }
 
 export async function resendOtp(nus_email: string) {
-  const response = await axiosInstance.post<AuthenticationResponse>(RESEND_OTP_PATH, {
-    nus_email
-  })
+  const response = await axiosInstance.post<AuthenticationResponse>(
+    RESEND_OTP_PATH,
+    {
+      nus_email,
+    }
+  );
   return response.data;
 }
 
@@ -54,19 +64,27 @@ export async function resendOtp(nus_email: string) {
  */
 export async function verifyAuth() {
   try {
-    await axiosInstance.get(VERIFY_AUTHENTICATION);
+    await axiosInstance.post(VERIFY_AUTHENTICATION, {
+      token: TokenService.getLocalAccessToken(),
+    });
     return true;
   } catch (err) {
-    return false;
+    if (axios.isAxiosError(err) && err.response?.status === 401) {
+      return false;
+    }
+    throw err;
   }
 }
 
 export async function login(userLoginDetails: UserLoginDetails) {
-  const response = await axiosInstance.post<AuthenticationResponse>('/login', userLoginDetails);
+  const response = await axiosInstance.post<AuthenticationResponse>(
+    '/login',
+    JSON.stringify(userLoginDetails)
+  );
   const tokenResponseData = response.data as TokenResponseData;
   TokenService.setTokens({
-    accessToken: tokenResponseData.access_token,
-    refreshToken: tokenResponseData.refresh_token,
+    accessToken: tokenResponseData.access,
+    refreshToken: tokenResponseData.refresh,
   });
   return response.data;
 }

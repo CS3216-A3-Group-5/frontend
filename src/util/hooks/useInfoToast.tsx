@@ -6,13 +6,13 @@ import { informationCircleOutline } from 'ionicons/icons';
  */
 export default function useInfoToast() {
   const [present] = useIonToast();
-  const presentToast = (message: string) => {
+  const presentToast = (message: string, color?: string) => {
     void present({
       message,
-      color: 'success',
+      color: color ? color : 'success',
       duration: 2000,
       position: 'top',
-      icon: informationCircleOutline
+      icon: informationCircleOutline,
     });
   };
   return presentToast;

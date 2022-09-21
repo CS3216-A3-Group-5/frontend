@@ -12,12 +12,12 @@ import {
   IonSearchbar,
   IonToolbar,
 } from '@ionic/react';
-import { useLayoutEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState, useLayoutEffect } from 'react';
+import { useLocation } from 'react-router';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import AppHeader from '../../components/AppHeader';
 import { PAGE_SIZE } from '../../constants';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import {
   getNewPageOfExploreModules,
   getPageOfExploreModulesWithNewKeyword,
@@ -37,6 +37,7 @@ export default function ModulesPage() {
   const handleApiError = useApiRequestErrorHandler();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [hasDoneFirstLoad, setHasDoneFirstLoad] = useState<boolean>(false);
 
   /* eslint-disable */
   function getNewPageOfModules(e: any) {
@@ -85,7 +86,10 @@ export default function ModulesPage() {
       .catch((error) => {
         createErrorToast(handleApiError(error));
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        setIsLoading(false);
+        setHasDoneFirstLoad(true);
+      });
   }
 
   useLayoutEffect(() => {
@@ -106,32 +110,33 @@ export default function ModulesPage() {
             <h1>Explore modules</h1>
           </IonLabel>
         </IonListHeader>
-        {Object.keys(modules).length > 0 ? (
-          <>
-            <IonList lines="full">
-              {Object.values(modules).map((uniModule) => (
-                <ModuleListItem
-                  uniModule={uniModule}
-                  key={uniModule.code}
-                  path={currentPath}
-                />
-              ))}
-            </IonList>
-            <IonInfiniteScroll
-              onIonInfinite={getNewPageOfModules}
-              threshold="50px"
-              disabled={isInfiniteScrollDisabled}
-            >
-              <IonInfiniteScrollContent loadingSpinner="circles"></IonInfiniteScrollContent>
-            </IonInfiniteScroll>
-          </>
-        ) : (
-          <IonCard color="secondary">
-            <IonCardContent>
-              <h2>No modules found.</h2>
-            </IonCardContent>
-          </IonCard>
-        )}
+        {hasDoneFirstLoad &&
+          (Object.keys(modules).length > 0 ? (
+            <>
+              <IonList lines="full">
+                {Object.values(modules).map((uniModule) => (
+                  <ModuleListItem
+                    uniModule={uniModule}
+                    key={uniModule.code}
+                    path={currentPath}
+                  />
+                ))}
+              </IonList>
+              <IonInfiniteScroll
+                onIonInfinite={getNewPageOfModules}
+                threshold="50px"
+                disabled={isInfiniteScrollDisabled}
+              >
+                <IonInfiniteScrollContent loadingSpinner="circles"></IonInfiniteScrollContent>
+              </IonInfiniteScroll>
+            </>
+          ) : (
+            <IonCard color="secondary">
+              <IonCardContent>
+                <h2>No modules found.</h2>
+              </IonCardContent>
+            </IonCard>
+          ))}
         <IonLoading isOpen={isLoading}></IonLoading>
       </IonContent>
     </IonPage>

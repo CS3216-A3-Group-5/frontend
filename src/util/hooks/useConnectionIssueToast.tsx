@@ -1,5 +1,5 @@
 import { useIonToast } from '@ionic/react';
-import { informationCircleOutline } from 'ionicons/icons';
+import { globeOutline } from 'ionicons/icons';
 import { DataRetrievalErrorType } from '../../redux/slices/objectDetailsSlice';
 
 /**
@@ -8,18 +8,19 @@ import { DataRetrievalErrorType } from '../../redux/slices/objectDetailsSlice';
 export default function useConnectionIssueToast() {
   const [present] = useIonToast();
   const presentToast = (connectionErrorType: DataRetrievalErrorType) => {
-    let message = "";
+    let message = '';
     if (connectionErrorType === DataRetrievalErrorType.NO_CONNECTION) {
-      message = "You are not connected to the Internet. Information might not be up-to-date.";
+      message =
+        'You are not connected to the Internet. Information might not be up-to-date.';
     } else {
-      message = "No response received from server. Information might not be up-to-date.";
+      message = 'Unable to reach server. Information might not be up-to-date.';
     }
     void present({
       message,
       color: 'primary',
       duration: 2000,
       position: 'top',
-      icon: informationCircleOutline,
+      icon: globeOutline,
     });
   };
   return presentToast;

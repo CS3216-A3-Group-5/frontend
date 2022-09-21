@@ -34,6 +34,8 @@ export default function Homepage() {
   const createErrorToast = useErrorToast();
   const [isInfiniteScrollDisabled, setIsInfiniteScrollDisabled] =
     useState<boolean>(false);
+  const [haveTriedFirstDataLoad, setHaveTriedFirstDataLoad] =
+    useState<boolean>(false);
   const handleApiError = useApiRequestErrorHandler();
   const dispatch = useAppDispatch();
 
@@ -46,6 +48,7 @@ export default function Homepage() {
       })
       .finally(() => {
         setIsLoading(false);
+        setHaveTriedFirstDataLoad(true);
       });
   }
 
@@ -109,7 +112,7 @@ export default function Homepage() {
           </IonLabel>
         </IonListHeader>
         <IonList lines="full">
-          {Object.keys(modules).length === 0 ? (
+          {haveTriedFirstDataLoad && Object.keys(modules).length === 0 ? (
             <IonCard color="secondary">
               <IonCardContent>
                 <h2>You are not enrolled in any modules!</h2>

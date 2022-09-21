@@ -46,85 +46,118 @@ import NonAuthRoute from './util/authentication/NonAuthRoute';
 import RegisterPage from './pages/authentication/register';
 import VerifyPage from './pages/authentication/verify';
 import EnrolledModuleView from './pages/home/EnrolledModuleView';
+import { useLayoutEffect } from 'react';
+import { verifyAuth } from './api/authentication';
+import { useApiRequestErrorHandler } from './api/errorHandling';
+import useInfoToast from './util/hooks/useInfoToast';
+import { OnlineContext, useProvideOnlineStatus } from './util/onlineContext';
+import { persistor } from './redux/store';
 
 setupIonicReact();
 
 export default function App() {
   const authenticatedUser = useProvideAuth();
+  const onlineStatus = useProvideOnlineStatus();
+  const presentInfoToast = useInfoToast();
+  const handleApiError = useApiRequestErrorHandler();
+
+  useLayoutEffect(() => {
+    verifyAuth()
+      .then((result) => {
+        authenticatedUser.setIsAuthenticated(result);
+        if (result === false) {
+          void persistor.purge();
+        }
+        onlineStatus.setIsOnline(true);
+      })
+      .catch((err) => {
+        //any other error other than 401 will allow access, but offline data only
+        handleApiError(err);
+        //if (error.errorType !== ErrorType.AUTHENTICATION_FAIL) {
+        presentInfoToast(
+          'Unable to reach server. Displaying offline information.'
+        );
+        onlineStatus.setIsOnline(false);
+      });
+  }, []);
 
   return (
     <IonApp>
       <AuthContext.Provider value={authenticatedUser}>
-        <IonReactRouter>
-          <IonTabs>
-            <IonRouterOutlet>
-              <NonAuthRoute exact path={LOGIN}>
-                <LoginPage />
-              </NonAuthRoute>
-              <NonAuthRoute exact path={REGISTER}>
-                <RegisterPage />
-              </NonAuthRoute>
-              <NonAuthRoute exact path={VERIFY_EMAIL}>
-                <VerifyPage />
-              </NonAuthRoute>
-              <PrivateRoute exact path="/home">
-                <Home />
-              </PrivateRoute>
-              <PrivateRoute
-                path="/home/modules/:moduleCode"
-                component={EnrolledModuleView}
-              />
-              <PrivateRoute exact path="/modules">
-                <ModulesPage />
-              </PrivateRoute>
-              <PrivateRoute
-                path="/modules/:moduleCode"
-                component={ModuleView}
-              />
-              <PrivateRoute exact path="/user_profile">
-                <UserProfile />
-              </PrivateRoute>
-              <PrivateRoute
-                exact
-                path="/user_profile/edit"
-                component={EditProfile}
-              />
-              <PrivateRoute exact path="/connections">
-                <ConnectionsPage />
-              </PrivateRoute>
-              <PrivateRoute exact path="/">
-                <Redirect to="/home" />
-              </PrivateRoute>
-            </IonRouterOutlet>
-            <IonTabBar
-              slot="bottom"
-              className={authenticatedUser.isAuthenticated ? '' : 'ion-hide'}
-            >
-              <IonTabButton tab="modules" href="/modules">
-                <IonIcon icon={searchOutline} />
-                <IonLabel className={styles['tab_button_text']}>
-                  Modules
-                </IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="connections" href="/connections">
-                <IonIcon icon={people}></IonIcon>
-                <IonLabel className={styles['tab_button_text']}>
-                  Connections
-                </IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="home" href="/home">
-                <IonIcon icon={home}></IonIcon>
-                <IonLabel className={styles['tab_button_text']}>Home</IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="userProfile" href="/user_profile">
-                <IonIcon icon={person} />
-                <IonLabel className={styles['tab_button_text']}>
-                  Profile
-                </IonLabel>
-              </IonTabButton>
-            </IonTabBar>
-          </IonTabs>
-        </IonReactRouter>
+        <OnlineContext.Provider value={onlineStatus}>
+          <IonReactRouter>
+            <IonTabs>
+              <IonRouterOutlet>
+                <NonAuthRoute exact path={LOGIN}>
+                  <LoginPage />
+                </NonAuthRoute>
+                <NonAuthRoute exact path={REGISTER}>
+                  <RegisterPage />
+                </NonAuthRoute>
+                <NonAuthRoute exact path={VERIFY_EMAIL}>
+                  <VerifyPage />
+                </NonAuthRoute>
+                <PrivateRoute exact path="/home">
+                  <Home />
+                </PrivateRoute>
+                <PrivateRoute
+                  path="/home/modules/:moduleCode"
+                  component={EnrolledModuleView}
+                />
+                <PrivateRoute exact path="/modules">
+                  <ModulesPage />
+                </PrivateRoute>
+                <PrivateRoute
+                  path="/modules/:moduleCode"
+                  component={ModuleView}
+                />
+                <PrivateRoute exact path="/user_profile">
+                  <UserProfile />
+                </PrivateRoute>
+                <PrivateRoute
+                  exact
+                  path="/user_profile/edit"
+                  component={EditProfile}
+                />
+                <PrivateRoute exact path="/connections">
+                  <ConnectionsPage />
+                </PrivateRoute>
+                <PrivateRoute exact path="/">
+                  <Redirect to="/home" />
+                </PrivateRoute>
+              </IonRouterOutlet>
+              <IonTabBar
+                slot="bottom"
+                className={authenticatedUser.isAuthenticated ? '' : 'ion-hide'}
+              >
+                <IonTabButton tab="modules" href="/modules">
+                  <IonIcon icon={searchOutline} />
+                  <IonLabel className={styles['tab_button_text']}>
+                    Modules
+                  </IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="connections" href="/connections">
+                  <IonIcon icon={people}></IonIcon>
+                  <IonLabel className={styles['tab_button_text']}>
+                    Connections
+                  </IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="home" href="/home">
+                  <IonIcon icon={home}></IonIcon>
+                  <IonLabel className={styles['tab_button_text']}>
+                    Home
+                  </IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="userProfile" href="/user_profile">
+                  <IonIcon icon={person} />
+                  <IonLabel className={styles['tab_button_text']}>
+                    Profile
+                  </IonLabel>
+                </IonTabButton>
+              </IonTabBar>
+            </IonTabs>
+          </IonReactRouter>
+        </OnlineContext.Provider>
       </AuthContext.Provider>
     </IonApp>
   );
