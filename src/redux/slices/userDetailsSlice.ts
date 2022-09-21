@@ -57,16 +57,24 @@ const UserDetailsSlice = createSlice({
 
 export const getSelfUserDetails = createAsyncThunk<DetailedUser>(
   'userDetails/getUser',
-  async (_, __) => {
-    const responseData = await getSelfDetailedUser();
-    return responseData;
+  async (_, thunkApi) => {
+    try {
+      const data = await getSelfDetailedUser();
+      return data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 
 export const updateSelfUserDetails = createAsyncThunk<void, DetailedUser>(
   'userDetails/updateUser',
-  async (user, _) => {
-    await updateSelfDetailedUser(user);
+  async (user, thunkApi) => {
+    try {
+      await updateSelfDetailedUser(user);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 

@@ -66,8 +66,12 @@ export const getNewPageOfModules = createAsyncThunk<
 >('home/getNewPageOfModules', async (_, thunkApi) => {
   const keyword = thunkApi.getState().home.keyword;
   const page = thunkApi.getState().home.page;
-  const responseData = await getModulesOfUser(page + 1, keyword);
-  return responseData;
+  try {
+    const responseData = await getModulesOfUser(page + 1, keyword);
+    return responseData;
+  } catch (error) {
+    return thunkApi.rejectWithValue(error);
+  }
 });
 
 export const getPageOfModulesWithNewKeyword = createAsyncThunk<
@@ -77,16 +81,24 @@ export const getPageOfModulesWithNewKeyword = createAsyncThunk<
 >('home/getPageOfModulesWithNewKeyword', async (keyword, thunkApi) => {
   thunkApi.dispatch(HomeSlice.actions.setKeyword(keyword ? keyword : ''));
   thunkApi.dispatch(HomeSlice.actions.setPage(1));
-  const responseData = await getModulesOfUser(1, keyword ? keyword : '');
-  return responseData;
+  try {
+    const responseData = await getModulesOfUser(1, keyword ? keyword : '');
+    return responseData;
+  } catch (error) {
+    return thunkApi.rejectWithValue(error);
+  }
 });
 
 export const updateListOfStudentsInModule = createAsyncThunk<
   Array<User>,
   string
->('home/updateListOfStudentsInModule', async (moduleCode: string) => {
-  const responseData = await getStudentsOfModule(moduleCode);
-  return responseData;
+>('home/updateListOfStudentsInModule', async (moduleCode: string, thunkApi) => {
+  try {
+    const responseData = await getStudentsOfModule(moduleCode);
+    return responseData;
+  } catch (error) {
+    return thunkApi.rejectWithValue(error);
+  }
 });
 
 // set up persistence, uses local storage to persist this reducer

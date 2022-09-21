@@ -101,7 +101,7 @@ export const getModuleStudents = createAsyncThunk<
         data: modulesLRU.get(moduleCode)!,
       };
     }
-    throw error;
+    return thunkApi.rejectWithValue(error);
   }
 });
 
@@ -143,7 +143,7 @@ export const getUserDetails = createAsyncThunk<
         data: usersLRU.get(id)!,
       };
     }
-    throw error;
+    return thunkApi.rejectWithValue(error);
   }
 });
 

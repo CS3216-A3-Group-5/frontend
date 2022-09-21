@@ -47,6 +47,9 @@ const UserSlice = createSlice({
         action.meta.arg.newStatus;
       state.moduleStatuses = updatedModuleStatuses;
     });
+    builder.addCase(submitRegisterForm.fulfilled, (state, action) => {
+      state.email = action.meta.arg.nus_email;
+    });
   },
 });
 
@@ -55,23 +58,36 @@ export const submitRegisterForm = createAsyncThunk<
   UserLoginDetails
 >('user/submitRegisterForm', async (userLoginDetails, thunkApi) => {
   const dispatch = thunkApi.dispatch;
-  const responseData = await registerUser(userLoginDetails);
-  dispatch(setEmail(userLoginDetails.nus_email));
-  return responseData;
+  try {
+    const responseData = await registerUser(userLoginDetails);
+    return responseData;
+  } catch (error) {
+    return thunkApi.rejectWithValue(error);
+  }
 });
 
 export const getUserStatusForModule = createAsyncThunk<UserStatus, string>(
   'user/getUserStatusForModule',
-  async (moduleCode) => {
-    return getUserStatus(moduleCode);
+  async (moduleCode, thunkApi) => {
+    try {
+      const data = await getUserStatus(moduleCode);
+      return data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 
 export const updateUserStatusForModule = createAsyncThunk<
   void,
   { moduleCode: string; newStatus: UserStatus }
->('user/updateUserStatusForModule', async (args) => {
-  return updateUserStatus(args.moduleCode, args.newStatus);
+>('user/updateUserStatusForModule', async (args, thunkApi) => {
+  try {
+    const data = await updateUserStatus(args.moduleCode, args.newStatus);
+    return data;
+  } catch (error) {
+    return thunkApi.rejectWithValue(error);
+  }
 });
 
 export const { setEmail, setId, setIsInProcessOfVerifyingEmail } =

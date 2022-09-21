@@ -39,8 +39,6 @@ import ConnectionsPage from './pages/connections';
 import ModuleView from './pages/modules/ModuleView';
 import EditProfile from './pages/user_profile/edit_profile';
 import { AuthContext, useProvideAuth } from './util/authentication/AuthContext';
-import { useLayoutEffect } from 'react';
-import { verifyAuth } from './api/authentication';
 import PrivateRoute from './util/authentication/PrivateRoute';
 import { LOGIN, REGISTER, VERIFY_EMAIL } from './routes';
 import LoginPage from './pages/authentication/login';
@@ -53,14 +51,6 @@ setupIonicReact();
 
 export default function App() {
   const authenticatedUser = useProvideAuth();
-
-  // before app first renders, check authentication with backend
-  // TODO: show old data if unable to establish connection to backend!
-  useLayoutEffect(() => {
-    void verifyAuth().then((val) => {
-      authenticatedUser.setIsAuthenticated(val);
-    });
-  }, []);
 
   return (
     <IonApp>

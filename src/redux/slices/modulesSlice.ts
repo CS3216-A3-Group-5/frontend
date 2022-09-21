@@ -1,7 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  getExploreModulesFromApi,
-} from '../../api/modules';
+import { getExploreModulesFromApi } from '../../api/modules';
 import { UniModule } from '../../api/types';
 import { RootState } from '../store';
 
@@ -69,8 +67,12 @@ export const getNewPageOfExploreModules = createAsyncThunk<
 >('modules/getNewPageOfExploreModules', async (_, thunkApi) => {
   const keyword = thunkApi.getState().modules.keyword;
   const page = thunkApi.getState().modules.page;
-  const responseData = await getExploreModulesFromApi(page + 1, keyword);
-  return responseData;
+  try {
+    const responseData = await getExploreModulesFromApi(page + 1, keyword);
+    return responseData;
+  } catch (error) {
+    return thunkApi.rejectWithValue(error);
+  }
 });
 
 export const getPageOfExploreModulesWithNewKeyword = createAsyncThunk<
@@ -82,11 +84,15 @@ export const getPageOfExploreModulesWithNewKeyword = createAsyncThunk<
   async (keyword, thunkApi) => {
     thunkApi.dispatch(ModuleSlice.actions.setKeyword(keyword ? keyword : ''));
     thunkApi.dispatch(ModuleSlice.actions.setPage(1));
-    const responseData = await getExploreModulesFromApi(
-      1,
-      keyword ? keyword : ''
-    );
-    return responseData;
+    try {
+      const responseData = await getExploreModulesFromApi(
+        1,
+        keyword ? keyword : ''
+      );
+      return responseData;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
 );
 

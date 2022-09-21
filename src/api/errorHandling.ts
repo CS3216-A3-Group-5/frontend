@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useHistory } from 'react-router';
+import { persistor } from '../redux/store';
 import { useAuth } from '../util/authentication/AuthContext';
 import { LOGIN_PATH } from './constants';
 
@@ -25,7 +26,6 @@ export class ApiRequestError extends Error {
   }
 }
 
-
 export function useApiRequestErrorHandler() {
   const history = useHistory();
   const auth = useAuth();
@@ -35,15 +35,13 @@ export function useApiRequestErrorHandler() {
       // Not even online, cannot send request
       return new ApiRequestError(ErrorType.NO_CONNECTION);
     }
-    if (error instanceof ApiRequestError) {
-      // this is an error that is checked for, like no connection
-      return error;
-    }
     if (axios.isAxiosError(error)) {
       if (error.response) {
         // check if the error from server is an authentication error
         if (error.response.status === 401) {
           auth.setIsAuthenticated(false);
+          // purge storage
+          void persistor.purge();
           // redirect to login screen whenever a 401 occurs
           history.push(LOGIN_PATH);
           return new ApiRequestError(ErrorType.AUTHENTICATION_FAIL);
