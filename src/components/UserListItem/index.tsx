@@ -12,6 +12,7 @@ import {
 } from '@ionic/react';
 import { checkmarkCircle, hourglass } from 'ionicons/icons';
 import { useState } from 'react';
+import { getFullURL } from '../../api';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import { ConnectionStatus, DetailedUser, User } from '../../api/types';
 import { useAppDispatch } from '../../redux/hooks';
@@ -101,7 +102,7 @@ export default function UserListItem({ user, module }: UserListItemProps) {
             alt="user thumbnail"
             src={
               user.thumbnailPic
-                ? user.thumbnailPic
+                ? getFullURL(user.thumbnailPic)
                 : 'assets/user_default_icon.svg'
             }
           ></img>

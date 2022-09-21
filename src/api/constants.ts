@@ -27,4 +27,4 @@ export function getPathForSetModuleStatusForUser(moduleCode: string) {
 
 export const OWN_USER_MODULE_STATUS = '/user/modules/status';
 // TODO: check how we want to implement profile picture viewing logic
-export const PROFILE_PICTURE_PATH = '/picture';
+export const PROFILE_PICTURE_PATH = '/user/picture';

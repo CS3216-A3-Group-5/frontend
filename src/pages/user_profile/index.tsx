@@ -1,25 +1,32 @@
 import { IonButton, IonContent, IonPage } from '@ionic/react';
 import { useEffect } from 'react';
+import { logout } from '../../api/authentication';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import AppHeader from '../../components/AppHeader';
 import UserCardItem from '../../components/UserCardItem/UserCardItem';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getSelfUserDetails } from '../../redux/slices/userDetailsSlice';
+import useErrorToast from '../../util/hooks/useErrorToast';
 import styles from './styles.module.scss';
 
 export default function UserProfile() {
   const user = useAppSelector((state) => state.userDetails.user);
   const handleApiRequestError = useApiRequestErrorHandler();
-  const dispatch = useAppDispatch()
+  const createErrorToast = useErrorToast();
+  const dispatch = useAppDispatch();
 
   // shoot api query before painting to screen
   useEffect(() => {
-    dispatch(getSelfUserDetails()).catch(
-      (error) => {
-        handleApiRequestError(error)
-      }
-    );
+    dispatch(getSelfUserDetails()).catch((error) => {
+      createErrorToast(handleApiRequestError(error));
+    });
   }, []);
+
+  function logoutUser() {
+    logout().catch((error) => {
+      createErrorToast(handleApiRequestError(error));
+    });
+  }
 
   if (user) {
     return (
@@ -32,6 +39,13 @@ export default function UserProfile() {
             routerLink={'/user_profile/edit'}
           >
             Edit Profile
+          </IonButton>
+          <IonButton
+            className={styles['edit-profile-button']}
+            color="danger"
+            onClick={logoutUser}
+          >
+            Logout
           </IonButton>
         </IonContent>
       </IonPage>
