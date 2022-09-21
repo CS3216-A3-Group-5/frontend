@@ -1,4 +1,5 @@
 import {
+  IonButton,
   IonContent,
   IonLabel,
   IonList,
@@ -58,11 +59,7 @@ export default function ConnectionsPage() {
       </AppHeader>
       <IonContent fullscreen>
         {incomingRequests.length > 0 && (
-          <IonListHeader>
-            <IonLabel>
-              <h1>Incoming Requests</h1>
-            </IonLabel>
-          </IonListHeader>
+          <ConnectionListHeader header="Incoming Requests" />
         )}
         <IonList className="ion-no-padding">
           {incomingRequests
@@ -76,11 +73,7 @@ export default function ConnectionsPage() {
             : null}
         </IonList>
         {outgoingRequests.length > 0 && (
-          <IonListHeader>
-            <IonLabel>
-              <h1>Outgoing Requests</h1>
-            </IonLabel>
-          </IonListHeader>
+          <ConnectionListHeader header="Outgoing Requests" />
         )}
         <IonList className="ion-no-padding">
           {outgoingRequests
@@ -94,11 +87,7 @@ export default function ConnectionsPage() {
             : null}
         </IonList>
         {connections.length > 0 && (
-          <IonListHeader>
-            <IonLabel>
-              <h1>Connections</h1>
-            </IonLabel>
-          </IonListHeader>
+          <ConnectionListHeader header="Connections" />
         )}
         <IonList className="ion-no-padding">
           {connections
@@ -115,5 +104,20 @@ export default function ConnectionsPage() {
       </IonContent>
       <IonLoading isOpen={isLoading}></IonLoading>
     </IonPage>
+  );
+}
+
+interface ConnectionListHeaderProps {
+  header: string;
+}
+
+function ConnectionListHeader({ header }: ConnectionListHeaderProps) {
+  return (
+    <IonListHeader className="ion-padding-top">
+      <IonLabel>
+        <h2>{header}</h2>
+      </IonLabel>
+      <IonButton color="medium">View All</IonButton>
+    </IonListHeader>
   );
 }

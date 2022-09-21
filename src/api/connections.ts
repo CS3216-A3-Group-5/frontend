@@ -5,18 +5,19 @@
 import axiosInstance from '.';
 import { CONNECTIONS_PATH } from './constants';
 import { ConnectionResponseFormat, responseToConnection } from './formats';
-import { Connection, ConnectionType, UniModule } from './types';
+import { Connection, ConnectionType } from './types';
 
 export async function getConnectedConnections(
-  module?: UniModule
+  keyword?: string,
+  page = 1
 ): Promise<Connection[]> {
   const response = await axiosInstance.get<ConnectionResponseFormat[]>(
     CONNECTIONS_PATH,
     {
       params: {
         type: ConnectionType.CONNECTED,
-        module_code: module ? module.code : '',
-        page: 1,
+        q: keyword ? keyword : '',
+        page: { page },
       },
     }
   );
@@ -27,15 +28,16 @@ export async function getConnectedConnections(
 }
 
 export async function getIncomingConnectionsRequests(
-  module?: UniModule
+  keyword?: string,
+  page = 1
 ): Promise<Connection[]> {
   const response = await axiosInstance.get<ConnectionResponseFormat[]>(
     CONNECTIONS_PATH,
     {
       params: {
         type: ConnectionType.INCOMING_REQUEST,
-        module_code: module ? module.code : '',
-        page: 1,
+        q: keyword ? keyword : '',
+        page: { page },
       },
     }
   );
@@ -46,15 +48,16 @@ export async function getIncomingConnectionsRequests(
 }
 
 export async function getOutgoingConnectionsRequests(
-  module?: UniModule
+  keyword?: string,
+  page = 1
 ): Promise<Connection[]> {
   const response = await axiosInstance.get<ConnectionResponseFormat[]>(
     CONNECTIONS_PATH,
     {
       params: {
         type: ConnectionType.OUTGOING_REQUEST,
-        module_code: module ? module.code : '',
-        page: 1,
+        q: keyword ? keyword : '',
+        page: { page },
       },
     }
   );

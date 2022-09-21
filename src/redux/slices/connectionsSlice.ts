@@ -17,11 +17,11 @@ interface ConnectionState {
   incoming: Connection[];
   outgoing: Connection[];
 }
-const initialState = {
+const initialState: ConnectionState = {
   connections: [],
   incoming: [],
   outgoing: [],
-} as ConnectionState;
+};
 
 const ConnectionsSlice = createSlice({
   name: 'userDetails',

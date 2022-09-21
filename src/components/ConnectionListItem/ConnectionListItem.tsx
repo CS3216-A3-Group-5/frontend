@@ -42,7 +42,7 @@ function ConnectionAction({
   }
 
   if (connectionType === ConnectionType.CONNECTED) {
-    return <IonIcon icon={checkmarkCircle} />;
+    return <IonIcon color="success" src={checkmarkCircle}></IonIcon>;
   } else if (connectionType == ConnectionType.INCOMING_REQUEST) {
     return (
       <div style={{ display: 'flex', flexDirection: 'row' }}>
