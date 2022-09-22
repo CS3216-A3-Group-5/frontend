@@ -5,6 +5,7 @@ import {
   acceptIncomingRequest,
   cancelOutgoingRequest,
   createConnectionRequest,
+  deleteConnectedConnection,
   getConnectedConnections,
   getIncomingConnectionsRequests,
   getOutgoingConnectionsRequests,
@@ -50,6 +51,11 @@ const ConnectionsSlice = createSlice({
     });
     builder.addCase(cancelOutgoing.fulfilled, (state, action) => {
       state.outgoing = state.outgoing.filter(
+        ({ id }) => id !== action.meta.arg.id
+      );
+    });
+    builder.addCase(deleteConnected.fulfilled, (state, action) => {
+      state.connections = state.connections.filter(
         ({ id }) => id !== action.meta.arg.id
       );
     });
@@ -122,6 +128,17 @@ export const cancelOutgoing = createAsyncThunk<void, Connection>(
   async (connection, thunkApi) => {
     try {
       await cancelOutgoingRequest(connection);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteConnected = createAsyncThunk<void, Connection>(
+  'connections/deleteConnected',
+  async (connection, thunkApi) => {
+    try {
+      await deleteConnectedConnection(connection);
     } catch (error) {
       return thunkApi.rejectWithValue(error);
     }

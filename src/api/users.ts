@@ -102,12 +102,7 @@ export async function unenrollModule(moduleCode: string) {
  */
 export async function getUserStatus(moduleCode: string) {
   const resp = await axiosInstance.get<GetUserStatusResponseFormat>(
-    OWN_USER_MODULE_STATUS,
-    {
-      data: {
-        module_code: moduleCode,
-      },
-    }
+    OWN_USER_MODULE_STATUS + '/' + moduleCode
   );
   return responseToUserStatus(resp.data.status);
 }
@@ -116,8 +111,7 @@ export async function updateUserStatus(
   moduleCode: string,
   newStatus: UserStatus
 ) {
-  await axiosInstance.put(OWN_USER_MODULE_STATUS, {
-    module_code: moduleCode,
+  await axiosInstance.put(OWN_USER_MODULE_STATUS + '/' + moduleCode, {
     status: userStatusToRequest(newStatus),
   });
 }

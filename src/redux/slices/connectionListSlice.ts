@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   acceptIncomingRequest,
   cancelOutgoingRequest,
+  deleteConnectedConnection,
   getConnectedConnections,
   getIncomingConnectionsRequests,
   getOutgoingConnectionsRequests,
@@ -37,7 +38,7 @@ const ConnectionListSlice = createSlice({
     setPage: (state, action: PayloadAction<number>) => {
       state.page = action.payload;
     },
-    resetConnections: (state, action: PayloadAction<void>) => {
+    resetConnections: (state) => {
       state.connections = {};
     },
   },
@@ -76,6 +77,11 @@ const ConnectionListSlice = createSlice({
       state.connections = newConnections;
     });
     builder.addCase(cancelOutgoingInList.fulfilled, (state, action) => {
+      const newConnections = { ...state.connections };
+      delete newConnections[action.meta.arg.id];
+      state.connections = newConnections;
+    });
+    builder.addCase(deleteConnectedInList.fulfilled, (state, action) => {
       const newConnections = { ...state.connections };
       delete newConnections[action.meta.arg.id];
       state.connections = newConnections;
@@ -126,7 +132,7 @@ export const getNewPageOfConnections = createAsyncThunk<
   undefined,
   { state: RootState }
 >('connectionList/getNewPageOfConnections', async (_, thunkApi) => {
-  const keyword = thunkApi.getState().connectionList.keyword;
+  const keyword: string = thunkApi.getState().connectionList.keyword;
   const page = thunkApi.getState().connectionList.page;
   try {
     const responseData = await getConnectionsOfType(
@@ -167,6 +173,17 @@ export const cancelOutgoingInList = createAsyncThunk<void, Connection>(
   async (connection, thunkApi) => {
     try {
       await cancelOutgoingRequest(connection);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteConnectedInList = createAsyncThunk<void, Connection>(
+  'connectionList/deleteConnectedInList',
+  async (connection, thunkApi) => {
+    try {
+      await deleteConnectedConnection(connection);
     } catch (error) {
       return thunkApi.rejectWithValue(error);
     }
