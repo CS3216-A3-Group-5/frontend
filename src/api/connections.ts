@@ -88,6 +88,13 @@ export async function cancelOutgoingRequest(connection: Connection) {
   });
 }
 
+export async function deleteConnectedConnection(connection: Connection) {
+  await axiosInstance.put(CONNECTIONS_PATH, {
+    id: connection.id,
+    status: 0,
+  });
+}
+
 export async function createConnectionRequest(
   otherUserId: string,
   module_code: string
