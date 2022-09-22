@@ -1,7 +1,7 @@
 export enum ConnectionStatus {
-  NOT_CONNECTED,
-  CONNECTED,
-  PENDING,
+  NOT_CONNECTED = 0,
+  PENDING = 1,
+  CONNECTED = 2,
 }
 
 export enum ConnectionType {

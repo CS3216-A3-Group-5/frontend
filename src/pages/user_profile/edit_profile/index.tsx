@@ -1,6 +1,5 @@
-
 import { IonAvatar, IonContent, IonPage } from '@ionic/react';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { getFullURL } from '../../../api';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
@@ -73,7 +72,7 @@ export default function EditProfile({ title }: { title: string }) {
     setUserDetails(userStore);
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (selectedFile) {
       const objectUrl = URL.createObjectURL(selectedFile);
       setTempUrl(objectUrl);
