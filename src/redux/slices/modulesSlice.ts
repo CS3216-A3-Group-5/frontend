@@ -1,9 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { logEvent } from 'firebase/analytics';
 import { getExploreModulesFromApi } from '../../api/modules';
+import storage from 'redux-persist/lib/storage';
 import { UniModule } from '../../api/types';
 import { analytics } from '../../firebase';
 import { RootState } from '../store';
+import { persistReducer } from 'redux-persist';
 
 interface ModuleState {
   modules: { [key: string]: UniModule };
@@ -103,6 +105,16 @@ export const getPageOfExploreModulesWithNewKeyword = createAsyncThunk<
   }
 );
 
+const modulesPersistConfig = {
+  key: 'modules',
+  storage,
+};
+
+const persistModulesReducer = persistReducer(
+  modulesPersistConfig,
+  ModuleSlice.reducer
+);
+
 /*
 export const updateListOfStudentsInExploreModule = createAsyncThunk<
   Array<User>,
@@ -113,4 +125,4 @@ export const updateListOfStudentsInExploreModule = createAsyncThunk<
 });
 */
 
-export default ModuleSlice.reducer;
+export default persistModulesReducer;

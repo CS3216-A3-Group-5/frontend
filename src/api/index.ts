@@ -24,6 +24,7 @@ const axiosInstance = axios.create(config);
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = TokenService.getLocalAccessToken();
+    console.log(token);
     if (token && config.url !== REGISTER_PATH) {
       if (!config.headers) {
         config.headers = {};

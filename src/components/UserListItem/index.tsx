@@ -13,6 +13,7 @@ import {
 import { checkmarkCircle, hourglass } from 'ionicons/icons';
 import { useState } from 'react';
 import { getFullURL } from '../../api';
+import { createConnectionRequest } from '../../api/connections';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import {
   ConnectionStatus,
@@ -32,7 +33,7 @@ import styles from './style.module.scss';
 
 interface UserListItemProps {
   user: User;
-  module?: string; // when viewing this user from a module page
+  module: string; // when viewing this user from a module page
 }
 
 /**
@@ -68,6 +69,9 @@ export default function UserListItem({ user, module }: UserListItemProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<DetailedUser>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
+    user.connectionStatus
+  );
   const presentConnectionIssueToast = useConnectionIssueToast();
   const presentErrorToast = useErrorToast();
   const handleApiError = useApiRequestErrorHandler();
@@ -99,6 +103,23 @@ export default function UserListItem({ user, module }: UserListItemProps) {
     setIsModalOpen(false);
   }
 
+  function onConnectionButtonPress(
+    event: React.MouseEvent<HTMLIonButtonElement>
+  ) {
+    event.stopPropagation();
+    setIsLoading(true);
+    createConnectionRequest(user.id, module)
+      .then((response) => {
+        setConnectionStatus(response.otherUser.connectionStatus);
+      })
+      .catch((error) => {
+        presentErrorToast(handleApiError(error));
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
   return (
     <div>
       <IonItem button className="user-list-item" onClick={seeUserDetails}>
@@ -115,7 +136,7 @@ export default function UserListItem({ user, module }: UserListItemProps) {
         <IonLabel>
           <div className={styles['name-label-container']}>
             <h1>{user.name}</h1>
-            {renderConnectionStatusIcon(user.connectionStatus)}
+            {renderConnectionStatusIcon(connectionStatus)}
           </div>
           <p>
             Y{new Date().getFullYear() - Number(user.matriculationYear) + 1}{' '}
@@ -133,8 +154,12 @@ export default function UserListItem({ user, module }: UserListItemProps) {
             </p>
           ) : null}
         </IonLabel>
-        {user.connectionStatus === ConnectionStatus.NOT_CONNECTED && (
-          <IonButton size="default" color="primary">
+        {connectionStatus === ConnectionStatus.NOT_CONNECTED && (
+          <IonButton
+            size="default"
+            color="primary"
+            onClick={onConnectionButtonPress}
+          >
             Connect
           </IonButton>
         )}
