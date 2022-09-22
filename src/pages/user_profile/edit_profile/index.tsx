@@ -1,5 +1,5 @@
 import { IonAvatar, IonContent, IonPage, NavContext } from '@ionic/react';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { getFullURL } from '../../../api';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { uploadImage } from '../../../api/pictures';
@@ -65,13 +65,16 @@ export default function EditProfile({ title }: { title: string }) {
 
   useVerifyAuthenticationThenLoadData(() => {
     setUserDetails(userStore);
+  });
+
+  useEffect(() => {
     if (selectedFile) {
       const objectUrl = URL.createObjectURL(selectedFile);
       setTempUrl(objectUrl);
 
       return () => URL.revokeObjectURL(objectUrl);
     }
-  });
+  }, [selectedFile]);
 
   function updateUser() {
     let haveError = false;
