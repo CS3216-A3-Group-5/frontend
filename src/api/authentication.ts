@@ -2,11 +2,15 @@
  * API call handlers for authentication.
  */
 
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import axiosInstance from '.';
 import { AuthenticationResponse } from '../pages/authentication/constants';
+
 import TokenService from '../util/services/tokenService';
 import {
+  LOGIN_PATH,
+  LOGOUT_PATH,
+  REFRESH_TOKEN_PATH,
   REGISTER_PATH,
   RESEND_OTP_PATH,
   VERIFY_AUTHENTICATION,
@@ -78,8 +82,9 @@ export async function verifyAuth() {
 
 export async function login(userLoginDetails: UserLoginDetails) {
   const response = await axiosInstance.post<AuthenticationResponse>(
-    '/login',
-    userLoginDetails
+    LOGIN_PATH,
+    userLoginDetails,
+    { skipAuthRefresh: true } as AxiosRequestConfig
   );
   const tokenResponseData = response.data as TokenResponseData;
   TokenService.setTokens({
@@ -89,10 +94,25 @@ export async function login(userLoginDetails: UserLoginDetails) {
   return response.data;
 }
 
+export async function refreshTokens() {
+  const response = await axiosInstance.post<TokenResponseData>(
+    REFRESH_TOKEN_PATH,
+    {
+      refresh: TokenService.getLocalRefreshToken(),
+    },
+    { isRefreshAttempt: true } as AxiosRequestConfig
+  );
+  const tokenResponseData = response.data;
+  TokenService.setTokens({
+    accessToken: tokenResponseData.access,
+    refreshToken: tokenResponseData.refresh,
+  });
+}
+
 export async function logout() {
-  const refreshToken = TokenService.getTokens()?.refreshToken;
+  const refreshToken = TokenService.getLocalRefreshToken();
   TokenService.removeTokens();
-  await axiosInstance.post('/logout', {
+  await axiosInstance.post(LOGOUT_PATH, {
     refresh: refreshToken,
   });
 }

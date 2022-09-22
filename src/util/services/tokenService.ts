@@ -33,12 +33,12 @@ function setTokens(tokens: Tokens) {
 
 function getLocalRefreshToken() {
   const tokens = getTokens();
-  return tokens ? tokens.refreshToken : null;
+  return tokens ? tokens.refreshToken : 'xx';
 }
 
 function getLocalAccessToken() {
   const tokens = getTokens();
-  return tokens ? tokens.accessToken : null;
+  return tokens ? tokens.accessToken : 'xx';
 }
 
 function updateAccessToken(accessToken: string): void {

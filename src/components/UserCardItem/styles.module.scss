@@ -19,6 +19,7 @@
 
 .user-information .name {
   font-size: 1.8rem;
+  color: black;
 }
 
 .user-information .major {
@@ -53,4 +54,12 @@
   margin-left: 0.3rem;
   max-width: 8.5rem;
   overflow-wrap: break-word;
+}
+
+p.user-status-looking-for-friend {
+  color: var(--ion-color-secondary-shade);
+}
+
+p.user-status-willing-to-help {
+  color: var(--ion-color-primary-shade);
 }

@@ -2,7 +2,7 @@ import { IonCard, IonCardContent, IonAvatar, IonIcon } from '@ionic/react';
 import { callOutline, mail, paperPlaneOutline } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
 import { getFullURL } from '../../api';
-import { DetailedUser } from '../../api/types';
+import { DetailedUser, UserStatus } from '../../api/types';
 import styles from './styles.module.scss';
 
 interface UserCardItemProps {
@@ -14,12 +14,22 @@ function UserDetails({ user, module }: UserCardItemProps) {
   return (
     <div>
       <h1 className={styles['name']}>{user.name}</h1>
-      <h2 className={styles['major']}>Majoring in {user.universityCourse}</h2>
-      {module && (
-        <h3>
-          Status in {module}: {user.userStatus}
-        </h3>
-      )}
+      <h2 className={styles['major']}>
+        Y{new Date().getFullYear() - Number(user.matriculationYear) + 1}{' '}
+        {user.universityCourse}
+      </h2>
+      {module &&
+        (user.userStatus && user.userStatus !== UserStatus.NO_STATUS ? (
+          <p
+            className={
+              user.userStatus === UserStatus.LOOKING_FOR_A_FRIEND
+                ? styles['user-status-looking-for-friend']
+                : styles['user-status-willing-to-help']
+            }
+          >
+            {user.userStatus}
+          </p>
+        ) : null)}
     </div>
   );
 }
@@ -56,11 +66,11 @@ export default function UserCardItem({ user, module }: UserCardItemProps) {
             {isDesktop && <UserDetails user={user} module={module} />}
             <div className={styles['contact-information']}>
               <div>
-                <IonIcon icon={mail} />
+                <IonIcon icon={mail} color="tertiary" />
                 <h2>{user.contactDetails.email}</h2>
               </div>
               <div>
-                <IonIcon icon={paperPlaneOutline} />
+                <IonIcon icon={paperPlaneOutline} color="primary" />
                 <h2>
                   {user.contactDetails.telegramHandle
                     ? '@' + user.contactDetails.telegramHandle
@@ -68,7 +78,7 @@ export default function UserCardItem({ user, module }: UserCardItemProps) {
                 </h2>
               </div>
               <div>
-                <IonIcon icon={callOutline} />
+                <IonIcon icon={callOutline} color="danger" />
                 <h2>
                   {user.contactDetails.phoneNumber
                     ? user.contactDetails.phoneNumber
@@ -83,10 +93,12 @@ export default function UserCardItem({ user, module }: UserCardItemProps) {
           {!isDesktop && <UserDetails user={user} />}
         </div>
 
-        <div className={styles['bio-row']}>
-          <h1 className={styles['bio-header']}>Bio</h1>
-          <h2 className={styles['bio']}>{user.bio}</h2>
-        </div>
+        {user.bio !== '' && (
+          <div className={styles['bio-row']}>
+            <h1 className={styles['bio-header']}>Bio</h1>
+            <h2 className={styles['bio']}>{user.bio}</h2>
+          </div>
+        )}
       </IonCardContent>
     </IonCard>
   );

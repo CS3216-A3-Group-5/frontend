@@ -52,7 +52,6 @@ export async function updateSelfDetailedUser(user: DetailedUser) {
     OWN_USER_DETAILS_PATH,
     userResponse
   );
-  console.log(response);
 }
 
 /**
