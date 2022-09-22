@@ -8,10 +8,12 @@ import AppHeader from '../../../components/AppHeader';
 import InputFormCard, {
   InputFormCardField,
 } from '../../../components/InputFormCard';
-import { APP_NAME } from '../../../constants';
 import { analytics } from '../../../firebase';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { setIsInProcessOfVerifyingEmail } from '../../../redux/slices/userSlice';
+import {
+  setHasCreatedProfile,
+  setIsInProcessOfVerifyingEmail,
+} from '../../../redux/slices/userSlice';
 import { HOME, REGISTER } from '../../../routes';
 import useErrorToast from '../../../util/hooks/useErrorToast';
 import useInfoToast from '../../../util/hooks/useInfoToast';
@@ -67,9 +69,10 @@ const VerifyPage: React.FC = () => {
           }
           // otp success
           presentInfoToast(
-            'One-time passcode verified. Enjoy using ' + APP_NAME + '!'
+            "One-time passcode verified. Let's create your profile!"
           );
           dispatch(setIsInProcessOfVerifyingEmail(false));
+          dispatch(setHasCreatedProfile(false));
           logEvent(analytics, 'sign_up');
           history.push(HOME);
         })

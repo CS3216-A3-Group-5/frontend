@@ -34,6 +34,7 @@ import {
   getUserStatusForModule,
   updateUserStatusForModule,
 } from '../../../redux/slices/userSlice';
+import { useCheckUserProfileCreated } from '../../../util/hooks/useCheckUserProfileCreated';
 import useConnectionIssueToast from '../../../util/hooks/useConnectionIssueToast';
 import useErrorToast from '../../../util/hooks/useErrorToast';
 import useVerifyAuthenticationThenLoadData from '../../../util/hooks/useVerifyAuthenticationThenLoadData';
@@ -70,6 +71,8 @@ export default function ModuleView({
   const [fuse, setFuse] = useState<Fuse<User>>();
   const [students, setStudents] = useState<User[]>();
   const [filteredUsers, setFilteredUsers] = useState<User[]>();
+
+  useCheckUserProfileCreated();
 
   function getStudents() {
     setIsLoading(true);

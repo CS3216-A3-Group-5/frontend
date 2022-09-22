@@ -10,6 +10,7 @@ interface UserState {
   id: string;
   email: string;
   isInProcessOfVerifyingEmail: boolean;
+  hasCreatedProfile: boolean;
   moduleStatuses: { [key: string]: UserStatus };
   isLoggedIn: boolean;
 }
@@ -18,6 +19,7 @@ const initialState: UserState = {
   id: '',
   email: '',
   isInProcessOfVerifyingEmail: false,
+  hasCreatedProfile: true,
   moduleStatuses: {},
   isLoggedIn: false,
 };
@@ -37,6 +39,9 @@ const UserSlice = createSlice({
     },
     setIsLoggedIn: (state, action: PayloadAction<boolean>) => {
       state.isLoggedIn = action.payload;
+    },
+    setHasCreatedProfile: (state, action: PayloadAction<boolean>) => {
+      state.hasCreatedProfile = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -100,6 +105,7 @@ export const {
   setId,
   setIsInProcessOfVerifyingEmail,
   setIsLoggedIn,
+  setHasCreatedProfile,
 } = UserSlice.actions;
 
 // set up persistence, uses local storage to persist this reducer

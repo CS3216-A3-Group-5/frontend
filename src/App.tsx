@@ -43,6 +43,7 @@ import LoginPage from './pages/authentication/login';
 import RegisterPage from './pages/authentication/register';
 import VerifyPage from './pages/authentication/verify';
 import EnrolledModuleView from './pages/home/EnrolledModuleView';
+import CreateProfile from './pages/user_profile/create_profile';
 
 setupIonicReact();
 
@@ -68,6 +69,7 @@ export default function App() {
               path="/home/modules/:moduleCode"
               component={EnrolledModuleView}
             />
+            <Route exact path="/create_profile" component={CreateProfile} />
             <Route exact path="/modules">
               <ModulesPage />
             </Route>

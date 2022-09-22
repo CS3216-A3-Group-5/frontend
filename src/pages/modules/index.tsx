@@ -22,6 +22,7 @@ import {
   getNewPageOfExploreModules,
   getPageOfExploreModulesWithNewKeyword,
 } from '../../redux/slices/modulesSlice';
+import { useCheckUserProfileCreated } from '../../util/hooks/useCheckUserProfileCreated';
 import useErrorToast from '../../util/hooks/useErrorToast';
 import useInfoToast from '../../util/hooks/useInfoToast';
 import useVerifyAuthenticationThenLoadData from '../../util/hooks/useVerifyAuthenticationThenLoadData';
@@ -39,6 +40,8 @@ export default function ModulesPage() {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasDoneFirstLoad, setHasDoneFirstLoad] = useState<boolean>(false);
+
+  useCheckUserProfileCreated();
 
   /* eslint-disable */
   function getNewPageOfModules(e: any) {

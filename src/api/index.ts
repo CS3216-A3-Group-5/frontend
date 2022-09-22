@@ -5,8 +5,9 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { refreshTokens } from './authentication';
 import TokenService from '../util/services/tokenService';
 import { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
+import { REGISTER_PATH } from './constants';
 
-const API_BASE_URL_apiary =
+const API_BASE_URL_APIARY =
   'https://private-26272e-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
 
 const API_BASE_URL = 'https://goldfish-app-4g8cm.ondigitalocean.app';
@@ -23,7 +24,7 @@ const axiosInstance = axios.create(config);
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = TokenService.getLocalAccessToken();
-    if (token) {
+    if (token && config.url !== REGISTER_PATH) {
       if (!config.headers) {
         config.headers = {};
       }

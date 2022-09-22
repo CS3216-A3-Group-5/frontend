@@ -9,6 +9,7 @@ import { getSelfUserDetails } from '../../redux/slices/userDetailsSlice';
 import { setIsLoggedIn } from '../../redux/slices/userSlice';
 import { persistor } from '../../redux/store';
 import { LOGIN } from '../../routes';
+import { useCheckUserProfileCreated } from '../../util/hooks/useCheckUserProfileCreated';
 import useErrorToast from '../../util/hooks/useErrorToast';
 import useVerifyAuthenticationThenLoadData from '../../util/hooks/useVerifyAuthenticationThenLoadData';
 import styles from './styles.module.scss';
@@ -19,6 +20,8 @@ export default function UserProfile() {
   const handleApiRequestError = useApiRequestErrorHandler();
   const createErrorToast = useErrorToast();
   const dispatch = useAppDispatch();
+
+  useCheckUserProfileCreated();
 
   useVerifyAuthenticationThenLoadData(() => {
     dispatch(getSelfUserDetails()).catch((error) => {
@@ -52,7 +55,7 @@ export default function UserProfile() {
           </IonButton>
           <IonButton
             className={styles['edit-profile-button']}
-            color="danger"
+            color="tertiary"
             onClick={logoutUser}
           >
             Logout
