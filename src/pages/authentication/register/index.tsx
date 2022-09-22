@@ -69,8 +69,9 @@ const RegisterPage: React.FC = () => {
     } else if (!isValidEmail(registerDetails.nus_email)) {
       currFieldErrors = {
         ...currFieldErrors,
-        [RegisterFormField.EMAIL]: 'Not a valid NUS email.',
+        [RegisterFormField.EMAIL]: 'Not a valid NUS email. NUS emails must have domain "u.nus.edu"',
       };
+      haveError = true;
     }
     if (!registerDetails.password) {
       currFieldErrors = {

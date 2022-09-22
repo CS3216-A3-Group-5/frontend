@@ -41,21 +41,11 @@ function getLocalAccessToken() {
   return tokens && tokens.accessToken ? tokens.accessToken : 'xx';
 }
 
-function updateAccessToken(accessToken: string): void {
-  const tokens = getTokens();
-  if (!tokens) {
-    throw new NoTokenInStorage();
-  }
-  tokens.accessToken = accessToken;
-  localStorage.setItem(TOKENS_LOCALSTORAGE_KEY, JSON.stringify(tokens));
-}
-
 const TokenService = {
   getTokens,
   setTokens,
   getLocalAccessToken,
   getLocalRefreshToken,
-  updateAccessToken,
   removeTokens,
 };
 

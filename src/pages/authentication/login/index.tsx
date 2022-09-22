@@ -62,7 +62,7 @@ export default function LoginPage() {
     } else if (!isValidEmail(userLoginDetails.nus_email)) {
       currFieldErrors = {
         ...currFieldErrors,
-        [LoginField.EMAIL]: 'Not a valid NUS email.',
+        [LoginField.EMAIL]: 'Not a valid NUS email. NUS emails must have domain "u.nus.edu"',
       };
       haveError = true;
     }

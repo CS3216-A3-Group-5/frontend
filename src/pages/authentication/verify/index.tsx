@@ -14,7 +14,7 @@ import {
   setHasCreatedProfile,
   setIsInProcessOfVerifyingEmail,
 } from '../../../redux/slices/userSlice';
-import { HOME, REGISTER } from '../../../routes';
+import { CREATE_PROFILE, REGISTER } from '../../../routes';
 import useErrorToast from '../../../util/hooks/useErrorToast';
 import useInfoToast from '../../../util/hooks/useInfoToast';
 import { ERROR_FIELD_NAME } from '../constants';
@@ -74,7 +74,7 @@ const VerifyPage: React.FC = () => {
           dispatch(setIsInProcessOfVerifyingEmail(false));
           dispatch(setHasCreatedProfile(false));
           logEvent(analytics, 'sign_up');
-          history.push(HOME);
+          history.replace(CREATE_PROFILE);
         })
         .catch((error) => {
           createErrorToast(handleApiError(error));
@@ -95,7 +95,6 @@ const VerifyPage: React.FC = () => {
           return;
         }
         presentInfoToast('One-time passcode resent to ' + email);
-        history.push(HOME);
       })
       .catch((error) => {
         createErrorToast(handleApiError(error));

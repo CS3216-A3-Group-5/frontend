@@ -99,8 +99,7 @@ export async function refreshTokens() {
     REFRESH_TOKEN_PATH,
     {
       refresh: TokenService.getLocalRefreshToken(),
-    },
-    { isRefreshAttempt: true } as AxiosRequestConfig
+    }
   );
   const tokenResponseData = response.data;
   TokenService.setTokens({
