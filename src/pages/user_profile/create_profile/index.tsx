@@ -1,6 +1,5 @@
-
 import { IonAvatar, IonContent, IonPage } from '@ionic/react';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { getFullURL } from '../../../api';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
@@ -13,8 +12,8 @@ import InputFormCard, {
 } from '../../../components/InputFormCard';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { updateSelfUserDetails } from '../../../redux/slices/userDetailsSlice';
-import { USER_PROFILE } from '../../../routes';
-import { useCheckUserProfileCreated } from '../../../util/hooks/useCheckUserProfileCreated';
+import { setHasCreatedProfile } from '../../../redux/slices/userSlice';
+import { HOME } from '../../../routes';
 import useErrorToast from '../../../util/hooks/useErrorToast';
 import useVerifyAuthenticationThenLoadData from '../../../util/hooks/useVerifyAuthenticationThenLoadData';
 import styles from './styles.module.scss';
@@ -22,7 +21,7 @@ import styles from './styles.module.scss';
 /**
  * Page for editing profile
  */
-export default function EditProfile({ title }: { title: string }) {
+export default function CreateProfile() {
   enum EditProfileFormField {
     NAME = 'Name',
     COURSE = 'Course',
@@ -36,6 +35,9 @@ export default function EditProfile({ title }: { title: string }) {
     [key in EditProfileFormField]: string;
   };
 
+  const hasCreatedProfile = useAppSelector(
+    (state) => state.user.hasCreatedProfile
+  );
   const presentErrorToast = useErrorToast();
   const handleApiRequestError = useApiRequestErrorHandler();
   const dispatch = useAppDispatch();
@@ -67,20 +69,22 @@ export default function EditProfile({ title }: { title: string }) {
   const [selectedFile, setSelectedFile] = useState<File>();
   const [tempUrl, setTempUrl] = useState<string>('');
 
-  useCheckUserProfileCreated();
-
   useVerifyAuthenticationThenLoadData(() => {
     setUserDetails(userStore);
-  });
-
-  useEffect(() => {
     if (selectedFile) {
       const objectUrl = URL.createObjectURL(selectedFile);
       setTempUrl(objectUrl);
 
       return () => URL.revokeObjectURL(objectUrl);
     }
-  }, [selectedFile]);
+  });
+
+  useLayoutEffect(() => {
+    if (hasCreatedProfile) {
+      // this page shouldnt be accessible if already created profile
+      history.replace(HOME);
+    }
+  });
 
   function updateUser() {
     let haveError = false;
@@ -175,7 +179,8 @@ export default function EditProfile({ title }: { title: string }) {
                 presentErrorToast(handleApiRequestError(error));
               });
             }
-            history.replace(USER_PROFILE);
+            dispatch(setHasCreatedProfile(true));
+            history.replace(HOME);
           },
           (error) => {
             presentErrorToast(handleApiRequestError(error));
@@ -303,7 +308,7 @@ export default function EditProfile({ title }: { title: string }) {
             />
           </div>
           <InputFormCard
-            title={title}
+            title={'Create your profile'}
             inputFields={registerInputFields}
             buttons={formButtons}
             isLoading={isLoading}

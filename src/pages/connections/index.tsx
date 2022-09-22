@@ -24,6 +24,7 @@ import {
   getIncoming,
   getOutgoing,
 } from '../../redux/slices/connectionsSlice';
+import { useCheckUserProfileCreated } from '../../util/hooks/useCheckUserProfileCreated';
 import useErrorToast from '../../util/hooks/useErrorToast';
 import useVerifyAuthenticationThenLoadData from '../../util/hooks/useVerifyAuthenticationThenLoadData';
 
@@ -42,6 +43,8 @@ export default function ConnectionsPage() {
   const presentErrorToast = useErrorToast();
   const handleApiRequestError = useApiRequestErrorHandler();
   const dispatch = useAppDispatch();
+
+  useCheckUserProfileCreated();
 
   useVerifyAuthenticationThenLoadData(() => {
     setIsLoading(true);

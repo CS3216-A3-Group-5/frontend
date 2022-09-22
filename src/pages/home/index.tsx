@@ -23,6 +23,7 @@ import {
   getNewPageOfModules,
   getPageOfModulesWithNewKeyword,
 } from '../../redux/slices/homeSlice';
+import { useCheckUserProfileCreated } from '../../util/hooks/useCheckUserProfileCreated';
 import useErrorToast from '../../util/hooks/useErrorToast';
 import useInfoToast from '../../util/hooks/useInfoToast';
 import useVerifyAuthenticationThenLoadData from '../../util/hooks/useVerifyAuthenticationThenLoadData';
@@ -39,6 +40,8 @@ export default function Homepage() {
     useState<boolean>(false);
   const handleApiError = useApiRequestErrorHandler();
   const dispatch = useAppDispatch();
+
+  useCheckUserProfileCreated();
 
   function getPageOfModulesOnSearch(keyword?: string | null) {
     setIsLoading(true);
