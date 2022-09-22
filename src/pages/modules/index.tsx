@@ -12,7 +12,7 @@ import {
   IonSearchbar,
   IonToolbar,
 } from '@ionic/react';
-import { useState, useLayoutEffect } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import AppHeader from '../../components/AppHeader';
@@ -24,7 +24,8 @@ import {
 } from '../../redux/slices/modulesSlice';
 import useErrorToast from '../../util/hooks/useErrorToast';
 import useInfoToast from '../../util/hooks/useInfoToast';
-import ModuleListItem from './ModuleListItem';
+import useVerifyAuthenticationThenLoadData from '../../util/hooks/useVerifyAuthenticationThenLoadData';
+import ModuleListItem from './ModuleListItem/ModuleListItem';
 
 export default function ModulesPage() {
   const currentPath = useLocation().pathname;
@@ -92,16 +93,17 @@ export default function ModulesPage() {
       });
   }
 
-  useLayoutEffect(() => {
-    // get initial page of modules, default is ordered by alphabet from backend
-    getInitialExploreModules();
-  }, []);
+  useVerifyAuthenticationThenLoadData(getInitialExploreModules);
 
   return (
     <IonPage>
       <AppHeader>
         <IonToolbar>
-          <IonSearchbar debounce={1000} onIonChange={handleSearchbarChange} />
+          <IonSearchbar
+            debounce={800}
+            onIonChange={handleSearchbarChange}
+            placeholder="Module code or title"
+          />
         </IonToolbar>
       </AppHeader>
       <IonContent fullscreen>
@@ -119,6 +121,7 @@ export default function ModulesPage() {
                     uniModule={uniModule}
                     key={uniModule.code}
                     path={currentPath}
+                    showEnrolledStatus
                   />
                 ))}
               </IonList>

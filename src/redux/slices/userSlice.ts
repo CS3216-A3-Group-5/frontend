@@ -11,6 +11,7 @@ interface UserState {
   email: string;
   isInProcessOfVerifyingEmail: boolean;
   moduleStatuses: { [key: string]: UserStatus };
+  isLoggedIn: boolean;
 }
 
 const initialState: UserState = {
@@ -18,6 +19,7 @@ const initialState: UserState = {
   email: '',
   isInProcessOfVerifyingEmail: false,
   moduleStatuses: {},
+  isLoggedIn: false,
 };
 
 const UserSlice = createSlice({
@@ -32,6 +34,9 @@ const UserSlice = createSlice({
     },
     setIsInProcessOfVerifyingEmail: (state, action: PayloadAction<boolean>) => {
       state.isInProcessOfVerifyingEmail = action.payload;
+    },
+    setIsLoggedIn: (state, action: PayloadAction<boolean>) => {
+      state.isLoggedIn = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -90,8 +95,12 @@ export const updateUserStatusForModule = createAsyncThunk<
   }
 });
 
-export const { setEmail, setId, setIsInProcessOfVerifyingEmail } =
-  UserSlice.actions;
+export const {
+  setEmail,
+  setId,
+  setIsInProcessOfVerifyingEmail,
+  setIsLoggedIn,
+} = UserSlice.actions;
 
 // set up persistence, uses local storage to persist this reducer
 const userPersistConfig = {

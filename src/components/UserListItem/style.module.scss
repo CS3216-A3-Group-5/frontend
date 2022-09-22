@@ -6,10 +6,18 @@
 }
 
 .avatar {
-  width: 48px;
+  width: 64px;
   height: auto;
 }
 
 .connection-status-icon {
-  font-size: 24px;
+  font-size: 20px;
+}
+
+p.user-status-looking-for-friend {
+  color: var(--ion-color-secondary-shade);
+}
+
+p.user-status-willing-to-help {
+  color: var(--ion-color-primary-shade);
 }

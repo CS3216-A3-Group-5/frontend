@@ -1,6 +1,6 @@
 import { IonContent, IonPage } from '@ionic/react';
 import { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { registerUser, UserLoginDetails } from '../../../api/authentication';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import AppHeader from '../../../components/AppHeader';
@@ -15,6 +15,7 @@ import {
 } from '../../../redux/slices/userSlice';
 import { VERIFY_EMAIL } from '../../../routes';
 import { isValidEmail } from '../../../util/authentication';
+import { useCheckAuthAndRedirect } from '../../../util/hooks/useCheckAuthRedirect';
 import useErrorToast from '../../../util/hooks/useErrorToast';
 import useInfoToast from '../../../util/hooks/useInfoToast';
 import { ERROR_FIELD_NAME } from '../constants';
@@ -44,6 +45,7 @@ const RegisterPage: React.FC = () => {
     [RegisterFormField.PASSWORD]: '',
     [RegisterFormField.CONFIRMATION_PASSWORD]: '',
   });
+  useCheckAuthAndRedirect();
 
   const [registerDetails, setRegisterDetails] = useState<UserLoginDetails>({
     nus_email: '',
@@ -161,7 +163,14 @@ const RegisterPage: React.FC = () => {
   return (
     <IonPage>
       <AppHeader />
-      <IonContent fullscreen>
+      <IonContent
+        fullscreen
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            register();
+          }
+        }}
+      >
         <InputFormCard
           title="Register"
           inputFields={registerInputFields}

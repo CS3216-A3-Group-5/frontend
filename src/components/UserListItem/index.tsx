@@ -14,7 +14,12 @@ import { checkmarkCircle, hourglass } from 'ionicons/icons';
 import { useState } from 'react';
 import { getFullURL } from '../../api';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
-import { ConnectionStatus, DetailedUser, User } from '../../api/types';
+import {
+  ConnectionStatus,
+  DetailedUser,
+  User,
+  UserStatus,
+} from '../../api/types';
 import { useAppDispatch } from '../../redux/hooks';
 import {
   DataRetrievalErrorType,
@@ -39,7 +44,7 @@ function renderConnectionStatusIcon(connectionStatus: ConnectionStatus) {
       return (
         <IonIcon
           className={styles['connection-status-icon']}
-          color="success"
+          color="primary"
           src={checkmarkCircle}
         ></IonIcon>
       );
@@ -112,7 +117,21 @@ export default function UserListItem({ user, module }: UserListItemProps) {
             <h1>{user.name}</h1>
             {renderConnectionStatusIcon(user.connectionStatus)}
           </div>
-          {user.userStatus ? <p>{user.userStatus}</p> : null}
+          <p>
+            Y{new Date().getFullYear() - Number(user.matriculationYear) + 1}{' '}
+            {user.universityCourse}
+          </p>
+          {user.userStatus && user.userStatus !== UserStatus.NO_STATUS ? (
+            <p
+              className={
+                user.userStatus === UserStatus.LOOKING_FOR_A_FRIEND
+                  ? styles['user-status-looking-for-friend']
+                  : styles['user-status-willing-to-help']
+              }
+            >
+              {user.userStatus}
+            </p>
+          ) : null}
         </IonLabel>
         {user.connectionStatus === ConnectionStatus.NOT_CONNECTED && (
           <IonButton size="default" color="primary">

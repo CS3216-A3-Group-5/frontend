@@ -23,6 +23,8 @@
     "@types/react-router": "^5.1.11",
     "@types/react-router-dom": "^5.1.7",
     "axios": "^0.27.2",
+    "axios-auth-refresh": "^3.3.3",
+    "fuse.js": "^6.6.2",
     "ionicons": "^6.0.3",
     "lru_map": "^0.4.1",
     "react": "^18.2.0",

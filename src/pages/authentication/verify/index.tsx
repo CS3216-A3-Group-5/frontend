@@ -40,7 +40,7 @@ const VerifyPage: React.FC = () => {
    */
   useLayoutEffect(() => {
     if (!isInProcessOfVerifyingEmail) {
-      history.push(REGISTER);
+      history.replace(REGISTER);
     }
   }, []);
 
