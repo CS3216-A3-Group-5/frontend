@@ -64,28 +64,30 @@ export default function UserCardItem({ user, module }: UserCardItemProps) {
 
           <div className={styles['user-information']}>
             {isDesktop && <UserDetails user={user} module={module} />}
-            <div className={styles['contact-information']}>
-              <div>
-                <IonIcon icon={mail} color="tertiary" />
-                <h2>{user.contactDetails.email}</h2>
+            {user.contactDetails.email && (
+              <div className={styles['contact-information']}>
+                <div>
+                  <IonIcon icon={mail} color="tertiary" />
+                  <h2>{user.contactDetails.email}</h2>
+                </div>
+                <div>
+                  <IonIcon icon={paperPlaneOutline} color="primary" />
+                  <h2>
+                    {user.contactDetails.telegramHandle
+                      ? '@' + user.contactDetails.telegramHandle
+                      : 'None'}
+                  </h2>
+                </div>
+                <div>
+                  <IonIcon icon={callOutline} color="danger" />
+                  <h2>
+                    {user.contactDetails.phoneNumber
+                      ? user.contactDetails.phoneNumber
+                      : 'None'}
+                  </h2>
+                </div>
               </div>
-              <div>
-                <IonIcon icon={paperPlaneOutline} color="primary" />
-                <h2>
-                  {user.contactDetails.telegramHandle
-                    ? '@' + user.contactDetails.telegramHandle
-                    : 'None'}
-                </h2>
-              </div>
-              <div>
-                <IonIcon icon={callOutline} color="danger" />
-                <h2>
-                  {user.contactDetails.phoneNumber
-                    ? user.contactDetails.phoneNumber
-                    : 'None'}
-                </h2>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
