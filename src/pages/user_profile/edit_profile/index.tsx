@@ -1,6 +1,5 @@
-
 import { IonAvatar, IonContent, IonPage } from '@ionic/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { getFullURL } from '../../../api';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';

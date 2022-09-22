@@ -2,9 +2,11 @@ import { useIonToast } from '@ionic/react';
 import { globe, alert } from 'ionicons/icons';
 import { ApiRequestError, ErrorType } from '../../api/errorHandling';
 
-
 function getIconForErrorType(errorType: ErrorType) {
-  if (errorType === ErrorType.NO_CONNECTION || errorType === ErrorType.TIMEOUT) {
+  if (
+    errorType === ErrorType.NO_CONNECTION ||
+    errorType === ErrorType.TIMEOUT
+  ) {
     return globe;
   } else {
     return alert;
@@ -16,26 +18,23 @@ function getIconForErrorType(errorType: ErrorType) {
  */
 export default function useErrorToast() {
   const [present] = useIonToast();
-  const presentToast = (
-    apiError: ApiRequestError,
-    errorMessage?: string,
-  ) => {
-    let message = "";
+  const presentToast = (apiError: ApiRequestError, errorMessage?: string) => {
+    let message = '';
     switch (apiError.errorType) {
-      case (ErrorType.AUTHENTICATION_FAIL):
-        message = "Authentication failed. Please try again.";
+      case ErrorType.AUTHENTICATION_FAIL:
+        message = 'Authentication failed. Please login again.';
         break;
-      case (ErrorType.NO_CONNECTION):
-        message = "You are not connected to the internet";
+      case ErrorType.NO_CONNECTION:
+        message = 'You are not connected to the internet';
         break;
-      case (ErrorType.TIMEOUT):
-        message = "Could not reach server. Please try again.";
+      case ErrorType.TIMEOUT:
+        message = 'Could not reach server. Please try again.';
         break;
       default:
         if (errorMessage) {
           message = errorMessage;
         } else {
-          message = "An unknown error occured. Please try again.";
+          message = 'An unknown error occured. Please try again.';
         }
     }
     void present({
