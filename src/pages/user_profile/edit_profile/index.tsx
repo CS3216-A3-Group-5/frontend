@@ -1,5 +1,5 @@
 import { IonAvatar, IonContent, IonPage, NavContext } from '@ionic/react';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useLayoutEffect, useState } from 'react';
 import { getFullURL } from '../../../api';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { uploadImage } from '../../../api/pictures';
@@ -12,6 +12,7 @@ import InputFormCard, {
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { updateSelfUserDetails } from '../../../redux/slices/userDetailsSlice';
 import useErrorToast from '../../../util/hooks/useErrorToast';
+import useVerifyAuthentication from '../../../util/hooks/useVerifyAuthentication';
 import styles from './styles.module.scss';
 
 /**
@@ -61,20 +62,27 @@ export default function EditProfile() {
   });
   const [selectedFile, setSelectedFile] = useState<File>();
   const [tempUrl, setTempUrl] = useState<string>('');
+  const isVerified = useVerifyAuthentication();
 
   // shoot api query before painting to screen
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!isVerified) {
+      return;
+    }
     setUserDetails(userStore);
-  }, []);
+  }, [isVerified]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!isVerified) {
+      return;
+    }
     if (selectedFile) {
       const objectUrl = URL.createObjectURL(selectedFile);
       setTempUrl(objectUrl);
 
       return () => URL.revokeObjectURL(objectUrl);
     }
-  }, [selectedFile]);
+  }, [selectedFile, isVerified]);
 
   function updateUser() {
     let haveError = false;

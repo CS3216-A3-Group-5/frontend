@@ -37,6 +37,7 @@ import {
 } from '../../../redux/slices/userSlice';
 import useConnectionIssueToast from '../../../util/hooks/useConnectionIssueToast';
 import useErrorToast from '../../../util/hooks/useErrorToast';
+import useVerifyAuthentication from '../../../util/hooks/useVerifyAuthentication';
 import styles from './styles.module.scss';
 
 const statusSubHeader =
@@ -68,6 +69,7 @@ export default function ModuleView({
 
   const [isUnenrollAlertShowing, setIsUnenrollAlertShowing] =
     useState<boolean>(false);
+  const isVerified = useVerifyAuthentication();
 
   function getStudents() {
     setIsLoading(true);
@@ -141,9 +143,12 @@ export default function ModuleView({
 
   // shoot api query to get list of students of this module before paint
   useLayoutEffect(() => {
+    if (!isVerified) {
+      return;
+    }
     getStudents();
     getUserStatus();
-  }, [match.params.moduleCode]);
+  }, [isVerified]);
 
   // user status interface stuff
   function getSelectInterfaceType() {

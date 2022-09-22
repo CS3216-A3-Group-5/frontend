@@ -4,6 +4,7 @@
 export const LOGIN_PATH = '/login';
 export const REGISTER_PATH = '/register';
 export const VERIFY_EMAIL_PATH = '/verify';
+export const LOGOUT_PATH = '/logout';
 export const VERIFY_AUTHENTICATION = '/token/verify';
 export const GET_LIST_OF_MODULES_PATH = '/modules';
 export const REFRESH_TOKEN_PATH = '/token/refresh';

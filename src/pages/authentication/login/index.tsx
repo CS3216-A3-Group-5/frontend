@@ -1,7 +1,7 @@
 import { IonContent, IonPage } from '@ionic/react';
 import { logEvent } from 'firebase/analytics';
 import { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { login, UserLoginDetails } from '../../../api/authentication';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import AppHeader from '../../../components/AppHeader';
@@ -9,8 +9,11 @@ import InputFormCard, {
   InputFormCardField,
 } from '../../../components/InputFormCard';
 import { analytics } from '../../../firebase';
+import { useAppDispatch } from '../../../redux/hooks';
+import { setIsLoggedIn } from '../../../redux/slices/userSlice';
 import { HOME, REGISTER } from '../../../routes';
 import { isValidEmail } from '../../../util/authentication';
+import { useCheckAuthAndRedirect } from '../../../util/hooks/useCheckAuthRedirect';
 import useErrorToast from '../../../util/hooks/useErrorToast';
 import { ERROR_FIELD_NAME } from '../constants';
 
@@ -28,6 +31,7 @@ type FieldErrors = {
 
 export default function LoginPage() {
   const history = useHistory();
+  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const handleApiError = useApiRequestErrorHandler();
   const createErrorToast = useErrorToast();
@@ -36,6 +40,7 @@ export default function LoginPage() {
     nus_email: '',
     password: '',
   });
+  useCheckAuthAndRedirect();
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({
     [LoginField.EMAIL]: '',
     [LoginField.PASSWORD]: '',
@@ -76,12 +81,14 @@ export default function LoginPage() {
         .then((resp) => {
           if (resp.error_message) {
             // theres an error with logging in
+            dispatch(setIsLoggedIn(false));
             setLoginErrorMessage(resp[ERROR_FIELD_NAME]);
             return;
           }
           // login success
+          dispatch(setIsLoggedIn(true));
           logEvent(analytics, 'login');
-          history.push(HOME);
+          history.replace(HOME);
         })
         .catch((error) => {
           createErrorToast(handleApiError(error));

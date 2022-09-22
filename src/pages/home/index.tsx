@@ -25,6 +25,7 @@ import {
 } from '../../redux/slices/homeSlice';
 import useErrorToast from '../../util/hooks/useErrorToast';
 import useInfoToast from '../../util/hooks/useInfoToast';
+import useVerifyAuthentication from '../../util/hooks/useVerifyAuthentication';
 import ModuleListItem from '../modules/ModuleListItem';
 
 export default function Homepage() {
@@ -38,6 +39,7 @@ export default function Homepage() {
     useState<boolean>(false);
   const handleApiError = useApiRequestErrorHandler();
   const dispatch = useAppDispatch();
+  const isVerified = useVerifyAuthentication();
 
   function getPageOfModulesOnSearch(keyword?: string | null) {
     setIsLoading(true);
@@ -94,8 +96,10 @@ export default function Homepage() {
 
   // load modules before first paint
   useLayoutEffect(() => {
-    getModulesOfUser();
-  }, []);
+    if (isVerified) {
+      getModulesOfUser();
+    }
+  }, [isVerified]);
 
   const currentPath = useLocation().pathname;
   return (

@@ -24,6 +24,7 @@ import {
 } from '../../redux/slices/modulesSlice';
 import useErrorToast from '../../util/hooks/useErrorToast';
 import useInfoToast from '../../util/hooks/useInfoToast';
+import useVerifyAuthentication from '../../util/hooks/useVerifyAuthentication';
 import ModuleListItem from './ModuleListItem';
 
 export default function ModulesPage() {
@@ -38,6 +39,7 @@ export default function ModulesPage() {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasDoneFirstLoad, setHasDoneFirstLoad] = useState<boolean>(false);
+  const isVerified = useVerifyAuthentication();
 
   /* eslint-disable */
   function getNewPageOfModules(e: any) {
@@ -93,9 +95,12 @@ export default function ModulesPage() {
   }
 
   useLayoutEffect(() => {
+    if (!isVerified) {
+      return;
+    }
     // get initial page of modules, default is ordered by alphabet from backend
     getInitialExploreModules();
-  }, []);
+  }, [isVerified]);
 
   return (
     <IonPage>

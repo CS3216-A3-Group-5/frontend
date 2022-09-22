@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { persistor } from '../redux/store';
-import { useAuth } from '../util/authentication/AuthContext';
 import { LOGIN_PATH } from './constants';
 
 /**
@@ -28,7 +27,6 @@ export class ApiRequestError extends Error {
 
 export function useApiRequestErrorHandler() {
   const history = useHistory();
-  const auth = useAuth();
 
   return function handleApiRequestError(error: unknown): ApiRequestError {
     if (!window.navigator.onLine) {
@@ -39,7 +37,6 @@ export function useApiRequestErrorHandler() {
       if (error.response) {
         // check if the error from server is an authentication error
         if (error.response.status === 401) {
-          auth.setIsAuthenticated(false);
           // purge storage
           void persistor.purge();
           // redirect to login screen whenever a 401 occurs
@@ -47,7 +44,7 @@ export function useApiRequestErrorHandler() {
           return new ApiRequestError(ErrorType.AUTHENTICATION_FAIL);
         }
         // some other error occured at server
-        console.log('API requst error: ', error.message);
+        console.log('API request error: ', error.message);
         return new ApiRequestError(ErrorType.UNKNOWN);
       } else if (error.request) {
         // no response received from server

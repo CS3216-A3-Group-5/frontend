@@ -1,14 +1,17 @@
 import { IonButton, IonContent, IonPage } from '@ionic/react';
-import { useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useLayoutEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { logout } from '../../api/authentication';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import AppHeader from '../../components/AppHeader';
 import UserCardItem from '../../components/UserCardItem/UserCardItem';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getSelfUserDetails } from '../../redux/slices/userDetailsSlice';
+import { setIsLoggedIn } from '../../redux/slices/userSlice';
+import { persistor } from '../../redux/store';
 import { LOGIN } from '../../routes';
 import useErrorToast from '../../util/hooks/useErrorToast';
+import useVerifyAuthentication from '../../util/hooks/useVerifyAuthentication';
 import styles from './styles.module.scss';
 
 export default function UserProfile() {
@@ -17,21 +20,27 @@ export default function UserProfile() {
   const handleApiRequestError = useApiRequestErrorHandler();
   const createErrorToast = useErrorToast();
   const dispatch = useAppDispatch();
+  const isVerified = useVerifyAuthentication();
 
   // shoot api query before painting to screen
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!isVerified) {
+      return;
+    }
     dispatch(getSelfUserDetails()).catch((error) => {
       createErrorToast(handleApiRequestError(error));
     });
-  }, []);
+  }, [isVerified]);
 
   function logoutUser() {
     logout()
-      .then(() => {
-        history.push(LOGIN);
-      })
       .catch((error) => {
         createErrorToast(handleApiRequestError(error));
+      })
+      .finally(() => {
+        dispatch(setIsLoggedIn(false));
+        void persistor.purge();
+        history.replace(LOGIN);
       });
   }
 
