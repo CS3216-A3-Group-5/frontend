@@ -266,7 +266,13 @@ export default function EditProfile({ title }: { title: string }) {
 
   if (user) {
     return (
-      <IonPage>
+      <IonPage
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            updateUser();
+          }
+        }}
+      >
         <AppHeader />
         <IonContent
           fullscreen

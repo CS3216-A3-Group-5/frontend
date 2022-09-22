@@ -29,6 +29,7 @@ export default function useVerifyAuthenticationThenLoadData(
           // authentication failed, purge the storage
           void persistor.purge();
           history.replace(LOGIN);
+          return;
         }
         loadDataFunc();
       })

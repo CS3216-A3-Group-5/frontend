@@ -84,7 +84,7 @@ export default function CreateProfile() {
       // this page shouldnt be accessible if already created profile
       history.replace(HOME);
     }
-  });
+  }, []);
 
   function updateUser() {
     let haveError = false;
@@ -272,7 +272,13 @@ export default function CreateProfile() {
 
   if (user) {
     return (
-      <IonPage>
+      <IonPage
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            updateUser();
+          }
+        }}
+      >
         <AppHeader />
         <IonContent
           fullscreen

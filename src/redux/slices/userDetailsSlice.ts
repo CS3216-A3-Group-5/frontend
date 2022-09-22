@@ -44,6 +44,9 @@ const UserDetailsSlice = createSlice({
     setPhoneNumber: (state, action: PayloadAction<string>) => {
       state.user.contactDetails.phoneNumber = action.payload;
     },
+    setEmailInUserDetails: (state, action: PayloadAction<string>) => {
+      state.user.contactDetails.email = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(updateSelfUserDetails.fulfilled, (state, action) => {
@@ -85,6 +88,7 @@ export const {
   setBio,
   setTelegram,
   setPhoneNumber,
+  setEmailInUserDetails,
 } = UserDetailsSlice.actions;
 
 // set up persistence, uses local storage to persist this reducer

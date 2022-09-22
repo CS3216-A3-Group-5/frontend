@@ -10,6 +10,7 @@ import InputFormCard, {
 } from '../../../components/InputFormCard';
 import { analytics } from '../../../firebase';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { setEmailInUserDetails } from '../../../redux/slices/userDetailsSlice';
 import {
   setHasCreatedProfile,
   setIsInProcessOfVerifyingEmail,
@@ -71,6 +72,7 @@ const VerifyPage: React.FC = () => {
           presentInfoToast(
             "One-time passcode verified. Let's create your profile!"
           );
+          dispatch(setEmailInUserDetails(email));
           dispatch(setIsInProcessOfVerifyingEmail(false));
           dispatch(setHasCreatedProfile(false));
           logEvent(analytics, 'sign_up');

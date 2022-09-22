@@ -99,7 +99,10 @@ export async function refreshTokens() {
     REFRESH_TOKEN_PATH,
     {
       refresh: TokenService.getLocalRefreshToken(),
-    }
+    },
+    {
+      skipAuthRefresh: true,
+    } as AxiosRequestConfig
   );
   const tokenResponseData = response.data;
   TokenService.setTokens({

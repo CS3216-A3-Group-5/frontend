@@ -67,7 +67,6 @@ export const submitRegisterForm = createAsyncThunk<
   AuthenticationResponse,
   UserLoginDetails
 >('user/submitRegisterForm', async (userLoginDetails, thunkApi) => {
-  const dispatch = thunkApi.dispatch;
   try {
     const responseData = await registerUser(userLoginDetails);
     return responseData;
