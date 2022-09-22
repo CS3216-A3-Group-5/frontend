@@ -1,3 +1,4 @@
+
 import { IonAvatar, IonContent, IonPage } from '@ionic/react';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -70,13 +71,16 @@ export default function EditProfile({ title }: { title: string }) {
 
   useVerifyAuthenticationThenLoadData(() => {
     setUserDetails(userStore);
+  });
+
+  useEffect(() => {
     if (selectedFile) {
       const objectUrl = URL.createObjectURL(selectedFile);
       setTempUrl(objectUrl);
 
       return () => URL.revokeObjectURL(objectUrl);
     }
-  });
+  }, [selectedFile]);
 
   function updateUser() {
     let haveError = false;

@@ -46,7 +46,7 @@ export default function InputFormCard({
   return (
     <IonCard>
       <IonCardHeader>
-        <img src={image}></img>
+        {image && <img src={image} alt="user picture"></img>}
         <IonCardTitle>
           <h1>{title}</h1>
         </IonCardTitle>
