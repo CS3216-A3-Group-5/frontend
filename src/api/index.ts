@@ -6,7 +6,8 @@ import { refreshTokens } from './authentication';
 import TokenService from '../util/services/tokenService';
 import { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 
-const API_BASE_URL_a = 'https://private-26272e-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
+const API_BASE_URL_apiary =
+  'https://private-26272e-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
 
 const API_BASE_URL = 'https://goldfish-app-4g8cm.ondigitalocean.app';
 

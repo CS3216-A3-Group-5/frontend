@@ -91,7 +91,6 @@ export async function login(userLoginDetails: UserLoginDetails) {
     accessToken: tokenResponseData.access,
     refreshToken: tokenResponseData.refresh,
   });
-  console.log(TokenService.getTokens());
   return response.data;
 }
 

@@ -163,7 +163,14 @@ const RegisterPage: React.FC = () => {
   return (
     <IonPage>
       <AppHeader />
-      <IonContent fullscreen>
+      <IonContent
+        fullscreen
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            register();
+          }
+        }}
+      >
         <InputFormCard
           title="Register"
           inputFields={registerInputFields}

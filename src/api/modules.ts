@@ -14,9 +14,20 @@ import {
 } from './formats';
 import { UniModule } from './types';
 
+/**
+ * Returns all the students in a module.
+ */
 export async function getStudentsOfModule(moduleCode: string) {
   const response = await axiosInstance.get<Array<SimpleUserResponseFormat>>(
-    getPathForGetListOfUsersForModule(moduleCode)
+    getPathForGetListOfUsersForModule(moduleCode),
+    {
+      params: {
+        name: '',
+        user_status: '',
+        connection_status: '',
+        page: '',
+      },
+    }
   );
   return response.data.map((resp) => responseToSimpleUser(resp));
 }

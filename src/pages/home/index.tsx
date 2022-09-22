@@ -12,7 +12,7 @@ import {
   IonSearchbar,
   IonToolbar,
 } from '@ionic/react';
-import { useLayoutEffect, useState } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 
@@ -25,8 +25,8 @@ import {
 } from '../../redux/slices/homeSlice';
 import useErrorToast from '../../util/hooks/useErrorToast';
 import useInfoToast from '../../util/hooks/useInfoToast';
-import useVerifyAuthentication from '../../util/hooks/useVerifyAuthentication';
-import ModuleListItem from '../modules/ModuleListItem';
+import useVerifyAuthenticationThenLoadData from '../../util/hooks/useVerifyAuthenticationThenLoadData';
+import ModuleListItem from '../modules/ModuleListItem/ModuleListItem';
 
 export default function Homepage() {
   const modules = useAppSelector((state) => state.home.modules);
@@ -39,7 +39,6 @@ export default function Homepage() {
     useState<boolean>(false);
   const handleApiError = useApiRequestErrorHandler();
   const dispatch = useAppDispatch();
-  const isVerified = useVerifyAuthentication();
 
   function getPageOfModulesOnSearch(keyword?: string | null) {
     setIsLoading(true);
@@ -91,22 +90,23 @@ export default function Homepage() {
       .catch((error) => {
         createErrorToast(handleApiError(error));
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
-  // load modules before first paint
-  useLayoutEffect(() => {
-    if (isVerified) {
-      getModulesOfUser();
-    }
-  }, [isVerified]);
+  useVerifyAuthenticationThenLoadData(getModulesOfUser);
 
   const currentPath = useLocation().pathname;
   return (
     <IonPage>
       <AppHeader>
         <IonToolbar>
-          <IonSearchbar debounce={1000} onIonChange={handleSearchbarChange} />
+          <IonSearchbar
+            debounce={1000}
+            onIonChange={handleSearchbarChange}
+            placeholder="Module code or title"
+          />
         </IonToolbar>
       </AppHeader>
       <IonContent fullscreen>

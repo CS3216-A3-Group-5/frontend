@@ -16,8 +16,9 @@ import {
   IonToolbar,
   isPlatform,
 } from '@ionic/react';
+import Fuse from 'fuse.js';
 import { helpCircleOutline } from 'ionicons/icons';
-import { useState, useLayoutEffect } from 'react';
+import { useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { User, UserStatus } from '../../../api/types';
@@ -35,7 +36,7 @@ import {
 } from '../../../redux/slices/userSlice';
 import useConnectionIssueToast from '../../../util/hooks/useConnectionIssueToast';
 import useErrorToast from '../../../util/hooks/useErrorToast';
-import useVerifyAuthentication from '../../../util/hooks/useVerifyAuthentication';
+import useVerifyAuthenticationThenLoadData from '../../../util/hooks/useVerifyAuthenticationThenLoadData';
 import styles from './styles.module.scss';
 
 const statusSubHeader =
@@ -50,7 +51,6 @@ export default function ModuleView({
   match,
 }: RouteComponentProps<{ moduleCode: string }>) {
   const dispatch = useAppDispatch();
-  const [students, setStudents] = useState<User[]>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const presentConnectionIssueToast = useConnectionIssueToast();
   const presentErrorToast = useErrorToast();
@@ -67,7 +67,9 @@ export default function ModuleView({
 
   const [isUnenrollAlertShowing, setIsUnenrollAlertShowing] =
     useState<boolean>(false);
-  const isVerified = useVerifyAuthentication();
+  const [fuse, setFuse] = useState<Fuse<User>>();
+  const [students, setStudents] = useState<User[]>();
+  const [filteredUsers, setFilteredUsers] = useState<User[]>();
 
   function getStudents() {
     setIsLoading(true);
@@ -79,6 +81,20 @@ export default function ModuleView({
           presentConnectionIssueToast(returnObject.errorType);
         }
         setStudents(returnObject.data);
+        setFilteredUsers(returnObject.data);
+        setFuse(
+          new Fuse(returnObject.data, {
+            keys: [
+              'name',
+              { name: 'connectionStatus', weight: 3 },
+              { name: 'userStatus', weight: 3 },
+              { name: 'universityCourse', weight: 3 },
+            ],
+            includeScore: true,
+            sortFn: (a, b) => a.score - b.score,
+            threshold: 0.2,
+          })
+        );
       })
       .catch((error) => {
         presentErrorToast(handleApiError(error));
@@ -136,13 +152,10 @@ export default function ModuleView({
       });
   }
 
-  // shoot api query to get list of students of this module before paint
-  useLayoutEffect(() => {
-    if (isVerified) {
-      getStudents();
-      getUserStatus();
-    }
-  }, [isVerified]);
+  useVerifyAuthenticationThenLoadData(() => {
+    getStudents();
+    getUserStatus();
+  });
 
   // user status interface stuff
   function getSelectInterfaceType() {
@@ -156,6 +169,19 @@ export default function ModuleView({
   /* eslint-disable */
   function onSelectionChange(e: any) {
     updateStatus(e.target.value);
+  }
+
+  function handleSearchbarChange(ev: Event) {
+    const target = ev.target as HTMLIonSearchbarElement;
+    let results: User[] = [];
+    if (!target.value || target.value === '') {
+      results = students!;
+    } else if (fuse) {
+      results = fuse
+        .search(target.value ? target.value : '')
+        .map((record) => record.item);
+    }
+    setFilteredUsers(results);
   }
 
   // unenroll alert stuff
@@ -249,10 +275,14 @@ export default function ModuleView({
             <h1>Students</h1>
           </IonLabel>
         </IonListHeader>
-        <IonSearchbar />
+        <IonSearchbar
+          debounce={800}
+          onIonChange={handleSearchbarChange}
+          placeholder="Name, university course or status"
+        />
         <IonList className="ion-no-padding">
-          {students
-            ? students.map((user) => (
+          {filteredUsers
+            ? filteredUsers.map((user) => (
                 <UserListItem user={user} key={user.id} module={module.code} />
               ))
             : null}

@@ -12,7 +12,7 @@ import {
   IonPage,
   IonToolbar,
 } from '@ionic/react';
-import { useState, useLayoutEffect } from 'react';
+import { useState } from 'react';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import { ConnectionType } from '../../api/types';
 import AppHeader from '../../components/AppHeader';
@@ -25,7 +25,7 @@ import {
   getOutgoing,
 } from '../../redux/slices/connectionsSlice';
 import useErrorToast from '../../util/hooks/useErrorToast';
-import useVerifyAuthentication from '../../util/hooks/useVerifyAuthentication';
+import useVerifyAuthenticationThenLoadData from '../../util/hooks/useVerifyAuthenticationThenLoadData';
 
 export default function ConnectionsPage() {
   const incomingRequests = useAppSelector(
@@ -41,15 +41,9 @@ export default function ConnectionsPage() {
     useState<ConnectionType>(ConnectionType.CONNECTED);
   const presentErrorToast = useErrorToast();
   const handleApiRequestError = useApiRequestErrorHandler();
-  const isVerified = useVerifyAuthentication();
   const dispatch = useAppDispatch();
-  //TODO: add filtering and sorting
 
-  // shoot api query before painting to screen
-  useLayoutEffect(() => {
-    if (!isVerified) {
-      return;
-    }
+  useVerifyAuthenticationThenLoadData(() => {
     setIsLoading(true);
     Promise.all([
       dispatch(getIncoming()),
@@ -60,7 +54,7 @@ export default function ConnectionsPage() {
         presentErrorToast(handleApiRequestError(error));
       })
       .finally(() => setIsLoading(false));
-  }, [isVerified]);
+  });
 
   return (
     <IonPage>

@@ -12,7 +12,7 @@ import {
   IonSearchbar,
   IonToolbar,
 } from '@ionic/react';
-import { useState, useLayoutEffect } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import AppHeader from '../../components/AppHeader';
@@ -24,8 +24,8 @@ import {
 } from '../../redux/slices/modulesSlice';
 import useErrorToast from '../../util/hooks/useErrorToast';
 import useInfoToast from '../../util/hooks/useInfoToast';
-import useVerifyAuthentication from '../../util/hooks/useVerifyAuthentication';
-import ModuleListItem from './ModuleListItem';
+import useVerifyAuthenticationThenLoadData from '../../util/hooks/useVerifyAuthenticationThenLoadData';
+import ModuleListItem from './ModuleListItem/ModuleListItem';
 
 export default function ModulesPage() {
   const currentPath = useLocation().pathname;
@@ -39,7 +39,6 @@ export default function ModulesPage() {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasDoneFirstLoad, setHasDoneFirstLoad] = useState<boolean>(false);
-  const isVerified = useVerifyAuthentication();
 
   /* eslint-disable */
   function getNewPageOfModules(e: any) {
@@ -94,19 +93,17 @@ export default function ModulesPage() {
       });
   }
 
-  useLayoutEffect(() => {
-    if (!isVerified) {
-      return;
-    }
-    // get initial page of modules, default is ordered by alphabet from backend
-    getInitialExploreModules();
-  }, [isVerified]);
+  useVerifyAuthenticationThenLoadData(getInitialExploreModules);
 
   return (
     <IonPage>
       <AppHeader>
         <IonToolbar>
-          <IonSearchbar debounce={1000} onIonChange={handleSearchbarChange} />
+          <IonSearchbar
+            debounce={800}
+            onIonChange={handleSearchbarChange}
+            placeholder="Module code or title"
+          />
         </IonToolbar>
       </AppHeader>
       <IonContent fullscreen>
@@ -124,6 +121,7 @@ export default function ModulesPage() {
                     uniModule={uniModule}
                     key={uniModule.code}
                     path={currentPath}
+                    showEnrolledStatus
                   />
                 ))}
               </IonList>

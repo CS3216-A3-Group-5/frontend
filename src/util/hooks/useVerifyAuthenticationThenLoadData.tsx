@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from 'react';
+import { useIonViewDidEnter } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { verifyAuth } from '../../api/authentication';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
@@ -8,7 +8,12 @@ import { persistor } from '../../redux/store';
 import { LOGIN } from '../../routes';
 import useInfoToast from './useInfoToast';
 
-export default function useVerifyAuthentication() {
+/**
+ * Verifies that a user is logged in before runnning the provided function to load data for that page.
+ */
+export default function useVerifyAuthenticationThenLoadData(
+  loadDataFunc: () => void
+) {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const presentInfoToast = useInfoToast();
@@ -16,17 +21,16 @@ export default function useVerifyAuthentication() {
   const wasLoggedInPreviously = useAppSelector(
     (state) => state.user.isLoggedIn
   );
-  const [isVerified, setIsVerified] = useState<boolean>(false);
-  useLayoutEffect(() => {
+  useIonViewDidEnter(() => {
     verifyAuth()
       .then((result) => {
         dispatch(setIsLoggedIn(result));
-        setIsVerified(true);
         if (!result) {
           // authentication failed, purge the storage
           void persistor.purge();
           history.replace(LOGIN);
         }
+        loadDataFunc();
       })
       .catch((err) => {
         //any other error other than 401 will allow access, but offline data only
@@ -35,7 +39,6 @@ export default function useVerifyAuthentication() {
           presentInfoToast(
             'Unable to reach server. Displaying offline information.'
           );
-          setIsVerified(true);
         } else {
           presentInfoToast(
             'Unable to login to server. Please try again.',
@@ -45,5 +48,4 @@ export default function useVerifyAuthentication() {
         }
       });
   }, []);
-  return isVerified;
 }

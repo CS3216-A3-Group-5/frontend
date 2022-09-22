@@ -20,7 +20,7 @@ export function getPathForGetStudentsOfModule(moduleCode: string) {
   return '/modules/' + moduleCode + '/users';
 }
 export const OWN_USER_DETAILS_PATH = '/user';
-export const ENROLL_MODULE_PATH = '/modules/enroll';
+export const ENROLL_MODULE_PATH = '/user/modules/enroll';
 export const CONNECTIONS_PATH = '/user/connections';
 export function getPathForSetModuleStatusForUser(moduleCode: string) {
   return '/user/status/' + moduleCode;

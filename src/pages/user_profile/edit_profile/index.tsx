@@ -1,5 +1,5 @@
 import { IonAvatar, IonContent, IonPage, NavContext } from '@ionic/react';
-import { useContext, useLayoutEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { getFullURL } from '../../../api';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { uploadImage } from '../../../api/pictures';
@@ -12,7 +12,7 @@ import InputFormCard, {
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { updateSelfUserDetails } from '../../../redux/slices/userDetailsSlice';
 import useErrorToast from '../../../util/hooks/useErrorToast';
-import useVerifyAuthentication from '../../../util/hooks/useVerifyAuthentication';
+import useVerifyAuthenticationThenLoadData from '../../../util/hooks/useVerifyAuthenticationThenLoadData';
 import styles from './styles.module.scss';
 
 /**
@@ -62,27 +62,16 @@ export default function EditProfile() {
   });
   const [selectedFile, setSelectedFile] = useState<File>();
   const [tempUrl, setTempUrl] = useState<string>('');
-  const isVerified = useVerifyAuthentication();
 
-  // shoot api query before painting to screen
-  useLayoutEffect(() => {
-    if (!isVerified) {
-      return;
-    }
+  useVerifyAuthenticationThenLoadData(() => {
     setUserDetails(userStore);
-  }, [isVerified]);
-
-  useLayoutEffect(() => {
-    if (!isVerified) {
-      return;
-    }
     if (selectedFile) {
       const objectUrl = URL.createObjectURL(selectedFile);
       setTempUrl(objectUrl);
 
       return () => URL.revokeObjectURL(objectUrl);
     }
-  }, [selectedFile, isVerified]);
+  });
 
   function updateUser() {
     let haveError = false;
@@ -270,7 +259,14 @@ export default function EditProfile() {
     return (
       <IonPage>
         <AppHeader />
-        <IonContent fullscreen>
+        <IonContent
+          fullscreen
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              updateUser();
+            }
+          }}
+        >
           <div className={styles['container']}>
             <label htmlFor="upload">
               <IonAvatar slot="start" className={styles['profile-picture']}>

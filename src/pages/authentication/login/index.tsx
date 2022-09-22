@@ -141,7 +141,14 @@ export default function LoginPage() {
   return (
     <IonPage>
       <AppHeader />
-      <IonContent fullscreen>
+      <IonContent
+        fullscreen
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            submitLogin();
+          }
+        }}
+      >
         <InputFormCard
           title="Login"
           inputFields={loginInputFields}
