@@ -92,6 +92,7 @@ export default function EditProfile({ title }: { title: string }) {
       [EditProfileFormField.PHONE_NUMBER]: '',
     };
 
+    const newUser = user;
     const telegram = user.contactDetails.telegramHandle;
     // If user puts @ at start of handle, automatically remove it
     if (telegram && telegram[0] === '@') {
@@ -99,8 +100,7 @@ export default function EditProfile({ title }: { title: string }) {
         ...user.contactDetails,
         telegramHandle: telegram.substring(1),
       };
-      const newUser: DetailedUser = { ...user, contactDetails: contactDetails };
-      setUserDetails(newUser);
+      newUser.contactDetails = contactDetails;
     }
     if (!user.name) {
       currFieldErrors = {
@@ -160,11 +160,12 @@ export default function EditProfile({ title }: { title: string }) {
       haveError = true;
     }
 
+    setUserDetails(newUser);
     setFieldErrors(currFieldErrors);
 
     if (!haveError) {
       setIsLoading(true);
-      dispatch(updateSelfUserDetails(user))
+      dispatch(updateSelfUserDetails(newUser))
         .then(
           () => {
             if (selectedFile) {

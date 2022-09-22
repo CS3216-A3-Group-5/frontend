@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { getFullURL } from '../../../api';
 import { useApiRequestErrorHandler } from '../../../api/errorHandling';
 import { uploadImage } from '../../../api/pictures';
-import { DetailedUser } from '../../../api/types';
+import { ContactDetails, DetailedUser } from '../../../api/types';
 import AppHeader from '../../../components/AppHeader';
 import InputFormCard, {
   InputFormCardButton,
@@ -97,17 +97,15 @@ export default function CreateProfile() {
       [EditProfileFormField.PHONE_NUMBER]: '',
     };
 
-    let telegram = user.contactDetails.telegramHandle;
+    const newUser = user;
+    const telegram = user.contactDetails.telegramHandle;
     // If user puts @ at start of handle, automatically remove it
     if (telegram && telegram[0] === '@') {
-      telegram = telegram.substring(1);
-      setUserDetails({
-        ...user,
-        contactDetails: {
-          ...user.contactDetails,
-          telegramHandle: telegram,
-        },
-      });
+      const contactDetails: ContactDetails = {
+        ...user.contactDetails,
+        telegramHandle: telegram.substring(1),
+      };
+      newUser.contactDetails = contactDetails;
     }
     if (!user.name) {
       currFieldErrors = {
@@ -168,10 +166,11 @@ export default function CreateProfile() {
     }
 
     setFieldErrors(currFieldErrors);
+    setUserDetails(newUser);
 
     if (!haveError) {
       setIsLoading(true);
-      dispatch(updateSelfUserDetails(user))
+      dispatch(updateSelfUserDetails(newUser))
         .then(
           () => {
             if (selectedFile) {
