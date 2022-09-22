@@ -114,11 +114,9 @@ export default function App() {
                 <PrivateRoute exact path="/user_profile">
                   <UserProfile />
                 </PrivateRoute>
-                <PrivateRoute
-                  exact
-                  path="/user_profile/edit"
-                  component={EditProfile}
-                />
+                <PrivateRoute exact path="/user_profile/edit">
+                  <EditProfile title="Edit Profile" />
+                </PrivateRoute>
                 <PrivateRoute exact path="/connections">
                   <ConnectionsPage />
                 </PrivateRoute>
