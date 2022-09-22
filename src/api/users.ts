@@ -118,9 +118,7 @@ export async function updateUserStatus(
   newStatus: UserStatus
 ) {
   await axiosInstance.put(OWN_USER_MODULE_STATUS, {
-    data: {
-      module_code: moduleCode,
-      status: userStatusToRequest(newStatus),
-    },
+    module_code: moduleCode,
+    status: userStatusToRequest(newStatus),
   });
 }
