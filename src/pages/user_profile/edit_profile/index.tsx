@@ -18,7 +18,7 @@ import styles from './styles.module.scss';
 /**
  * Page for editing profile
  */
-export default function EditProfile() {
+export default function EditProfile({ title }: { title: string }) {
   enum EditProfileFormField {
     NAME = 'Name',
     COURSE = 'Course',
@@ -107,13 +107,6 @@ export default function EditProfile() {
       currFieldErrors = {
         ...currFieldErrors,
         [EditProfileFormField.COURSE]: 'Please enter your course.',
-      };
-      haveError = true;
-    }
-    if (!user.bio) {
-      currFieldErrors = {
-        ...currFieldErrors,
-        [EditProfileFormField.BIO]: 'Please enter your bio.',
       };
       haveError = true;
     }
@@ -293,7 +286,7 @@ export default function EditProfile() {
             />
           </div>
           <InputFormCard
-            title="Edit Profile"
+            title={title}
             inputFields={registerInputFields}
             buttons={formButtons}
             isLoading={isLoading}
