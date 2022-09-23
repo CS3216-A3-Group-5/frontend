@@ -40,7 +40,7 @@ export function useApiRequestErrorHandler() {
           // purge storage
           void persistor.purge();
           // redirect to login screen whenever a 401 occurs
-          history.push(LOGIN_PATH);
+          history.replace(LOGIN_PATH);
           return new ApiRequestError(ErrorType.AUTHENTICATION_FAIL);
         }
         // some other error occured at server
