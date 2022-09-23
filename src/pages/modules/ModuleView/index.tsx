@@ -34,6 +34,7 @@ import {
 } from '../../../redux/slices/objectDetailsSlice';
 import {
   getUserStatusForModule,
+  setModuleEnrollStatus,
   updateUserStatusForModule,
 } from '../../../redux/slices/userSlice';
 import { useCheckUserProfileCreated } from '../../../util/hooks/useCheckUserProfileCreated';
@@ -112,6 +113,12 @@ export default function ModuleView({
     enrollModule(module.code)
       .then(() => {
         setIsEnrolled(true);
+        dispatch(
+          setModuleEnrollStatus({
+            moduleCode: module.code,
+            status: UserStatus.NO_STATUS,
+          })
+        );
       })
       .catch((error) => {
         presentErrorToast(handleApiError(error));

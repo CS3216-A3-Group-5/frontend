@@ -42,6 +42,14 @@ const UserSlice = createSlice({
     },
     setHasCreatedProfile: (state, action: PayloadAction<boolean>) => {
       state.hasCreatedProfile = action.payload;
+    } /* eslint-disable */,
+    setModuleEnrollStatus: (
+      state,
+      action: PayloadAction<{ status: UserStatus; moduleCode: string }>
+    ) => {
+      const updatedModuleStatuses = Object.create(state.moduleStatuses);
+      updatedModuleStatuses[action.payload.moduleCode] = action.payload.status;
+      state.moduleStatuses = updatedModuleStatuses;
     },
   },
   extraReducers: (builder) => {
@@ -105,6 +113,7 @@ export const {
   setIsInProcessOfVerifyingEmail,
   setIsLoggedIn,
   setHasCreatedProfile,
+  setModuleEnrollStatus,
 } = UserSlice.actions;
 
 // set up persistence, uses local storage to persist this reducer

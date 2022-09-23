@@ -40,6 +40,7 @@ export default function Homepage() {
     useState<boolean>(false);
   const handleApiError = useApiRequestErrorHandler();
   const dispatch = useAppDispatch();
+  const searchKeyword = useAppSelector((state) => state.home.keyword);
 
   useCheckUserProfileCreated();
 
@@ -122,7 +123,11 @@ export default function Homepage() {
           {haveTriedFirstDataLoad && Object.keys(modules).length === 0 ? (
             <IonCard color="secondary">
               <IonCardContent>
-                <h2>You are not enrolled in any modules!</h2>
+                <h2>
+                  {searchKeyword
+                    ? 'No modules match your search.'
+                    : 'You are not enrolled in any modules!'}
+                </h2>
               </IonCardContent>
             </IonCard>
           ) : (

@@ -98,7 +98,7 @@ function ConnectionAction({
 
   if (connectionType === ConnectionType.CONNECTED) {
     return <IonIcon color="success" src={checkmarkCircle}></IonIcon>;
-  } else if (connectionType == ConnectionType.INCOMING_REQUEST) {
+  } else if (connectionType === ConnectionType.INCOMING_REQUEST) {
     return (
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <IonButton color="success" onClick={acceptIncomingRequest}>
@@ -109,7 +109,7 @@ function ConnectionAction({
         </IonButton>
       </div>
     );
-  } else if (connectionType == ConnectionType.OUTGOING_REQUEST) {
+  } else if (connectionType === ConnectionType.OUTGOING_REQUEST) {
     return (
       <IonButton color="danger" onClick={cancelOutgoingRequest}>
         Cancel
@@ -216,7 +216,7 @@ export default function ConnectionListItem({
           </IonToolbar>
         </IonHeader>
         <UserCardItem user={userDetails!} />
-        {connectionType == ConnectionType.CONNECTED && (
+        {connectionType === ConnectionType.CONNECTED && (
           <IonButton
             class="ion-padding-horizontal"
             color="danger"
