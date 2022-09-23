@@ -7,7 +7,6 @@ import {
   IonLabel,
   IonList,
   IonListHeader,
-  IonLoading,
   IonPage,
   IonSearchbar,
   IonToolbar,
@@ -31,7 +30,6 @@ import ModuleListItem from '../modules/ModuleListItem/ModuleListItem';
 
 export default function Homepage() {
   const modules = useAppSelector((state) => state.home.modules);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const presentInfoToast = useInfoToast();
   const createErrorToast = useErrorToast();
   const [isInfiniteScrollDisabled, setIsInfiniteScrollDisabled] =
@@ -45,14 +43,12 @@ export default function Homepage() {
   useCheckUserProfileCreated();
 
   function getPageOfModulesOnSearch(keyword?: string | null) {
-    setIsLoading(true);
     dispatch(getPageOfModulesWithNewKeyword(keyword))
       .unwrap()
       .catch((error) => {
         createErrorToast(handleApiError(error));
       })
       .finally(() => {
-        setIsLoading(false);
         setHaveTriedFirstDataLoad(true);
       });
   }
@@ -82,7 +78,6 @@ export default function Homepage() {
   }
 
   function getModulesOfUser() {
-    setIsLoading(true);
     dispatch(getPageOfModulesWithNewKeyword())
       .unwrap()
       .then((addedModules) => {
@@ -94,9 +89,7 @@ export default function Homepage() {
       .catch((error) => {
         createErrorToast(handleApiError(error));
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .finally(() => {});
   }
 
   useVerifyAuthenticationThenLoadData(getModulesOfUser);
@@ -148,7 +141,6 @@ export default function Homepage() {
           <IonInfiniteScrollContent loadingSpinner="circles"></IonInfiniteScrollContent>
         </IonInfiniteScroll>
       </IonContent>
-      <IonLoading isOpen={isLoading} />
     </IonPage>
   );
 }

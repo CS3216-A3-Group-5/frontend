@@ -7,7 +7,6 @@ import {
   IonLabel,
   IonList,
   IonListHeader,
-  IonLoading,
   IonPage,
   IonSearchbar,
   IonToolbar,
@@ -37,8 +36,6 @@ export default function ModulesPage() {
   const dispatch = useAppDispatch();
   const createErrorToast = useErrorToast();
   const handleApiError = useApiRequestErrorHandler();
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasDoneFirstLoad, setHasDoneFirstLoad] = useState<boolean>(false);
 
   useCheckUserProfileCreated();
@@ -61,14 +58,10 @@ export default function ModulesPage() {
   }
 
   function getPageOfModulesOnSearch(keyword?: string | null) {
-    setIsLoading(true);
     dispatch(getPageOfExploreModulesWithNewKeyword(keyword))
       .unwrap()
       .catch((error) => {
         createErrorToast(handleApiError(error));
-      })
-      .finally(() => {
-        setIsLoading(false);
       });
   }
 
@@ -78,7 +71,6 @@ export default function ModulesPage() {
   }
 
   function getInitialExploreModules() {
-    setIsLoading(true);
     dispatch(getPageOfExploreModulesWithNewKeyword(''))
       .unwrap()
       .then((addedModules) => {
@@ -91,7 +83,6 @@ export default function ModulesPage() {
         createErrorToast(handleApiError(error));
       })
       .finally(() => {
-        setIsLoading(false);
         setHasDoneFirstLoad(true);
       });
   }
@@ -143,7 +134,6 @@ export default function ModulesPage() {
               </IonCardContent>
             </IonCard>
           ))}
-        <IonLoading isOpen={isLoading}></IonLoading>
       </IonContent>
     </IonPage>
   );

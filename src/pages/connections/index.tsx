@@ -9,7 +9,6 @@ import {
   IonLabel,
   IonList,
   IonListHeader,
-  IonLoading,
   IonModal,
   IonPage,
   IonToolbar,
@@ -38,7 +37,6 @@ export default function ConnectionsPage() {
     (state) => state.connections.outgoing
   );
   const connections = useAppSelector((state) => state.connections.connections);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalConnectionType, setModalConnectionType] =
     useState<ConnectionType>(ConnectionType.CONNECTED);
@@ -49,16 +47,13 @@ export default function ConnectionsPage() {
   useCheckUserProfileCreated();
 
   useVerifyAuthenticationThenLoadData(() => {
-    setIsLoading(true);
     Promise.all([
       dispatch(getIncoming()),
       dispatch(getOutgoing()),
       dispatch(getConnections()),
-    ])
-      .catch((error) => {
-        presentErrorToast(handleApiRequestError(error));
-      })
-      .finally(() => setIsLoading(false));
+    ]).catch((error) => {
+      presentErrorToast(handleApiRequestError(error));
+    });
   });
 
   return (
@@ -122,9 +117,9 @@ export default function ConnectionsPage() {
               ))
             : null}
         </IonList>
-        {connections.length == 0 &&
-          incomingRequests.length == 0 &&
-          outgoingRequests.length == 0 && (
+        {connections.length === 0 &&
+          incomingRequests.length === 0 &&
+          outgoingRequests.length === 0 && (
             <IonCard color="secondary">
               <IonCardContent>
                 <h2>No connections found.</h2>
@@ -137,7 +132,6 @@ export default function ConnectionsPage() {
           connectionType={modalConnectionType}
         />
       </IonContent>
-      <IonLoading isOpen={isLoading}></IonLoading>
     </IonPage>
   );
 }
@@ -154,9 +148,9 @@ function ConnectionListHeader({
   setIsModalOpen,
 }: ConnectionListHeaderProps) {
   const header: string =
-    header_type == ConnectionType.CONNECTED
+    header_type === ConnectionType.CONNECTED
       ? 'Connected'
-      : header_type == ConnectionType.INCOMING_REQUEST
+      : header_type === ConnectionType.INCOMING_REQUEST
       ? 'Incoming Request'
       : 'Outgoing Request';
 
