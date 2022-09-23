@@ -94,9 +94,9 @@ async function getConnectionsOfType(
   keyword?: string,
   page = 1
 ): Promise<Connection[]> {
-  if (type == ConnectionType.CONNECTED) {
+  if (type === ConnectionType.CONNECTED) {
     return await getConnectedConnections(keyword, page);
-  } else if (type == ConnectionType.INCOMING_REQUEST) {
+  } else if (type === ConnectionType.INCOMING_REQUEST) {
     return await getIncomingConnectionsRequests(keyword, page);
   } else {
     return await getOutgoingConnectionsRequests(keyword, page);
