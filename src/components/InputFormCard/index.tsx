@@ -34,6 +34,7 @@ interface InputFormCardProps {
   isLoading?: boolean;
   errorMessage?: string;
   image?: string;
+  subtitle?: string;
 }
 export default function InputFormCard({
   title,
@@ -42,6 +43,7 @@ export default function InputFormCard({
   isLoading,
   errorMessage,
   image,
+  subtitle,
 }: InputFormCardProps) {
   return (
     <IonCard>
@@ -50,6 +52,7 @@ export default function InputFormCard({
         <IonCardTitle>
           <h1>{title}</h1>
         </IonCardTitle>
+        <IonCardSubtitle>{subtitle}</IonCardSubtitle>
         {errorMessage && (
           <IonCardSubtitle color="danger" mode="md">
             <h3>{errorMessage}</h3>

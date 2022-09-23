@@ -57,6 +57,9 @@ const VerifyPage: React.FC = () => {
     } else if (otp.length !== OTP_LENGTH) {
       currError = 'OTP should be 6 digits.';
       haveError = true;
+    } else if (isNaN(Number(otp))) {
+      currError = 'OTP should only contain numbers';
+      haveError = true;
     }
     setFieldErrorMessage(currError);
     if (!haveError) {
@@ -96,6 +99,7 @@ const VerifyPage: React.FC = () => {
           setErrorMessage(resp[ERROR_FIELD_NAME]);
           return;
         }
+        setErrorMessage('');
         presentInfoToast('One-time passcode resent to ' + email);
       })
       .catch((error) => {
@@ -135,6 +139,7 @@ const VerifyPage: React.FC = () => {
       <IonContent fullscreen>
         <InputFormCard
           title="Enter one-time passcode"
+          subtitle="OTP is valid for 5 minutes."
           inputFields={inputFields}
           buttons={formButtons}
           isLoading={isLoading}

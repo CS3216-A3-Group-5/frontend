@@ -5,7 +5,7 @@ import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import axios from 'axios';
 import { refreshTokens } from './authentication';
 import TokenService from '../util/services/tokenService';
-import { REGISTER_PATH, VERIFY_EMAIL_PATH } from './constants';
+import { REGISTER_PATH, RESEND_OTP_PATH, VERIFY_EMAIL_PATH } from './constants';
 
 const API_BASE_URL_APIARY =
   'https://private-26272e-cs3216a3group5.apiary-mock.com'; //TODO: Replace with real api link
@@ -25,7 +25,8 @@ axiosInstance.interceptors.request.use(
     if (
       token &&
       config.url !== REGISTER_PATH &&
-      config.url !== VERIFY_EMAIL_PATH
+      config.url !== VERIFY_EMAIL_PATH &&
+      config.url !== RESEND_OTP_PATH
     ) {
       if (!config.headers) {
         config.headers = {};

@@ -8,7 +8,7 @@ export const LOGOUT_PATH = '/logout';
 export const VERIFY_AUTHENTICATION = '/token/verify';
 export const GET_LIST_OF_MODULES_PATH = '/modules';
 export const REFRESH_TOKEN_PATH = '/token/refresh';
-export const RESEND_OTP_PATH = '/resend_otp';
+export const RESEND_OTP_PATH = '/otp/send';
 export function getPathForGetListOfUsersForModule(moduleCode: string) {
   return '/modules/' + moduleCode + '/users';
 }
