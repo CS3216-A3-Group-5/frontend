@@ -1,6 +1,6 @@
 # CS3216 Assignment 3 Group 5 Frontend Source Code
 
-# Application Title: TBD
+# Application Title: Mod With Me
 
 ## This application is a PWA built with [Ionic Framework](https://ionicframework.com)
 
