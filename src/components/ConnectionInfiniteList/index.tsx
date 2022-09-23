@@ -107,7 +107,11 @@ export default function ConnectionInfiniteList({
     <>
       <IonHeader>
         <IonToolbar>
-          <IonSearchbar debounce={800} onIonChange={handleSearchbarChange} />
+          <IonSearchbar
+            debounce={800}
+            onIonChange={handleSearchbarChange}
+            placeholder="Name or Module Code"
+          />
         </IonToolbar>
       </IonHeader>
       {Object.keys(connections).length > 0 || isSearching ? (
