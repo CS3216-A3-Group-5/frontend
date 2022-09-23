@@ -36,6 +36,8 @@ export default function UserProfile() {
       })
       .finally(() => {
         dispatch(setIsLoggedIn(false));
+        // clear the redux store and the local stroage
+        dispatch({ type: 'USER_LOGOUT' });
         void persistor.purge();
         history.replace(LOGIN);
       });
