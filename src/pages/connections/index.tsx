@@ -2,6 +2,8 @@
 import {
   IonButton,
   IonButtons,
+  IonCard,
+  IonCardContent,
   IonContent,
   IonHeader,
   IonLabel,
@@ -120,7 +122,15 @@ export default function ConnectionsPage() {
               ))
             : null}
         </IonList>
-        <IonLoading isOpen={isLoading ? true : false} />
+        {connections.length == 0 &&
+          incomingRequests.length == 0 &&
+          outgoingRequests.length == 0 && (
+            <IonCard color="secondary">
+              <IonCardContent>
+                <h2>No connections found.</h2>
+              </IonCardContent>
+            </IonCard>
+          )}
         <ConnectionInfiniteListModal
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
