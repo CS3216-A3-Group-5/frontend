@@ -68,7 +68,7 @@ export default function EditProfile({ title }: { title: string }) {
 
   useCheckUserProfileCreated();
 
-  useVerifyAuthenticationThenLoadData(() => {
+  useVerifyAuthenticationThenLoadData(undefined, () => {
     setUserDetails(userStore);
   });
 
@@ -166,6 +166,7 @@ export default function EditProfile({ title }: { title: string }) {
     if (!haveError) {
       setIsLoading(true);
       dispatch(updateSelfUserDetails(newUser))
+        .unwrap()
         .then(
           () => {
             if (selectedFile) {

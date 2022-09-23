@@ -15,7 +15,8 @@ import useInfoToast from './useInfoToast';
  * Verifies that a user is logged in before runnning the provided function to load data for that page.
  */
 export default function useVerifyAuthenticationThenLoadData(
-  loadDataFunc: () => void
+  loadDataFunc?: () => void,
+  finalFunc?: () => void
 ) {
   const dispatch = useAppDispatch();
   const history = useHistory();
@@ -37,7 +38,7 @@ export default function useVerifyAuthenticationThenLoadData(
           history.replace(LOGIN);
           return;
         }
-        loadDataFunc();
+        loadDataFunc && loadDataFunc();
       })
       .catch((err) => {
         //any other error other than 401 will allow access, but offline data only
@@ -57,6 +58,7 @@ export default function useVerifyAuthenticationThenLoadData(
           );
           history.replace(LOGIN);
         }
-      });
+      })
+      .finally(finalFunc);
   }, [wasLoggedInPreviously, wasInformedOfOfflineMode]);
 }
