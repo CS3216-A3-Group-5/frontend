@@ -3,7 +3,10 @@ import { useHistory } from 'react-router-dom';
 import { verifyAuth } from '../../api/authentication';
 import { useApiRequestErrorHandler } from '../../api/errorHandling';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { setIsLoggedIn } from '../../redux/slices/userSlice';
+import {
+  setIsLoggedIn,
+  setWasInformedOfOfflineMode,
+} from '../../redux/slices/userSlice';
 import { persistor } from '../../redux/store';
 import { LOGIN } from '../../routes';
 import useInfoToast from './useInfoToast';
@@ -21,6 +24,9 @@ export default function useVerifyAuthenticationThenLoadData(
   const wasLoggedInPreviously = useAppSelector(
     (state) => state.user.isLoggedIn
   );
+  const wasInformedOfOfflineMode = useAppSelector(
+    (state) => state.user.wasInformedOfOfflineMode
+  );
   useIonViewDidEnter(() => {
     verifyAuth()
       .then((result) => {
@@ -37,9 +43,13 @@ export default function useVerifyAuthenticationThenLoadData(
         //any other error other than 401 will allow access, but offline data only
         handleApiError(err);
         if (wasLoggedInPreviously) {
-          presentInfoToast(
-            'Unable to reach server. Displaying offline information.'
-          );
+          // only inform the user once of offline mode
+          if (!wasInformedOfOfflineMode) {
+            dispatch(setWasInformedOfOfflineMode(true));
+            presentInfoToast(
+              'Unable to reach server. Displaying offline information.'
+            );
+          }
         } else {
           presentInfoToast(
             'Unable to login to server. Please try again.',
@@ -48,5 +58,5 @@ export default function useVerifyAuthenticationThenLoadData(
           history.replace(LOGIN);
         }
       });
-  }, []);
+  }, [wasLoggedInPreviously, wasInformedOfOfflineMode]);
 }

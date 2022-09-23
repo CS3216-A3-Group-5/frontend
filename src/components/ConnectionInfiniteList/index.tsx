@@ -1,6 +1,7 @@
 import {
   IonCard,
   IonCardContent,
+  IonHeader,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonList,
@@ -40,6 +41,7 @@ export default function ConnectionInfiniteList({
   const dispatch = useAppDispatch();
   const createErrorToast = useErrorToast();
   const handleApiError = useApiRequestErrorHandler();
+  const [isSearching, setIsSearching] = useState<boolean>(false);
 
   function getInitialConnections() {
     setIsLoading(true);
@@ -89,6 +91,11 @@ export default function ConnectionInfiniteList({
 
   function handleSearchbarChange(ev: Event) {
     const target = ev.target as HTMLIonSearchbarElement;
+    if (target.value) {
+      setIsSearching(true);
+    } else {
+      setIsSearching(false);
+    }
     getPageOfConnectionsOnSearch(target.value ? target.value : '');
   }
 
@@ -98,10 +105,12 @@ export default function ConnectionInfiniteList({
 
   return (
     <>
-      <IonToolbar>
-        <IonSearchbar debounce={1000} onIonChange={handleSearchbarChange} />
-      </IonToolbar>
-      {Object.keys(connections).length > 0 ? (
+      <IonHeader>
+        <IonToolbar>
+          <IonSearchbar debounce={800} onIonChange={handleSearchbarChange} />
+        </IonToolbar>
+      </IonHeader>
+      {Object.keys(connections).length > 0 || isSearching ? (
         <>
           <IonList lines="full">
             {Object.values(connections).map((connection) => (
@@ -124,7 +133,7 @@ export default function ConnectionInfiniteList({
       ) : (
         <IonCard color="secondary">
           <IonCardContent>
-            <h2>No connections found.</h2>
+            <h2>You don't have any connections!</h2>
           </IonCardContent>
         </IonCard>
       )}

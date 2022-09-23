@@ -13,6 +13,7 @@ interface UserState {
   hasCreatedProfile: boolean;
   moduleStatuses: { [key: string]: UserStatus };
   isLoggedIn: boolean;
+  wasInformedOfOfflineMode: boolean;
 }
 
 const initialState: UserState = {
@@ -22,6 +23,7 @@ const initialState: UserState = {
   hasCreatedProfile: true,
   moduleStatuses: {},
   isLoggedIn: false,
+  wasInformedOfOfflineMode: false,
 };
 
 const UserSlice = createSlice({
@@ -50,6 +52,9 @@ const UserSlice = createSlice({
       const updatedModuleStatuses = Object.create(state.moduleStatuses);
       updatedModuleStatuses[action.payload.moduleCode] = action.payload.status;
       state.moduleStatuses = updatedModuleStatuses;
+    },
+    setWasInformedOfOfflineMode: (state, action: PayloadAction<boolean>) => {
+      state.wasInformedOfOfflineMode = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -114,13 +119,14 @@ export const {
   setIsLoggedIn,
   setHasCreatedProfile,
   setModuleEnrollStatus,
+  setWasInformedOfOfflineMode,
 } = UserSlice.actions;
 
 // set up persistence, uses local storage to persist this reducer
 const userPersistConfig = {
   key: 'user',
   storage,
-  blacklist: ['isInProcessOfVerifyingEmail'],
+  blacklist: ['isInProcessOfVerifyingEmail', 'wasInformedOfOfflineMode'],
 };
 
 const persistedUserReducer = persistReducer(
